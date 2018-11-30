@@ -1,5 +1,5 @@
 import { mergeObject, loadJson, writeJson, LOG_TYPE, log } from './util/index';
-import pathfrom from 'path';
+import path from 'path';
 
 function merge(obj, ...others) {
     let outData = Object.assign(Object.prototype.toString.call(obj) === '[object Object]' ? {} : [], obj);

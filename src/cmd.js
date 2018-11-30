@@ -161,12 +161,15 @@ function handleInit() {
             answers = Object.assign({}, config, answers);
             return answers;
         }).then(data => {
-            let str = `module.exports = {\r\n\t`;
+            let str = `module.exports = {\r\n\t`,
+                notString = ['onlyZH', 'commandType'];
+
             for (let key in data) {
                 str += '/**\r\n\t';
                 str += ` * ${comments[key]}\r\n\t`;
                 str += ' */\r\n\t';
-                str += `${key}: ${data[key]|| '""'},\r\n\t`;
+                let text = notString.includes(key) ? data[key] : `"${(data[key] || '').replace(/"/g, '\\"')}"`;
+                str += `${key}: ${text},\r\n\t`;
             }
             str = str.replace(/,\r\n\t$/g, '\r\n');
             str += '}';
