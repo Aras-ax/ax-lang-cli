@@ -31,13 +31,13 @@ import arrayToJson from './arrayToJson';
 //     let t = data;
 // });
 
-arrayToJson('C:/Users/moshang/Desktop/srcOut/lang1.json', 'C:/Users/moshang/Desktop/srcOut/lang.json', 'C:/Users/moshang/Desktop/srcOut/t.json');
+// arrayToJson('C:/Users/moshang/Desktop/srcOut/lang1.json', 'C:/Users/moshang/Desktop/srcOut/lang.json', 'C:/Users/moshang/Desktop/srcOut/t.json');
 
-start({
-    commandType: COMMAD.JSON_TO_EXCEL,
-    jsonPath: 'C:/Users/moshang/Desktop/srcOut/t.json',
-    outExcelPath: ''
-});
+// start({
+//     commandType: COMMAD.JSON_TO_EXCEL,
+//     jsonPath: 'C:/Users/moshang/Desktop/srcOut/t.json',
+//     outExcelPath: ''
+// });
 
 // start({
 //     commandType: COMMAD.GET_WORDS,
@@ -77,6 +77,19 @@ start({
 // }).then(data => {
 //     let t = '';
 // });
+
+start({
+    commandType: COMMAD.TRANSLATE,
+    baseTranslatePath: './test/TestFile/test/html',
+    baseTransOutPath: './test/TestFile/output/html',
+    languagePath: './test/TestFile/testData/allTest/translate.xlsx',
+    hongPath,
+    sheetName: '',
+    keyName: 'EN',
+    valueName: 'CN'
+}).then(data => {
+    let t = '';
+});
 
 // start({
 //     commandType: COMMAD.JSON_TO_EXCEL,
