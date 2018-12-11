@@ -41,6 +41,8 @@ class ExtractHTML extends Extract {
     }
 
     transNode(html) {
+        this.getHeaderTag(html);;
+
         return new Promise((resolve, reject) => {
             try {
                 let dom = new JSDOM(html);
@@ -52,12 +54,29 @@ class ExtractHTML extends Extract {
         });
     }
 
+    getHeaderTag(html){
+        this.hasHeader = !!html.match(/\<head\>/g);
+        this.hasBody = !!html.match(/\<body([^>]*)\>/g);
+        this.footerTag = '\t\n<\html>';
+    }
+
     // 扫描节点，提取字段
     scanNode(document) {
         return new Promise((resolve, reject) => {
             this.listNode(document.documentElement);
 
-            resolve((document.doctype ? '<!doctype html>\t\n' : '') + document.documentElement.innerHTML);
+            let outHtml = document.documentElement.innerHTML;
+            
+            if(!this.hasHeader){
+                outHtml = outHtml.replace(/\<head\>[\s\S]*\<\/head\>/g, '');
+            }
+            if(!this.hasBody){
+                outHtml = outHtml.replace(/(\<body([^>]*)\>)|(\<\/body\>)/g, '');
+            }
+            outHtml = outHtml.replace(/^\s*|\s*$/g, '');
+            outHtml =  document.doctype ? '<!doctype html>\t\n<html>\t\n' + outHtml + '\t\n</html>' : outHtml;
+            
+            resolve(outHtml);
         });
     }
 
