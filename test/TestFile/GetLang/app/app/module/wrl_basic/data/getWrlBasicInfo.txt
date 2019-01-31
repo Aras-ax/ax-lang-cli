@@ -1,0 +1,42 @@
+{
+"basic":{
+				"country":"PH", 
+				"wifiEn":"0",     
+				"ssidEn":"1",	
+				"ssid":"Tenda_office",	
+				"channel":"9",		
+				"netMode":"bgn",	
+				"bandwidth":"0",
+				"extChannel":"upper",		
+				"broadcastSsid":"0",	
+				"power":"29",			
+				"isolationEn":"0",	
+				"tranSpeed":"-1",		
+				"autoHiddenSsid":"0",	
+				"maxClient":"25",		
+				"wifi_chkHz":"0",
+				"minPower":"8",		
+				"maxPower":"28",		
+				"defaultPower":"",		
+				"staTimeout":"",
+				"channelOffset":"1"
+				},"security":{
+				"secType":"wep",		
+				"wepAuth":"open",		
+				"defaultkey":"1",			
+				"wepKey1":"12345",		
+				"wepKeyType1":"hex",
+				"wepKey2":"12345",
+				"wepKeyType2":"ascii",
+				"wepKey3":"12345",
+				"wepKeyType3":"ascii",
+				"wepKey4":"12345",
+				"wepKeyType4":"hex",
+				"wpaAuth":"aes+tkip",	
+				"wpaPassword":"RTk1NjA=",	
+				"pwdInterval":"0",	
+				"radiusIp":"192.168.0.123",	
+				"radiusPort":"1812"			
+				}
+				
+}

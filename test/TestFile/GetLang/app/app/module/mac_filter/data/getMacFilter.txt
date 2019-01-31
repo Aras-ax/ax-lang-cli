@@ -1,0 +1,29 @@
+
+
+{
+	"rules": [{
+		"remark": "xxx",	
+		"mac": "AA:AA:AA:AA",	
+		"status": "1",
+		"date": "08:00-18:00|1;2;3",	
+		"mode": "0"
+	},{
+		"remark": "xxx",	
+		"mac": "AA:AA:AA:AA",	
+		"status": "1",
+		"date": "08:00-18:00|1;2;3",	
+		"mode": "0"
+	},{
+		"remark": "xxx",	
+		"mac": "123",	
+		"status": "1",
+		"date": "08:00-18:00|1;2;3",	
+		"mode": "0"
+	},{
+		"remark": "xxx",	
+		"mac": "456",	
+		"status": "1",
+		"date": "08:00-18:00|1;2;3",	
+		"mode": "0"
+	}]
+}

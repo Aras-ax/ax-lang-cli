@@ -1,0 +1,210 @@
+<form class="config-box" >
+	<section id="netService">
+		<!-- DDNS -->
+		<div class="none ddns">
+			<div data-field="ddnsEn" data-key="FormCheckbox"></div>
+			<select data-field="ddnsP" data-key="FormSelect"></select>
+			<input data-field="username" data-key="FormInput" type="text">
+			<input data-field="password" data-key="FormInput" type="password">
+			<input data-field="domain" data-key="FormInput" type="text">
+			<hr>
+		</div>
+		<!-- DDNS END -->
+
+		<!-- 远程web管理 -->
+		<div class="none remote-ip">
+			<div data-field="remoteEn" data-key="FormCheckbox"></div>
+			<select data-field="remoteIPtype" data-key="FormSelect"></select>
+			<input data-field="remoteIp" data-key="FormInput" type="text">
+			<input data-field="remotePort" data-key="FormInput" type="text">
+			<hr>
+		</div>
+		<!-- END -->
+
+		<!-- 定时重启 -->
+		<div data-field="timeRebootEn" data-key="FormCheckbox"></div>
+		<input data-field="rebootTime" data-key="FormInput" type="text">
+		<div id="week" style="width: 340px" data-field="week" data-key="FormCheckList"></div>
+		<!-- END -->
+		<hr>
+		<!--  WEB闲置超时时间 -->
+		<input data-field="webTimeout" data-key="FormInput" type="text">
+		<!-- END -->
+		<hr>
+		<!-- SNMP代理 -->
+		<div data-field="snmpEn" data-key="FormCheckbox"></div>
+		<input data-field="deviceName" data-key="FormInput" type="text">
+		<input data-field="Rcommunity" data-key="FormInput" type="text">
+		<input data-field="RWcommunity" data-key="FormInput" type="text">
+		<input data-field="location" data-key="FormInput" type="text">
+		<!-- END -->
+		<hr>
+		<!-- PING看门狗 -->
+		<div data-field="pingWatchDogEn" data-key="FormCheckbox"></div>
+		<input data-field="pingIp" data-key="FormInput" type="text">
+		<input data-field="pingInterval" data-key="FormInput" type="text">
+		<input data-field="startDelay" data-key="FormInput" type="text">
+		<input data-field="packetsNum" data-key="FormInput" type="text">
+		<!-- END -->
+		<hr>
+		<!-- DMZ主机 -->
+		<div class="none dmz">
+			<div data-field="DMZEn" data-key="FormCheckbox"></div>
+			<input data-field="DMZIp" data-key="FormInput" type="text">
+		</div>
+		<!-- END -->
+		<div data-field="telnetEn" data-key="FormCheckbox"></div>
+		<div data-field="upnpEn" data-key="FormCheckbox"></div>
+		<div data-field="watchDogEn" data-key="FormCheckbox"></div>
+	</section>
+</form>
+
+<article class="help-box none">
+	<section>
+		<p>
+			<span>DDNS: </span>
+			<span>When the device works in Router or WISP mode, dynamic DNS (DDNS) maps a fixed domain name to a dynamic WAN IP address.</span>
+		</p>
+		<p>To use this function, a DDNS account registered at the DDNS service providers supported by this device is required.</p>
+	</section>
+	<section>
+		<p>
+			<span>User Name/Password/Domain Name:</span>
+			<span>Enter the user name, password and domain name that you registered with DDNS service provider to enable the DDNS service of the device. </span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Remote Web Management:</span>
+			<span>With this function enabled, you can visit the web UI of this device remotely through its WAN port.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>IP Address:</span>
+			<span>IP address of the computer allowed to manage this device remotely. "All" indicates that any computer in WAN can manage this device remotely.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>IP Address:</span>
+			<span>enter the IP address of the computer allowed to manage this device remotely.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Port:</span>
+			<span>port number used for remote management of device. Default: 8080. You can change it if necessary.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Reboot Schedule:</span>
+			<span>you can create a reboot schedule for this device here. If this function is enabled, verify that the device is connected to the internet and the system time of the device is synchronized with the GMT time through the internet to ensure proper operation of the function.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Login Timeout Interval:</span>
+			<span>you can set the login timeout interval of this device here. If you perform no operation within the interval after logging in to the device, the system logs you out.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>SNMP Agent:</span>
+			<span>whether to enable the SNMP Agent function of the device. With this function enabled, you can manage the device using SNMP software.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Read Community:</span>
+			<span>Read password used between an NMS and the SNMP agent. The SNMP agent allows the NMS to use the Read community to read variables in the MIB of this device.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Read/Write Community:</span>
+			<span>Read/Write password used between an NMS and the SNMP agent. The SNMP agent allows the NMS to use the Read/Write community to read/write variables in the MIB of this device.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Ping Watch Dog:</span>
+			<span>Periodically ping target IP address to check the network connectivity and identify whether the device malfunctions. If it malfunctions, the device will reboot automatically to ensure the network performance.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>IP Address:</span>
+			<span>allow you to set the IP Address of target host.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Ping Interval:</span>
+			<span>interval at which the device sends Ping packets. Default: 300 s</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Ping Startup Delay:</span>
+			<span>interval at which the device enables the Ping Watch Dog function after the device reboots. Default: 300 s.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Threshold of lost packets for reboot:</span>
+			<span>specify the threshold of lost packet that triggers reboot. If N is set, the device will reboot automatically when it sends N Ping packets to target IP address/domain name, and does not receive response. Range: 1 to 65535, default: 3.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>DMZ Host:</span>
+			<span>If a host in LAN is set to DMZ host, the host exposes itself to WAN, and can achieve bidirectional communication with external network nodes.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>DMZ Host IP Address:</span>
+			<span>Enter IP address of a computer to be set as DMZ host in LAN.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Telnet Service:</span>
+			<span>Used to enable or disable Telent function.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>UPnP:</span>
+			<span>UPnP protocol allows the device to identify applications supported UPnP in LAN automatically, and enable ports for these applications to achieve automatic port mapping function.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Hardware Watch Dog:</span>
+			<span>???</span>
+		</p>
+		<p></p>
+	</section>
+</article>

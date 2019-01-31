@@ -1,0 +1,22 @@
+{
+    "name": "translate",
+    "version": "1.0.0",
+    "description": "语言提取和替换",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "moshang",
+    "license": "ISC",
+    "devDependencies": {
+        "escodegen": "^1.11.0",
+        "esprima": "^4.0.1",
+        "estraverse": "^4.2.0",
+        "jsdom": "^10.0.0",
+        "minimatch": "^3.0.4",
+        "node-xlsx": "^0.12.1"
+    },
+    "dependencies": {
+        "jest": "^23.6.0"
+    }
+}

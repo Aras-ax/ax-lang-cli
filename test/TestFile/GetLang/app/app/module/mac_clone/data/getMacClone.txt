@@ -1,0 +1,5 @@
+{
+	"mac": "AA:AA:AA:AA:AA:AA",	
+	"defaultMac": "22:AA:33:AA:AA:AA",	
+	"localMac": "BB:BB:BB:BB:BB:BB"	
+}

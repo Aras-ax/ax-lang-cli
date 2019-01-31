@@ -1,0 +1,18 @@
+{
+	"ssidList": [{
+		"channel":"6",
+		"index":"1",
+		"mac":"50:2B:73:09:6A:DC",
+		"secType":"WPA2-PSK,AES",
+		"signal":"-64",
+		"ssid":"nova-pan"
+	},{
+		"channel":"6",
+		"index":"2",
+		"mac":"50:2B:73:09:6A:DC",
+		"secType":"WPA2-PSK,AES",
+		"signal":"-64",
+		"ssid":"nova-pan"
+	}]
+}
+

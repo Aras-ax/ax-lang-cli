@@ -1,0 +1,20 @@
+{
+		"wmmEn":"1",			
+		"sensitivityEn":"0",		
+		"sensitivity":"-80",		
+		"preamble":"long",		
+		"interference":"2",		
+		"recieverMode":"0",	
+		"transmission":"0.1",	
+		"beacon":"100",		
+		"fragment":"2346",		
+		"rst":"2347",			
+		"dtim":"1",			
+		"apIsolation":"0",			
+		"LED1":"-60",				
+		"LED2":"-60",			
+		"LED3":"-90",		
+		"isolationEn":"0", 	
+		"polarization":"horizontal",	 
+		"wifi_chkHz":"0"
+}

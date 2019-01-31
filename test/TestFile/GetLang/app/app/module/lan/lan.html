@@ -1,0 +1,67 @@
+<form class="config-box">
+	<section class="lan-config-area" id="lanConfig">
+		<div data-field="mac" data-key="FormText"></div>
+		<select data-field="lanType" data-key="FormSelect"></select>
+		<input data-field="ip" data-key="FormInput" type="text">
+		<input data-field="mask" data-key="FormInput" type="text">
+		<input data-field="gateway" data-key="FormInput" type="text">
+		<input data-field="preDNS" data-key="FormInput" type="text">
+		<input data-field="altDNS" data-key="FormInput" type="text" required="false">
+		<input data-field="deviceName" data-key="FormInput" type="text"> 	
+	</section>
+	
+</form>
+
+<article class="help-box none">
+	<section>
+		<p>
+			<span>IP Address Type: </span>
+			<span>method for this device to obtain an IP address. The default option is Static IP Address.</span>
+		</p>
+		<p>If the IP Address Type of this device is set to "DHCP(Dynamic IP)" and you want to log in to the web UI of the device, you need to check the IP address of this device from the DHCP server client list in the network, and then use this IP address to login.</p>
+	</section>
+	<section>
+		<p>
+			<span>IP Address:</span>
+			<span>IP address (also called management IP address) of this device. By default, it is 192.168.2.1. You can access the web UI of this device using this IP address.</span>
+		</p>
+	</section>
+	<section>
+		<p>
+			<span>Subnet Mask:</span>
+			<span>subnet mask of wireless devices assigned by DHCP server.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Default Gateway:</span>
+			<span>default gateway IP address of this device. If this device must access the internet, you can set the default gateway to the LAN IP address of the egress router of this device.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Primary DNS Server:</span>
+			<span>mandatory. Set it to the DNS server IP address provided by your ISP. If you are uncertain about the IP address, consult your ISP.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Secondary DNS Server:</span>
+			<span>optional. Set it to the second DNS server address (if any) provided by your ISP.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Device Name:</span>
+			<span>name of this device. If this device is not the only one of its kind in the network, this name helps you identify the device. </span>
+		</p>
+		<p>Note:</p>
+		<p>if necessary, you can press the RST or RESET button on the device to restore factory settings.</p>
+		<p>If you change this IP address, you can log in to the web UI of this device only with the new IP address.</p>
+	</section>
+	
+</article>

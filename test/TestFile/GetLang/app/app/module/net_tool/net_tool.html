@@ -1,0 +1,252 @@
+<form class="config-box" id="xxxx">
+
+	<!-- 网络诊断选择 -->
+	<select id="Diagnosis" data-field="Diagnosis" data-key="FormSelect"></select>
+	<!-- END -->
+
+	<!-- 信号列表 -->
+	<section class="signal-list-area component-area none">
+		<table id="signalList" data-key="FormTable"></table>
+	</section>
+	<!-- END -->
+
+	<!-- Ping配置 -->
+	<section class="ping-area component-area none">
+		<div id="ping">
+			<select id="ipType"  data-field="ipType" data-key="FormSelect"></select>
+			<input id="destIP"  data-field="destIP" data-key="FormInput" type="text" visible="false">
+			<input id="_destIP"  data-field="_destIP" data-key="FormInput" type="text">
+			<input id="packetNum"  data-field="packetNum" data-key="FormInput" type="text">
+			<input id="packetSize"  data-field="packetSize" data-key="FormInput" type="text">
+		</div>
+		<!-- <div class="btn-group">
+			<input type="button" class="btn startPing" value="开始">
+			<input type="button" class="btn stopPing none" value="停止">
+		</div> -->
+		<div class="cm-footbar md-toolbar">
+			<input type="button" class="md-btn ok cm-submit startPing" value="开始">
+			<input type="button" class="md-btn ok cm-submit stopPing none" value="停止">
+		</div>
+	</section>
+	<!-- END -->
+
+	<!-- Ping结果列表 -->
+	<section class="ping-result-area component-area none">
+		<table id="pingResult" data-key="FormTable"></table>
+		<div class="ping-statistics">
+			<span></span>
+		</div>
+		<div class="ping-time">
+			<span class="ping-min"></span>
+			<span class="ping-avg"></span>
+			<span class="ping-max"></span>
+		</div>
+	</section>
+	<!-- End -->
+
+	<!-- 速率测试 -->
+	<section class="rate-test-area component-area none">
+		<div id="testResult">
+			<div class="rate-test-head">
+				<span class="avg-up">AVG RX</span><span class="avg-down">AVG TX</span><span class="avg-duo">AVG Total</span>
+			</div>
+			<div class="rate-test-result"><span><label  class="rxAvg">0</label><label>Mbps</label>
+				</span><span><label  class="txAvg">0</label>
+					<label>Mbps</label>
+				</span><span><label  class="totalAvg">0</label>
+					<label>Mbps</label>
+				</span>
+			</div>
+		</div>
+
+		<div id="rateTest">
+			<div id="testFrom" data-field="testFrom" data-key="FormRadioList"></div>
+			<select id="rateIpType" data-field="rateIpType" data-key="FormSelect"></select>
+			<input id="rateDestIP"  data-field="destIP" data-key="FormInput" type="text">
+			<input id="destPort"  data-field="destPort" data-key="FormInput" type="text">
+			<input id="userName"  data-field="userName" data-key="FormInput" type="text">
+			<input id="userPwd"  data-field="userPwd" data-key="FormInput" type="text">
+			<input id="rateGroups"  data-field="groups" data-key="FormInput" type="text">
+			<select id="rateDirection" data-field="direction" data-key="FormSelect"></select>
+			<input id="rateTime"  data-field="time" data-key="FormInput" type="text">
+		</div>
+
+		<div id="testProcess" class="none control-wrap clearfix">
+			<label class="form-title">测试进度</label>
+			<div class="form-content">
+				<p>
+					<span><em id="progressBar"></em></span>
+				</p>
+			</div>
+		</div>
+		<!-- <div class="btn-group">
+			<input type="button" class="btn startTest" value="开始">
+			<input type="button" class="btn stopTest none" value="停止">
+		</div> -->
+		<div class="cm-footbar md-toolbar">
+			<input type="button" class="md-btn ok cm-submit startTest" value="开始">
+			<input type="button" class="md-btn ok cm-submit stopTest none" value="停止">
+		</div>
+	</section>
+	<!-- END -->
+
+	<!-- Traceroute 配置-->
+	<section class="traceroute-area component-area none" id="trace">
+		<input id="destination" data-field="destination" data-key="FormInput" type="text">
+		<div class="cm-footbar md-toolbar">
+			<input type="button" class="md-btn ok cm-submit startTrace" value="开始">
+			<input type="button" class="md-btn ok cm-submit stopTrace none" value="停止">
+		</div>
+	</section>
+	<!-- END -->
+
+	<!-- Traceroute 结果-->
+	<section class="traceroute-result-area component-area none">
+		<table id="traceResult" data-key="FormTable"></table>
+	</section>
+	<!-- END -->
+
+</form>
+
+<article class="help-box none">
+	<section>
+		<p>
+			<span>Site Survey:</span>
+			<span>It is used to scan WiFi signals nearby for analysis with SSIDs, MAC addresses, channels and signal strength marked.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Ping:</span>
+			<span>You can use ping to detect the connectivity and quality of network connection.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Ping Packet:</span>
+			<span>set the size of transmitted ping packets.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Packet size:</span>
+			<span>specify the size of the packet transmitted by ping.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Destination IP Address/Domain Name:</span>
+			<span>enter the IP address or domain name of destination host.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Traceroute:</span>
+			<span>You can use the Traceroute tool to detect the routes that the packets pass by from the device to destination host.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Destination IP Address/Domain Name:</span>
+			<span>enter the IP address or domain name of destination host.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Speed Test:</span>
+			<span>used to test the throughput between two Tenda CPE in the same network. The test requires one of the two devices to be set as a server and the other as a client. The client launches the test request to the server and the server responds to it. The test result displays on the "Speed Test" page of the client.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Client:</span>
+			<span>the side that launches the test request. You need to set speed test parameters on client side, including IP address of peer device, speed test direction, and so on.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Server:</span>
+			<span>On the server end, click "Speed Test" button on "Diagnose" page to enable this function.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>IP Address of Peer AP:</span>
+			<span>IP address of peer bridge. You can select an existing IP address, or enter one.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>IP Address:</span>
+			<span>Enter the IP address of peer bridge.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>HTTP Port:</span>
+			<span>port number of HTTP service. Default: 80</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>User Name:</span>
+			<span>user name of web UI of peer device.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Password:</span>
+			<span>password of web UI of peer device.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>No. of Test Connection:</span>
+			<span>specify the number of test connection launched by the client. Range: 1 to 20.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Direction:</span>
+			<span>Select the test speed direction. RX (Receive): only test the speed that the peer device transmits data to this device. TX (Transit): only test the speed that this device transmits data to peer device. </span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Time:</span>
+			<span>period of speed test.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Test Progress:</span>
+			<span>process of speed test.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span></span>
+			<span></span>
+		</p>
+		<p></p>
+	</section>
+</article>

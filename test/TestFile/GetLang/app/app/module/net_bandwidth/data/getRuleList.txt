@@ -1,0 +1,21 @@
+{
+	"result": [{
+		"remark": "aaa",	
+		"ipRange": "192.168.8.1-192.168.8.3",	
+		"upSpeed": "100",
+		"downSpeed": "200",	
+		"status": "1"
+	},{
+		"remark": "bbb",	
+		"ipRange": "192.168.8.1-192.168.8.3",	
+		"upSpeed": "122200",
+		"downSpeed": "666",	
+		"status": "0"
+	},{
+		"remark": "ccc",	
+		"ipRange": "192.168.8.1-192.168.8.3",	
+		"upSpeed": "444",
+		"downSpeed": "66126",	
+		"status": "0"
+	}]
+}

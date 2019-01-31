@@ -1,0 +1,51 @@
+{
+		"ssid":"Tenda_office",		"macFilterEn":"1",		"filterMode":"deny",		"macList":[{
+		"index":"1",		"mac":"12:12:12:12:12:12",		"status":"1",		"action":""
+		},{
+		"index":"2",
+		"mac":"A4:71:74:71:FC:D0",
+		"status":"1",
+		"action":""
+		},{
+		"index":"3",
+		"mac":"A4:71:74:71:FC:AA",
+		"status":"1",
+		"action":""
+		},{
+		"index":"4",
+		"mac":"A4:71:74:71:FC:FF",
+		"status":"1",
+		"action":""
+		},{
+		"index":"5",
+		"mac":"A4:71:74:71:FC:A0",
+		"status":"1",
+		"action":""
+		},{
+		"index":"6",
+		"mac":"A4:71:74:71:FC:50",
+		"status":"1",
+		"action":""
+		},{
+		"index":"7",
+		"mac":"A4:71:74:71:FC:20",
+		"status":"1",
+		"action":""
+		},{
+		"index":"8",
+		"mac":"A4:71:74:71:FC:11",
+		"status":"1",
+		"action":""
+		},{
+		"index":"9",
+		"mac":"A4:71:74:71:FC:12",
+		"status":"1",
+		"action":""
+		},{
+		"index":"10",
+		"mac":"A4:71:74:71:FC:11",
+		"status":"1",
+		"action":""
+		}],
+		"wifi_chkHz":"0"
+}

@@ -1,0 +1,58 @@
+<form class="config-box" >
+	<section class="dhcp-config-area" id="dhcpConfig">
+		<div data-field="dhcpEn" data-key="FormCheckbox"></div>
+		<input data-field="startIP" data-key="FormInput" type="text">
+		<input data-field="endIP" data-key="FormInput" type="text">
+		<input data-field="mask" data-key="FormInput" type="text">
+		<input data-field="gateway" data-key="FormInput" type="text">
+		<input data-field="preDNS" data-key="FormInput" type="text">
+		<input data-field="altDNS" data-key="FormInput" type="text" required="false">
+		<select data-field="lease" data-key="FormSelect"></select>
+	</section>
+	
+</form>
+	
+<article class="help-box none">
+	<section>
+		<p>
+			<span>DHCP Server:</span>
+			<span>select this option if this device is required to assign IP addresses to LAN computers.</span>
+		</p>
+	</section>
+	<section>
+		<p>
+			<span>Start IP Address and End IP Address:</span>
+			<span>the range of IP addresses that the DHCP server can assign.</span>
+		</p>
+	</section>
+	<section>
+		<p>
+			<span>Subnet Mask:</span>
+			<span>subnet mask of wireless devices assigned by DHCP server.</span>
+		</p>
+	</section>
+	<section>
+		<p>
+			<span>Gateway:</span>
+			<span>default gateway IP address of clients assigned by the DHCP server of this device.</span>
+		</p>
+	</section>
+	<section>
+		<p>
+			<span>Primary DNS Server:</span>
+			<span>mandatory. Set it to the DNS server IP address provided by your ISP. If you are uncertain about the IP address, consult your ISP.</span>
+		</p>
+	</section>
+	<section>
+		<p>
+			<span>Secondary DNS Server:</span>
+			<span>optional. Set it to the second DNS server address (if any) provided by your ISP.</span>
+		</p>
+	</section>
+	<section>
+		<p>
+			<span>Lease Time:</span>
+			<span>valid time of IP addresses assigned by DHCP server. If the time expired, devices in LAN need to obtain an IP address again.</span>
+		</p>
+	</section>
+</article>

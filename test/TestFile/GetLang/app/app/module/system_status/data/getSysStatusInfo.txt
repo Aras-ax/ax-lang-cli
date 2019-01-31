@@ -1,0 +1,37 @@
+{
+	"sysStatus": {
+			"runTime": "1316",
+			"devName": "O3V2.0",
+			"fireversion": "V1.0.0.1(901)\n", 
+			"sysTime": "2017-09-28 19:27:17",  
+			"hwVersion": "V1.0",    
+			"lanIp": "192.168.2.1",    
+			"lanMac": "00:90:4C:45:61:23",   
+			"lan1Mac": "00:90:4C:45:61:24",  
+			"lanSpeed": "100/-10",             
+			"wrlMac": "00:90:4C:45:61:24",  
+			"wanStatus":"2",
+			"wanType": "dhcp",
+			"wanIp": "192.168.10.11",
+			"wanGw": "192.168.10.10",
+			"wanDns1": "114.114.114.114",
+			"wanDns2": "210.21.196.6",
+			"devMode": "wisp",
+			"devDist": "5.0km"
+		},
+		"wrlStatus": {
+			"workMode": "wisp",
+			"wifiEn": "1",
+			"txLink": "1X1",
+			"channelBand": "7",
+			"wrlClient": "0",
+			"ssid": "Tenda_zzk",
+			"secType": "none",
+			"encryptType": "N/A",
+			"connStatus": "1",
+			"remoteApMac": "C8:3A:35:44:0A:30",
+			"txSpeed": "54Mbps/1Mbps",
+			"signal": "-44",
+			"noise": "-87"
+		}
+}

@@ -1,0 +1,29 @@
+<form class="config-box" id="systemLog">
+	<section class="sys-handle-area">
+		<div class="btn-wrap" style="display: inline-block;">
+			<button type="button" id="refreshLog" class="btn-normal inline-block">刷新</button>
+			<button type="button" id="clearLog" class="btn-normal inline-block">清除</button>
+		</div>
+		<div style="display: inline-block;float: right;">
+			<label >日志类型</label>
+			<select class="form-select" id="selectLogType">
+				<option value="all">ALL</option>
+				<option value="SYSTEM">System</option>
+				<option value="WAN">WAN</option>
+			</select>
+		</div>
+	</section>
+	<section class="sys-log-area">
+		<table id="sysLog" data-key="FormTable"></table>
+	</section>
+
+</form>
+<article class="help-box none">
+	<section>
+		<p>
+			<span></span>
+			<span>You can check logs of this device here. A maximum of 300 entries are allowed. If exceeded, new logs will replace old ones.</span>
+		</p>
+		<p></p>
+	</section>
+</article>

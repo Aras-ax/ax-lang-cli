@@ -1,0 +1,62 @@
+<form class="config-box">
+	<section class="forward-config-area" id="portForward">
+		<input data-key="FormInput" data-field="ip" type="text">
+		<input data-key="FormInput" data-field="localPort" type="text">
+		<input data-key="FormInput" data-field="publicPort" type="text">
+		<select data-key="FormSelect" data-field="protocol"></select>
+		<select data-key="FormSelect" data-field="app"></select>
+
+		<div class="cm-footbar md-toolbar">
+			<input type="button" class="md-btn ok cm-submit" id="addRule" value="添加">
+		</div>
+	</section>
+
+	<section class="forward-table-area">
+		<table id="portFwdOperate"></table>
+	</section>
+</form>
+<article class="help-box none">
+	<section>
+		<p>
+			<span></span>
+			<span></span>
+		</p>
+		<p>Port mapping function allows the device to map WAN ports to LAN server, and forward the service requests transmitted to these ports to the corresponding server in LAN.</p>
+	</section>
+	<section>
+		<p>
+			<span>LAN IP Address:</span>
+			<span>IP address of the host which establishes server in LAN.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Internal Port:</span>
+			<span>service port of the server in LAN. A single port is supported.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>External Port:</span>
+			<span>ports enabled for WAN users by this device.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Protocol:</span>
+			<span>protocol type of the selected applications.</span>
+		</p>
+		<p></p>
+	</section>
+	<section>
+		<p>
+			<span>Application:</span>
+			<span>application services established in LAN.</span>
+		</p>
+		<p></p>
+	</section>
+	
+</article>
