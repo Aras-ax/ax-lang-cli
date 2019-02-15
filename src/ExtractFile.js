@@ -24,7 +24,7 @@ class ExtractFile {
             baseWritePath: '',
             onlyZH: false,
             isTranslate: false,
-            CONFIG_HONG: {},
+            config_hong_path: '',
             transWords: {}
         }, option)
         this.option.baseReadPath = correctPath(this.option.baseReadPath);
@@ -39,12 +39,19 @@ class ExtractFile {
         };
         this.outData = [];
 
+        if (this.option.config_hong_path) {
+            require(this.option.config_hong_path);
+        }
+
+        this.CONFIG_HONG = (global.R && global.R.CONST) || {};
+        global.R = null;
+
         this.init();
     }
 
     init() {
         this.extractHTML = new ExtractHTML({
-            CONFIG_HONG: this.option.CONFIG_HONG,
+            CONFIG_HONG: this.CONFIG_HONG,
             onlyZH: this.option.onlyZH,
             transWords: this.option.transWords,
             isTranslate: this.option.isTranslate,
@@ -60,7 +67,7 @@ class ExtractFile {
         });
 
         this.extractJS = new ExtractJS({
-            CONFIG_HONG: this.option.CONFIG_HONG,
+            CONFIG_HONG: this.CONFIG_HONG,
             onlyZH: this.option.onlyZH,
             transWords: this.option.transWords,
             isTranslate: this.option.isTranslate,
@@ -99,13 +106,14 @@ class ExtractFile {
 
         // 将未翻译的文件以错误的形式输出
         // 将提取的词条文件，输出为excel
-        Promise.all([this.handleHtml(), this.handleJs()]).then((data) => {
+        return Promise.all([this.handleHtml(), this.handleJs()]).then((data) => {
             let sheetName = this.option.onlyZH ? 'CN' : 'EN';
             this.outData.unshift(sheetName);
             let outPath = path.join(this.option.baseWritePath, (this.option.isTranslate ? '未匹配的词条' : '词条') + `${sheetName}.xlsx`);
             this.writeWordToExcel(outPath, sheetName);
             //重置
             this.reset();
+            return this.outData;
         });
     }
 

@@ -9,6 +9,7 @@ const {
 const {
     LOG_TYPE
 } = require('../util/config');
+
 const HANDLE_ATTRIBUTE = ['alt', 'placeholder', 'title', 'data-title'];
 const Edit_TYPE = {
     attribute: 1,
@@ -18,6 +19,7 @@ const Edit_TYPE = {
     title: 5
 };
 
+const ExtractJS = require('./extract_js');
 const Extract = require('./extract');
 
 /**
@@ -26,6 +28,19 @@ const Extract = require('./extract');
 class ExtractHTML extends Extract {
     constructor(option) {
         super(option);
+
+        this.extractJS = new ExtractJS({
+            CONFIG_HONG: this.option.CONFIG_HONG,
+            onlyZH: this.option.onlyZH,
+            transWords: this.option.transWords,
+            isTranslate: this.option.isTranslate,
+            // 词条提取完成后的操作
+            onComplete: (filePath, words) => {
+                if (words.length > 0) {
+                    this.addWords(words);
+                }
+            }
+        });
     }
 
     transNode(html) {
@@ -93,10 +108,24 @@ class ExtractHTML extends Extract {
                         if (firstChild && firstChild.nodeValue && trim(firstChild.nodeValue)) {
                             // nodeValueArray = nodeValueArray.concat(GetResData(firstChild.nodeValue, onlyZH, page).reverse());
                             // todo by xc 添加对内嵌JS代码的处理
+                            this.extractJS.transNode(firstChild.nodeValue)
+                                .then(AST => {
+                                    return this.extractJS.scanNode(AST);
+                                })
+                                .then((fileData) => {
+                                    if (this.option.isTranslate) {
+                                        // 写入文件
+                                        firstChild.nodeValue = fileData;
+                                    }
+                                    nextSibling && this.listNode(nextSibling);
+                                })
+                                .catch(error => {
+                                    log(error, LOG_TYPE.error);
+                                    nextSibling && this.listNode(nextSibling);
+                                });
+                        } else {
+                            nextSibling && this.listNode(nextSibling);
                         }
-                    }
-                    if (nextSibling) {
-                        this.listNode(nextSibling);
                     }
                     return;
                 }

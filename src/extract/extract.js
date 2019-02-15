@@ -66,7 +66,7 @@ class Extract {
             })
             .catch(error => {
                 log(error, LOG_TYPE.error);
-            });;
+            });
     }
 
     transNode(data) {
@@ -89,6 +89,12 @@ class Extract {
         if (!this.words.includes(word)) {
             this.words.push(word);
         }
+    }
+
+    addWords(words) {
+        words.forEach(word => {
+            this.addWord(word);
+        });
     }
 
     getWord(val) {
