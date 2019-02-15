@@ -1,5 +1,4 @@
 const esprima = require('esprima');
-const estraverse = require('estraverse');
 const escodegen = require('escodegen');
 
 const {
@@ -24,10 +23,14 @@ class ExtractJs extends Extract {
     transNode(jsDoc) {
         return new Promise((resolve, reject) => {
             try {
-                let AST = esprima.parseModule(jsDoc);
+                let AST = esprima.parseModule(jsDoc, {
+                    attachComment: true
+                });
                 resolve(AST);
             } catch (err) {
-                let AST = esprima.parseScript(jsDoc);
+                let AST = esprima.parseScript(jsDoc, {
+                    attachComment: true
+                });
                 resolve(AST);
             }
         });
@@ -39,8 +42,18 @@ class ExtractJs extends Extract {
         body.forEach(node => {
             this.listAst(node);
         });
+
+        let data = escodegen.generate(AST, {
+            comment: true,
+            format: {
+                indent: {
+                    adjustMultilineComment: false
+                }
+            },
+        });
+        data = unescape(data.replace(/\\u/g, '%u'));
         //返回数据
-        return Promise.resolve(escodegen.generate(AST));
+        return Promise.resolve(data);
     }
 
     getValue(nodeArgs) {
@@ -93,11 +106,31 @@ class ExtractJs extends Extract {
     listAst(astNode) {
         let type = Object.prototype.toString.call(astNode);
         if (type === '[object Object]') {
+            // 根据宏判断是否需要进行提取
+            if (astNode.leadingComments && astNode.trailingComments) {
+                // 代码开头注释的最后一项和代码结束的第一项注释必须一样才表明是宏控制的功能
+                let startComment = astNode.leadingComments[astNode.leadingComments.length - 1]['value'],
+                    endComments = astNode.trailingComments[0]['value'];
+                startComment = startComment.replace(/^\s*|\s*$/g, '');
+                endComments = endComments.replace(/^\s*|\s*$/g, '');
+                // 移除底部的注释，以免重复
+                delete astNode.trailingComments;
+                // 若设置了宏且对应的值为false，则不进行该功能块的提取
+                if (startComment === endComments && this.CONFIG_HONG[startComment] === false) {
+                    return;
+                }
+            }
+
             if (astNode.type === 'CallExpression') {
                 this.listNode(astNode);
                 return;
             }
+            // 对于注释的项不进行遍历
+            let ignoreKeys = ['leadingComments', 'trailingComments'];
             for (let key in astNode) {
+                if (ignoreKeys.includes(key)) {
+                    continue;
+                }
                 this.listAst(astNode[key]);
             }
         } else if (type === '[object Array]') {

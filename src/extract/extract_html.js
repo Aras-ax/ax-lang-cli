@@ -9,6 +9,7 @@ const {
 const {
     LOG_TYPE
 } = require('../util/config');
+
 const HANDLE_ATTRIBUTE = ['alt', 'placeholder', 'title', 'data-title'];
 const Edit_TYPE = {
     attribute: 1,
@@ -18,6 +19,7 @@ const Edit_TYPE = {
     title: 5
 };
 
+const ExtractJS = require('./extract_js');
 const Extract = require('./extract');
 
 /**
@@ -26,6 +28,19 @@ const Extract = require('./extract');
 class ExtractHTML extends Extract {
     constructor(option) {
         super(option);
+
+        this.extractJS = new ExtractJS({
+            CONFIG_HONG: this.option.CONFIG_HONG,
+            onlyZH: this.option.onlyZH,
+            transWords: this.option.transWords,
+            isTranslate: this.option.isTranslate,
+            // 词条提取完成后的操作
+            onComplete: (filePath, words) => {
+                if (words.length > 0) {
+                    this.addWords(words);
+                }
+            }
+        });
     }
 
     transNode(html) {
@@ -69,7 +84,7 @@ class ExtractHTML extends Extract {
                     dataOption = element.getAttribute('data-options');
 
                 // 如果属于宏控制功能，宏没开启是不会进行提取或翻译操作
-                if (hong && this.CONFIG_HONG[hong]) {
+                if (hong && this.CONFIG_HONG[hong] === false) {
                     if (nextSibling) {
                         this.listNode(nextSibling);
                     }
@@ -79,7 +94,8 @@ class ExtractHTML extends Extract {
                 // 标志为一个整体的html，将全部提取，不进行子元素的拆分提取操作
                 if (element.getAttribute("data-nowrap") == 1) {
                     // 将换行符，多个空格合并成一个空格进行提取
-                    curValue = this.getWord(element.innerHTML.replace(/(\s+)|(\t\n)|(\t)|(\n)/g, " "));
+                    curValue = this.getWord(element.innerHTML.replace(/(\s+)/g, " "));
+                    // this.getWord(element.innerHTML.replace(/(\s+)|(\t\n)|(\t)|(\n)/g, " "));
                     this.transWord(element, Edit_TYPE.html, curValue);
 
                     if (nextSibling) {
@@ -93,10 +109,24 @@ class ExtractHTML extends Extract {
                         if (firstChild && firstChild.nodeValue && trim(firstChild.nodeValue)) {
                             // nodeValueArray = nodeValueArray.concat(GetResData(firstChild.nodeValue, onlyZH, page).reverse());
                             // todo by xc 添加对内嵌JS代码的处理
+                            this.extractJS.transNode(firstChild.nodeValue)
+                                .then(AST => {
+                                    return this.extractJS.scanNode(AST);
+                                })
+                                .then((fileData) => {
+                                    if (this.option.isTranslate) {
+                                        // 写入文件
+                                        firstChild.nodeValue = fileData;
+                                    }
+                                    nextSibling && this.listNode(nextSibling);
+                                })
+                                .catch(error => {
+                                    log(error, LOG_TYPE.error);
+                                    nextSibling && this.listNode(nextSibling);
+                                });
+                        } else {
+                            nextSibling && this.listNode(nextSibling);
                         }
-                    }
-                    if (nextSibling) {
-                        this.listNode(nextSibling);
                     }
                     return;
                 }
@@ -108,13 +138,12 @@ class ExtractHTML extends Extract {
                 });
 
                 if (isInputButton) {
+                    curValue = this.getWord(element.value);
+                    this.transWord(element, Edit_TYPE.value, curValue);
                     //data-lang属性具有较高优先级
                     if (element.getAttribute("data-lang")) {
                         curValue = this.getWord(element.getAttribute("data-lang"));
                         this.transWord(element, Edit_TYPE.attribute, curValue, 'data-lang');
-                    } else {
-                        curValue = this.getWord(element.value);
-                        this.transWord(element, Edit_TYPE.value, curValue);
                     }
                 } else if (dataOption) {
                     try {
@@ -132,7 +161,7 @@ class ExtractHTML extends Extract {
                 break;
             case 3: //处理文本节点
                 if (/\S/.test(element.nodeValue)) {
-                    curValue = this.getWord(element.nodeValue);
+                    curValue = this.getWord(element.nodeValue.replace(/(\s+)/g, " "));
                     this.transWord(element, Edit_TYPE.nodeValue, curValue);
                 }
                 break;

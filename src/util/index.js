@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const xlsx = require('node-xlsx').default;
+const iconv = require('iconv-lite');
 
 const {
     LOG_TYPE
@@ -120,6 +121,7 @@ function loadExcel(xlsxPath, sheetName) {
                 outData = item.data;
                 return false;
             }
+            outData = [];
         } else {
             outData = item.data;
             return false;

@@ -6,8 +6,10 @@ const {
     EXCLUDE_FILE_END,
     LOG_TYPE
 } = require('../src/util/config');
+
 const ExtractHTML = require('./extract/extract_html');
 const ExtractJS = require('./extract/extract_js');
+
 const {
     scanFolder,
     createFolder,
@@ -24,7 +26,7 @@ class ExtractFile {
             baseWritePath: '',
             onlyZH: false,
             isTranslate: false,
-            CONFIG_HONG: {},
+            config_hong_path: '',
             transWords: {}
         }, option)
         this.option.baseReadPath = correctPath(this.option.baseReadPath);
@@ -39,12 +41,19 @@ class ExtractFile {
         };
         this.outData = [];
 
+        if (this.option.config_hong_path) {
+            require(this.option.config_hong_path);
+        }
+
+        this.CONFIG_HONG = (global.R && global.R.CONST) || {};
+        global.R = null;
+
         this.init();
     }
 
     init() {
         this.extractHTML = new ExtractHTML({
-            CONFIG_HONG: this.option.CONFIG_HONG,
+            CONFIG_HONG: this.CONFIG_HONG,
             onlyZH: this.option.onlyZH,
             transWords: this.option.transWords,
             isTranslate: this.option.isTranslate,
@@ -60,7 +69,7 @@ class ExtractFile {
         });
 
         this.extractJS = new ExtractJS({
-            CONFIG_HONG: this.option.CONFIG_HONG,
+            CONFIG_HONG: this.CONFIG_HONG,
             onlyZH: this.option.onlyZH,
             transWords: this.option.transWords,
             isTranslate: this.option.isTranslate,
@@ -77,6 +86,7 @@ class ExtractFile {
     }
 
     scanFile() {
+        this.outData = [];
         if (fs.lstatSync(this.option.baseReadPath).isDirectory()) {
             this.getFileList();
         } else {
@@ -99,14 +109,35 @@ class ExtractFile {
 
         // 将未翻译的文件以错误的形式输出
         // 将提取的词条文件，输出为excel
-        Promise.all([this.handleHtml(), this.handleJs()]).then((data) => {
-            let sheetName = this.option.onlyZH ? 'CN' : 'EN';
-            this.outData.unshift(sheetName);
+        return Promise.all([this.handleHtml(), this.handleJs()]).then((data) => {
+            let sheetName = this.extractJS.option.onlyZH ? 'CN' : 'EN';
+            if (!this.option.isTranslate) {
+                this.outData.unshift(sheetName);
+            }
             let outPath = path.join(this.option.baseWritePath, (this.option.isTranslate ? '未匹配的词条' : '词条') + `${sheetName}.xlsx`);
-            this.writeWordToExcel(outPath, sheetName);
+
+            if (this.outData.length > 0) {
+                this.writeWordToExcel(outPath, sheetName);
+
+                if (this.option.isTranslate) {
+                    console.error('还有部分词条未被翻译，见输出的Excel');
+                }
+            }
             //重置
             this.reset();
+            return this.outData;
         });
+    }
+
+    setAttr(attr, val) {
+        if (typeof attr === 'object') {
+            Object.assign(this.option, attr);
+        } else {
+            this.option[attr] = val;
+        }
+
+        this.extractHTML.setAttr(attr, val);
+        this.extractJS.setAttr(attr, val);
     }
 
     writeWordToExcel(outPath, sheetName) {

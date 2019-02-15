@@ -66,11 +66,28 @@ class Extract {
             })
             .catch(error => {
                 log(error, LOG_TYPE.error);
-            });;
+            });
     }
 
     transNode(data) {
         return Promise.resolve(data);
+    }
+
+    setAttr(attr, value) {
+        if (Object.prototype.toString.call(attr) === '[object Object]') {
+            for (let key in attr) {
+                this.setSingleAttr(key, attr[key]);
+            }
+        } else {
+            this.setSingleAttr(attr, value);
+        }
+    }
+
+    setSingleAttr(attr, value) {
+        this.option[attr] = value;
+        if (attr === 'CONFIG_HONG') {
+            this.CONFIG_HONG = value;
+        }
     }
 
     startTrans() {
@@ -91,7 +108,18 @@ class Extract {
         }
     }
 
+    addWords(words) {
+        words.forEach(word => {
+            this.addWord(word);
+        });
+    }
+
     getWord(val) {
+        // url不进行提取
+        if (/^((ht|f)tps?):\/\/([\w\-]+(\.[\w\-]+)*\/)*[\w\-]+(\.[\w\-]+)*\/?(\?([\w\-\.,@?^=%&:\/~\+#]*)+)?/i.test(val)) {
+            return '';
+        }
+
         if (val && /\S/.test(val)) {
             val = trim(val);
             let addValue = '';
@@ -103,9 +131,9 @@ class Extract {
             } else if (/[a-z]/i.test(val) || /[\u4e00-\u9fa5]/.test(val)) {
                 //中英文都提取
                 addValue = val;
-            } else {
-                // pageRemark.push([val, page].join(spliter));
             }
+
+
             if (addValue) {
                 if (this.option.isTranslate) {
                     let transVal = this.option.transWords[addValue];
