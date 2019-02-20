@@ -1,0 +1,21 @@
+{
+  "D:/Git/translate/test/TestFile/simpleTest/js/hello.js": "D:/Git/translate/test/TestFile/simpleTest/js/hello.js",
+  "auto": "自动",
+  "U#NBB#auto": "不限速",
+  "P#Xww#auto": "自动分配网速",
+  "type": "类型",
+  "K#Etc#type": "服务器类型",
+  "port": "端口",
+  "Submit": "提交",
+  "o#GkI#port": "接口",
+  "Cancel": "取消",
+  "Show": "显示",
+  "Hide": "隐藏",
+  "a#ncc#Show": "显示详情",
+  "H#yke#Hide": "隐藏详情",
+  "L#CRd#type": "類型",
+  "name": "姓名",
+  "age": "年龄",
+  "i#kpj#auto": "自动",
+  "R#PdJ#auto": "不限速"
+}

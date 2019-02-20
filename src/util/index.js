@@ -77,6 +77,7 @@ function loadJsonSync(src) {
 }
 
 function writeJson(data, outPath) {
+    createFolder(path.dirname(outPath));
     return new Promise((resolve, reject) => {
         fs.writeFile(outPath, JSON.stringify(data, '', 2), (err) => {
             if (err) {
@@ -155,7 +156,27 @@ function writeExcel(data, outPath, sheetName) {
 }
 
 function writeTextFile(filename, content) { //以文本形式写入
+    createFolder(path.dirname(filename));
     fs.writeFileSync(filename, content);
+}
+
+function createFolder(folder) {
+    folder = path.resolve(folder);
+    var originDir = folder;
+    try {
+        if (fs.existsSync(folder)) return;
+
+        while (!fs.existsSync(folder + '/..')) { //检查父目录是否存在
+            folder += '/..';
+        }
+
+        while (originDir.length <= folder.length) { //如果目录循环创建完毕，则跳出循环
+            fs.mkdirSync(folder, '0777');
+            folder = folder.substring(0, folder.length - 3);
+        }
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 /**

@@ -1,4 +1,4 @@
-const { loadExcel, writeJson, formatKey } = require('./util/index');
+const { loadExcel, writeJson, formatKey, decodeKey } = require('./util/index');
 const path = require('path');
 
 /**
@@ -15,15 +15,32 @@ function excel2json(option) {
     data = transferData(data, option.key, option.value);
 
     if (option.outPath) {
-        let outPath = path.join(option.outPath, option.fileName || 'lang.json');
+        if (Array.isArray(data)) {
+            let outPath = path.join(option.outPath, option.fileName || 'lang.json');
 
-        return writeJson(data, outPath).then((data) => {
-            console.log(`Excel to Json文件已写入地址：${outPath}`);
-            return data;
-        }).catch((error) => {
-            console.error(`Excel to Json失败，${error}`);
-            return {};
-        });
+            return writeJson(data, outPath).then((data) => {
+                console.log(`Excel to Json文件已写入地址：${outPath}`);
+                return data;
+            }).catch((error) => {
+                console.error(`Excel to Json失败，${error}`);
+                return {};
+            });
+        } else {
+            let promiseList = [];
+            option.outPath = path.join(option.outPath, 'lang');
+            for (let key in data) {
+                let outPath = path.join(option.outPath, `${key}.json`);
+
+                promiseList.push(writeJson(data[key], outPath));
+            }
+            return Promise.all(promiseList).then((data) => {
+                console.log(`Excel to Json文件已写入地址：${option.outPath}`);
+                return data;
+            }).catch((error) => {
+                console.error(`Excel to Json失败，${error}`);
+                return {};
+            });
+        }
     } else {
         console.log(`Excel to Json成功，无需保存到本地`);
         return Promise.resolve(data);
@@ -32,18 +49,18 @@ function excel2json(option) {
 
 /**
  * 提供value输出对象json, 不提供输出数组json
+ * value为值对应的语言列，多个语言列用逗号隔开
  */
 function transferData(data, key, value = '') {
     let outData = value === '' ? [] : {},
         keyValueRow = data.shift();
-    let keyIndex = keyValueRow.indexOf(key),
-        valueIndex = keyValueRow.indexOf(value);
+    let keyIndex = keyValueRow.indexOf(key);
 
     if (data.length === 0) {
         return outData;
     }
 
-    if (value === '') {
+    if (!value) {
         data.forEach(item => {
             let value = trim(item[keyIndex]),
                 i = 0;
@@ -52,25 +69,77 @@ function transferData(data, key, value = '') {
             }
             outData.push(value);
         })
-    } else {
-        data.forEach(item => {
-            let keyWorld = trim(item[keyIndex]),
-                valueWorld = trim(item[valueIndex]);
+        return outData;
+    }
+
+    // 多列解析，同时对重复的词条进行重新编码
+    value = value.split(',');
+    let valueIndex = {};
+    // 获取每个值字段对应的excel的列索引
+    value.forEach(item => {
+        valueIndex[item] = keyValueRow.indexOf(item);
+    });
+
+    value.forEach(valItem => {
+        let valIndex = valueIndex[valItem],
+            decodeKeys = {},
+            transData = {};
+
+        data.forEach(dataItem => {
+            let keyWorld = trim(dataItem[keyIndex]),
+                valueWorld = trim(dataItem[valIndex]),
+                repeatKey = '';
 
             keyWorld = keyWorld || valueWorld;
             valueWorld = valueWorld || keyWorld;
 
-            // 对重复的key进行重新编码
-            while (outData[keyWorld] && outData[keyWorld] !== valueWorld) {
+            // 重复判断
+            if (transData[keyWorld] && transData[keyWorld] !== valueWorld) {
+                let repeatKeys = decodeKeys[keyWorld] || [],
+                    oldKey = keyWorld;
+
+                repeatKeys.some(key => {
+                    if (transData[key] === valueWorld) {
+                        repeatKey = key;
+                        // 更新原数，以便下次直接用新的key值进行转换
+                        dataItem[keyIndex] = key;
+                        return true;
+                    }
+                });
+
+                if (repeatKey) {
+                    return true;
+                }
+
                 keyWorld = formatKey(keyWorld);
+
+                // 对重复的key进行重新编码
+                while (outData[keyWorld]) {
+                    keyWorld = formatKey(keyWorld);
+                }
+                repeatKeys.push(keyWorld);
+                // 更新原数，以便下次直接用新的key值进行转换
+                dataItem[keyIndex] = keyWorld;
+                // 记录当前重新编码的词条
+                decodeKeys[oldKey] = repeatKeys;
+                // 同步修改已经转换好的语言
+                syncKey(outData, oldKey, keyWorld);
             }
-            // 将数据文件记录下来
 
-            outData[keyWorld] = valueWorld;
+            transData[keyWorld] = valueWorld;
         });
-    }
 
+        outData[valItem] = transData;
+    });
     return outData;
+}
+
+function syncKey(obj, key, newKey) {
+    for (let t in obj) {
+        if (obj[t]) {
+            obj[t][newKey] = obj[t][key];
+        }
+    }
 }
 
 function trim(str) {

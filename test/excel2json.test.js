@@ -61,4 +61,17 @@ describe('excel2json正确性验证', () => {
             value: ''
         }).then(data => expect(data).toEqual([]));
     });
+
+    it('同时转换多个对象', () => {
+        expect.assertions(1);
+        return excel2json({
+            excelPath: 'D:\\Git\\translate\\test\\TestFile\\simpleTestData\\repeat.xlsx',
+            outPath: '',
+            sheetName: '',
+            key: 'EN',
+            value: 'CN,ZH'
+        }).then(data => {
+            return expect(Object.keys(data.CN).length).toEqual(Object.keys(data.ZH).length)
+        });
+    });
 });
