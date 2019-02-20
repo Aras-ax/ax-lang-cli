@@ -62,7 +62,7 @@ class ExtractFile {
             // 词条提取完成后的操作
             onComplete: (filePath, words) => {
                 if (words.length > 0) {
-                    this.outData.push([`[${correctPath(filePath)}]`]);
+                    this.outData.push([`${correctPath(filePath)}`]);
                     this.outData = this.outData.concat(words);
                 }
             }
