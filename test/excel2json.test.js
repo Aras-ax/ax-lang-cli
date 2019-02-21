@@ -71,7 +71,7 @@ describe('excel2json正确性验证', () => {
             key: 'EN',
             value: 'CN,ZH'
         }).then(data => {
-            return expect(Object.keys(data.CN).length).toEqual(Object.keys(data.ZH).length)
+            return expect(Object.keys(data.CN).sort()).toEqual(Object.keys(data.ZH).sort())
         });
     });
 });
