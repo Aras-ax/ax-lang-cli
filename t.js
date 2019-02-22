@@ -1,99 +1,59 @@
-/**
- * LRU缓存机制
- */
-
-var listNode = function(key, val) {
-    this.val = val;
-    this.key = key;
-    this.next = null;
-    this.preview = this;
-}
-
-/**
- * @param {number} capacity
- */
-var LRUCache = function(capacity) {
-    this.capacity = capacity;
-    this.hasMap = {};
-    this.head = null;
-    this.last = null;
-};
-
-/** 
- * @param {number} key
- * @return {number}
- */
-LRUCache.prototype.get = function(key) {
-    let node = this.hasMap[key];
-    if (node) {
-        this.sort(node);
-    } else {
-        return -1;
+var fourSum = function(nums, target) {
+    nums = nums.sort((a, b) => a - b);
+    let res = [],
+        hash = {};
+    for (let i = 0, l = nums.length; i < l - 3; i++) {
+        let r = threeSum(nums, i + 1, l, target, hash);
+        res.push(...r);
     }
 
-    return node.val;
+    return res;
 };
 
-/** 
- * @param {number} key 
- * @param {number} value
- * @return {void}
- */
-LRUCache.prototype.put = function(key, value) {
-    let { hasMap, head } = this,
-    node = hasMap[key];
+function threeSum(nums, i, l, target, hash) {
+    let res = [],
+        cur = nums[i - 1];
 
-    if (node) {
-        node.val = value;
-        this.sort(node);
-    } else {
-        this.capacity--;
-        node = new listNode(key, value);
+    target = target - cur;
 
-        if (head === null) {
-            this.head = node;
-            this.last = node;
-        } else {
-            node.next = head;
-            head.preview = node;
-            this.head = node;
+    for (; i < l - 2; i++) {
+        if (target >= 0 && nums[i] > target) {
+            return res;
+        }
+        let left = i + 1,
+            right = l - 1;
 
-            if (this.capacity < 0) {
-                delete this.hasMap[this.last.key];
-                this.last = this.last.preview;
-                this.last.next = null;
-                this.capacity = 0;
+        while (left < right) {
+            let sum = nums[i] + nums[left] + nums[right];
+            if (sum > target) {
+                while (nums[right] === nums[right - 1]) {
+                    right--;
+                }
+                right--;
+            } else if (sum < target) {
+                while (nums[left] === nums[left + 1]) {
+                    left++;
+                }
+                left++;
+            } else {
+                let key = '' + cur + nums[i] + nums[left] + nums[right];
+                if (!hash[key]) {
+                    hash[key] = true;
+                    res.push([cur, nums[i], nums[left], nums[right]]);
+                }
+                while (nums[right] === nums[right - 1]) {
+                    right--;
+                }
+                while (nums[left] === nums[left + 1]) {
+                    left++;
+                }
+                left++;
+                right--;
             }
         }
-        hasMap[key] = node;
     }
-};
-
-LRUCache.prototype.sort = function(node) {
-    if (this.head === node) {
-        return;
-    }
-
-    if (this.last === this.head) {
-        return;
-    }
-
-    if (node === this.last) {
-        this.last = node.preview;
-        this.last.next = null;
-    } else {
-        node.preview.next = node.next;
-        node.next.preview = node.preview;
-    }
-    node.next = this.head;
-    node.preview = node;
-
-    this.head.preview = node;
-    this.head = node;
+    return res;
 }
-/** 
- * Your LRUCache object will be instantiated and called as such:
- * var obj = Object.create(LRUCache).createNew(capacity)
- * var param_1 = obj.get(key)
- * obj.put(key,value)
- */
+
+console.log(fourSum([0, 1, 3, -5, 3, 0],
+    1));

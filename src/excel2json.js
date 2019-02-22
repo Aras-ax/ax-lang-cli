@@ -1,4 +1,4 @@
-const { loadExcel, writeJson, formatKey, decodeKey } = require('./util/index');
+const { loadExcel, writeJson, formatKey, decodeKey, writeExcel } = require('./util/index');
 const path = require('path');
 
 /**
@@ -8,11 +8,17 @@ function excel2json(option) {
     option.saveData = option.saveData === false ? false : true;
     let data = loadExcel(option.excelPath, option.sheetName);
 
+    if (option.key) {
+        option.key = option.key.toUpperCase();
+    }
+    if (option.value) {
+        option.value = option.value.toUpperCase();
+    }
     if (data.length === 0) {
         console.error(`数据为空，可能是sheetname不存在导致的`);
         return Promise.resolve([]);
     }
-    data = transferData(data, option.key, option.value);
+    data = transferData(data, option);
 
     if (option.outPath) {
         if (Array.isArray(data)) {
@@ -51,16 +57,27 @@ function excel2json(option) {
  * 提供value输出对象json, 不提供输出数组json
  * value为值对应的语言列，多个语言列用逗号隔开
  */
-function transferData(data, key, value = '') {
-    let outData = value === '' ? [] : {},
-        keyValueRow = data.shift();
+function transferData(data, option) {
+    let keyValueRow = data.shift(),
+        key = option.key,
+        value = option.value || '',
+        outData = value === '' ? [] : {};
+
+    keyValueRow = keyValueRow.join(',').toUpperCase().split(',');
+
     let keyIndex = keyValueRow.indexOf(key);
+    // 多列解析，同时对重复的词条进行重新编码
+    value = value.split(',');
+
+    if (value === '' || value === 'ALL') {
+        value = keyValueRow.filter(item => !!(item.replace(/\s/g, '')) && item !== key);
+    }
 
     if (data.length === 0) {
         return outData;
     }
 
-    if (!value) {
+    if (value.length === 0) {
         data.forEach(item => {
             let value = trim(item[keyIndex]),
                 i = 0;
@@ -72,8 +89,6 @@ function transferData(data, key, value = '') {
         return outData;
     }
 
-    // 多列解析，同时对重复的词条进行重新编码
-    value = value.split(',');
     let valueIndex = {};
     // 获取每个值字段对应的excel的列索引
     value.forEach(item => {
@@ -90,8 +105,15 @@ function transferData(data, key, value = '') {
                 valueWorld = trim(dataItem[valIndex]),
                 repeatKey = '';
 
-            keyWorld = keyWorld || valueWorld;
-            valueWorld = valueWorld || keyWorld;
+            if (!keyWorld) {
+                keyWorld = valueWorld;
+                dataItem[keyIndex] = valueWorld;
+            }
+
+            if (!valueWorld) {
+                valueWorld = decodeKey(keyWorld);
+                dataItem[valIndex] = decodeKey(keyWorld);
+            }
 
             // 重复判断
             if (transData[keyWorld] && transData[keyWorld] !== valueWorld) {
@@ -131,6 +153,14 @@ function transferData(data, key, value = '') {
 
         outData[valItem] = transData;
     });
+
+    // 因为会重新编码key字段，故还需要对excel文件进行回写操作，以保证其他地方使用excel文件时词条的正确性
+    data.unshift(keyValueRow);
+    let extName = path.extname(option.excelPath),
+        reg = new RegExp(extName + '$');
+
+    writeExcel(data, option.excelPath.replace(reg, '_copy') + extName, option.sheetName || 'lang');
+
     return outData;
 }
 

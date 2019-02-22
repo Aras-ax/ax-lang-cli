@@ -1,0 +1,21 @@
+{
+  "D:/Git/translate/test/TestFile/simpleTest/js/hello.js": "D:/Git/translate/test/TestFile/simpleTest/js/hello.js",
+  "auto": "自動",
+  "y#Szo#auto": "不限速",
+  "i#kvc#auto": "自動分配網速",
+  "type": "類型",
+  "R#Eii#type": "服務器類型",
+  "port": "端口",
+  "Submit": "提交",
+  "s#qOj#port": "接口",
+  "Cancel": "取消",
+  "Show": "顯示",
+  "Hide": "隱藏",
+  "C#JrI#Show": "顯示詳情",
+  "C#ByR#Hide": "隱藏詳情",
+  "d#lOz#auto": "槓精咩",
+  "a#ghP#auto": "限速個咩",
+  "x#xsX#type": "聯網類型",
+  "name": "姓名",
+  "age": "年齡"
+}

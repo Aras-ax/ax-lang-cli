@@ -9,6 +9,7 @@ module.exports = {
      * 6 JSON合并
      */
     commandType: 1,
+
     // 提取此条相关配置
     /**
      * bool 
@@ -30,6 +31,7 @@ module.exports = {
      * 宏文件地址
      */
     hongPath: '',
+
     // 翻译文件配置
     /**
      * 待翻译文件根目录
@@ -47,6 +49,7 @@ module.exports = {
      * 宏文件地址
      */
     hongPath: '',
+
     // 翻译检查陪着
     /**
      * 待检查文件根目录
@@ -64,6 +67,7 @@ module.exports = {
      * 检查信息输出路径
      */
     logPath: '',
+
     // excel转json配置
     /**
      * key对应列
@@ -74,6 +78,10 @@ module.exports = {
      */
     valueName: '',
     /**
+     * Excel对应的sheet名称
+     */
+    sheetName: '',
+    /**
      * Excel文件地址
      */
     excelPath: '',
@@ -81,6 +89,7 @@ module.exports = {
      * 输出json文件目录
      */
     outJsonPath: '',
+
     // json转Excel配置
     /**
      * json文件地址
@@ -90,6 +99,7 @@ module.exports = {
      * 输出Excel文件目录
      */
     outExcelPath: '',
+
     // json合并配置
     baseJsonPath: '',
     outMergeJsonPath: ''

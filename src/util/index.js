@@ -31,6 +31,13 @@ function decodeKey(key) {
     return key.replace(/^[a-zA-Z]\#[a-zA-Z][a-zA-Z][a-zA-Z]\#/g, '');
 }
 
+function getDirname(filePath) {
+    if (path.extname(filePath) !== '') {
+        return path.dirname(filePath);
+    }
+    return filePath;
+}
+
 /**
  * 异步加载json文件
  * 返回Promise，
@@ -138,7 +145,10 @@ function loadExcel(xlsxPath, sheetName) {
  * @param {String} outPath 导出的excel文件名+地址(绝对路径)
  */
 function writeExcel(data, outPath, sheetName) {
-    data = data.map(item => [item]);
+    if (data && data.length > 0 && typeof data[0] !== 'object') {
+        data = data.map(item => [item]);
+    }
+
     let buffer = xlsx.build([{
         name: sheetName || '语言包',
         data: data
