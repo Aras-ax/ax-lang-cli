@@ -66,7 +66,7 @@ describe('excel2json正确性验证', () => {
         expect.assertions(1);
         return excel2json({
             excelPath: 'D:\\Git\\translate\\test\\TestFile\\simpleTestData\\repeat.xlsx',
-            outPath: '',
+            outPath: 'D:\\Git\\translate\\test\\TestFile\\output',
             sheetName: '',
             key: 'EN',
             value: 'CN,ZH'

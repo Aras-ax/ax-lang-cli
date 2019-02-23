@@ -5,173 +5,33 @@ const inquirer = require('inquirer');
 const ExtractFile = require('./ExtractFile.js');
 const excel2json = require('./excel2json');
 const json2excel = require('./json2excel');
-const mergeJson = require('./mergeObject');
-const { COMMAD, questions, baseQuestions, COMMAD_TEXT, validate } = require('./util/config');
-const { getDirname } = require('./util/index');
-
-let cwd = process.cwd();
-let configFilepath = path.join(cwd, 'b281.config.js'),
-    config = {};
-console.log('读取配置···');
-
-// todo by xc 
-// 添加所有的配置以参数的形式一起传进来
-if (fs.existsSync(configFilepath)) {
-    config = require(configFilepath);
-
-    correctCfg(config).then(data => {
-        handle(data);
-    });
-
-} else {
-    getCfg().then(data => {
-        console.log(data);
-        handle(data);
-    });
-}
-
-function getCfg() {
-    let type = 0;
-    return inquirer.prompt(baseQuestions)
-        .then(answers => {
-            type = answers.commandType;
-            return inquirer.prompt(questions[type]);
-        })
-        .then(answers => {
-            answers.commandType = type;
-            return answers;
-        });
-}
-
-/**
- * 验证和修正所有配置参数
- */
-function correctCfg(cfg) {
-    if (cfg.commandType === undefined || cfg.commandType === '') {
-        console.error('请选择您需要使用的功能！');
-        return getCfg();
-    }
-
-    console.log(`您已选择[${COMMAD_TEXT[cfg.commandType]}]功能；`);
-
-    let error = validate(cfg.commandType);
-
-    if (error) {
-        console.error('参数配置错误，请重新配置：');
-
-        return inquirer.prompt(questions[type]).then(answers => {
-            answers.commandType = cfg.commandType;
-            return answers;
-        });
-    }
-
-    return Promise.resolve(cfg);
-}
-
-let validate = {
-    0: function(cfg) {
-        if (validate.folder(cfg.baseReadPath) !== true) {
-            return true;
-        }
-
-        cfg.baseOutPath = cfg.baseOutPath || getDirname(cfg.baseReadPath);
-        if (validate.specialFolder(cfg.baseOutPath) !== true) {
-            return true;
-        }
-
-        if (validate.specialfile(cfg.hongPath) !== true) {
-            return true;
-        }
-    },
-    1: function(cfg) {
-        if (validate.folder(cfg.baseTranslatePath) !== true) {
-            return true;
-        }
-
-        cfg.baseTransOutPath = cfg.baseTransOutPath || getDirname(cfg.baseTranslatePath);
-        if (validate.specialFolder(cfg.baseTransOutPath) !== true) {
-            return true;
-        }
-
-        if (validate.specialfile(cfg.hongPath) !== true) {
-            return true;
-        }
-
-        if (validate.filePath(cfg.languagePath) !== true) {
-            return true;
-        }
-    },
-    2: function(cfg) {
-        if (validate.folder(cfg.baseCheckPath) !== true) {
-            return true;
-        }
-
-        cfg.logPath = cfg.logPath || getDirname(cfg.baseCheckPath);
-        if (validate.specialFolder(cfg.logPath) !== true) {
-            return true;
-        }
-
-        if (validate.specialfile(cfg.hongPath) !== true) {
-            return true;
-        }
-
-        if (validate.filePath(cfg.langJsonPath) !== true) {
-            return true;
-        }
-    },
-    3: function(cfg) {
-        if (validate.required(cfg.keyName) !== true) {
-            return true;
-        }
-        if (validate.filePath(cfg.excelPath) !== true) {
-            return true;
-        }
-        cfg.outJsonPath = cfg.outJsonPath || getDirname(cfg.excelPath);
-        if (validate.specialFolder(cfg.outJsonPath) !== true) {
-            return true;
-        }
-    },
-    4: function(cfg) {
-        if (validate.filePath(cfg.jsonPath) !== true) {
-            return true;
-        }
-        cfg.outExcelPath = cfg.outExcelPath || getDirname(cfg.jsonPath);
-        if (validate.specialFolder(cfg.outExcelPath) !== true) {
-            return true;
-        }
-    },
-    5: function(cfg) {
-        if (validate.folder(cfg.baseJsonPath) !== true) {
-            return true;
-        }
-        cfg.outMergeJsonPath = cfg.outMergeJsonPath || getDirname(cfg.baseJsonPath);
-        if (validate.specialFolder(cfg.outMergeJsonPath) !== true) {
-            return true;
-        }
-    }
-}
+const mergeJson = require('./mergeJson');
+const { COMMAD, questions, baseQuestions, COMMAD_TEXT, valid } = require('./util/config');
+const { getDirname, loadJsonSync } = require('./util/index');
 
 function handle(cfg) {
     switch (cfg.commandType) {
         case COMMAD.GET_WORDS:
-            getWords(cfg);
+            return getWords(cfg);
             break;
         case COMMAD.TRANSLATE:
-            translate(cfg);
+            return translate(cfg);
             break;
         case COMMAD.CHECK_TRANSLATE:
-            check(cfg);
+            return check(cfg);
             break;
         case COMMAD.EXCEL_TO_JSON:
-            excelToJson(cfg);
+            return excelToJson(cfg);
             break;
         case COMMAD.JSON_TO_EXCEL:
-            jsonToExcel(cfg);
+            return jsonToExcel(cfg);
             break;
         case COMMAD.MERGE_JSON:
-            mergeJson(cfg);
+            return merge(cfg);
             break;
     }
+
+    return Promise.resolve('没有匹配的操作');
 }
 
 function getWords(cfg) {
@@ -182,7 +42,7 @@ function getWords(cfg) {
         config_hong_path: cfg.hongPath
     });
 
-    extract.scanFile();
+    return extract.scanFile();
 }
 
 /**
@@ -195,11 +55,34 @@ function translate(cfg) {
         baseWritePath: cfg.baseTransOutPath,
         isTranslate: true,
         config_hong_path: cfg.hongPath,
-        // todo by xc 语言翻译，语言包加载
-        transWords: cfg.languagePath
+        transWords: {}
     });
 
-    extract.scanFile();
+    // 通过JSON文件直接翻译
+    if (path.extname(cfg.languagePath) === '.json') {
+        let langData = loadJsonSync(cfg.languagePath);
+
+        extract.setAttr('transWords', langData);
+        return extract.scanFile();
+    } else {
+        // 通过Excel文件翻译，并生成语言包JSON
+        return excel2json({
+            excelPath: cfg.languagePath,
+            outPath: cfg.baseTransOutPath,
+            sheetName: cfg.sheetName,
+            key: cfg.keyName,
+            value: ''
+        }).then(data => {
+            let langData = {};
+            data = data[cfg.valueName.toUpperCase() || 'CN'];
+            for (let key in data) {
+                langData[data[key]] = key;
+            }
+            extract.setAttr('transWords', langData);
+            return extract.scanFile();
+        });
+    }
+
 }
 
 function check(cfg) {
@@ -210,11 +93,11 @@ function check(cfg) {
         transWords: cfg.langJsonPath
     });
 
-    extract.scanFile();
+    return extract.scanFile();
 }
 
 function excelToJson(cfg) {
-    excel2json({
+    return excel2json({
         excelPath: cfg.excelPath,
         outPath: cfg.outJsonPath,
         sheetName: cfg.sheetName,
@@ -224,9 +107,11 @@ function excelToJson(cfg) {
 }
 
 function jsonToExcel(cfg) {
-    json2excel(cfg.jsonPath, cfg.outExcelPath);
+    return json2excel(cfg.jsonPath, cfg.outExcelPath);
 }
 
-function mergeJson(cfg) {
-    mergeJson();
+function merge(cfg) {
+    return mergeJson(cfg.mainJsonPath, cfg.mergeJsonPath, cfg.outPath);
 }
+
+module.exports = handle;

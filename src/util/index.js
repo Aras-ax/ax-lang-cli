@@ -77,9 +77,9 @@ function loadJson(src) {
  */
 function loadJsonSync(src) {
     try {
-        return Promise.resolve(JSON.parse(fs.readFileSync(src)));
+        return JSON.parse(fs.readFileSync(src));
     } catch (e) {
-        return Promise.resolve(e);
+        return {};
     }
 }
 
@@ -213,6 +213,23 @@ function deepMerge(oldObj, newObj) {
     }
 }
 
+function mergeObject(main, other) {
+    if (Object.prototype.toString.call(main) === '[object Array]') {
+        return [...new Set(main.concat(other))];
+    }
+
+    for (let key in other) {
+        let data = other[key];
+        if (main[key] !== undefined && typeof main[key] === 'object' && typeof data === 'object') {
+            main[key] = mergeObject(main[key], data);
+        } else {
+            main[key] = data;
+        }
+    }
+
+    return main;
+}
+
 /**
  * 扫描文件夹内的文件
  */
@@ -302,6 +319,7 @@ module.exports = {
     writeExcel,
     correctPath,
     writeJson,
+    mergeObject,
     trim,
     log
 };

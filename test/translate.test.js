@@ -16,8 +16,8 @@ it('验证翻译JS的正确性', () => {
         excelPath: 'D:\\Git\\translate\\test\\TestFile\\simpleTestData\\js\\translate.xlsx',
         outPath: 'D:\\Git\\translate\\test\\TestFile\\output',
         sheetName: '',
-        key: 'EN',
-        value: 'CN'
+        key: 'CN',
+        value: 'EN'
     }).then(data => {
         extract.setAttr('transWords', data);
         return extract.scanFile();
@@ -40,6 +40,28 @@ it('验证翻译HTML的正确性', () => {
             baseReadPath: 'D:\\Git\\translate\\test\\TestFile\\simpleTest\\html'
         });
         return extract.scanFile();
+    }).then(data => {
+        return expect(data).toEqual([]);
+    });
+});
+
+it('验证Excel翻译的正确性', () => {
+    expect.assertions(1);
+    return excel2json({
+        excelPath: 'D:\\Git\\translate\\test\\TestFile\\simpleTestData\\js\\translate.xlsx',
+        outPath: 'D:\\Git\\translate\\test\\TestFile\\output',
+        sheetName: '',
+        key: 'CN',
+        value: ''
+    }).then(data => {
+        let langData = {};
+        data = data['CN'];
+        for (let key in data) {
+            langData[data[key]] = key;
+        }
+
+        extract.setAttr('transWords', langData);
+        extract.scanFile();
     }).then(data => {
         return expect(data).toEqual([]);
     });

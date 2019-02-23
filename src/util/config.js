@@ -41,9 +41,9 @@ const COMMAD = {
 
 const COMMAD_TEXT = ['提取词条', '翻译文件', '翻译检查', 'Excel转JSON', 'JSON转Excel', 'JSON合并'];
 
-const validate = {
+const valid = {
     filePath(val) {
-        if (path.extname(val) === '' || validate.folder(val) !== true) {
+        if (path.extname(val) === '' || valid.folder(val) !== true) {
             return '请输入有效的文件地址'
         }
 
@@ -54,7 +54,7 @@ const validate = {
             return true;
         }
 
-        return validate.filePath(val);
+        return valid.filePath(val);
     },
     folder(val) {
         if (!path.isAbsolute(val)) {
@@ -71,7 +71,7 @@ const validate = {
             return true;
         }
 
-        return validate.folder(val);
+        return valid.folder(val);
     },
     required(val) {
         if (!!val) {
@@ -99,12 +99,12 @@ const baseQuestions = [{
             type: 'input',
             name: 'baseReadPath',
             message: '待提取文件地址',
-            validate: validate.folder
+            validate: valid.folder
         }, {
             type: 'input',
             name: 'baseOutPath',
             message: '提取的Excel文件输出地址',
-            validate: validate.specialFolder,
+            validate: valid.specialFolder,
             default (answers) {
                 return getDirname(answers.baseReadPath);
             }
@@ -113,18 +113,18 @@ const baseQuestions = [{
             name: 'hongPath',
             message: '宏文件地址',
             default: '',
-            validate: validate.specialfile
+            validate: valid.specialfile
         }],
         [{
             type: 'input',
             name: 'baseTranslatePath',
             message: '待翻译文件根目录',
-            validate: validate.folder
+            validate: valid.folder
         }, {
             type: 'input',
             name: 'baseTransOutPath',
             message: '翻译后文件输出根目录',
-            validate: validate.specialFolder,
+            validate: valid.specialFolder,
             default (answers) {
                 return getDirname(answers.baseTransOutPath);
             }
@@ -132,49 +132,58 @@ const baseQuestions = [{
             type: 'input',
             name: 'languagePath',
             message: '语言包文件地址',
-            validate: validate.filePath
+            validate: valid.filePath
         }, {
             type: 'input',
             name: 'hongPath',
             message: '宏文件地址',
             default: '',
-            validate: validate.specialfile
-        }, {
-            type: 'input',
-            name: 'keyName',
-            message: 'key对应列',
-            default: 'EN'
-        }, {
-            type: 'input',
-            name: 'valueName',
-            message: 'value对应列',
-            default: 'ALL' // 空代表所有
+            validate: valid.specialfile
         }, {
             type: 'input',
             name: 'sheetName',
             message: 'Excel中对应的sheet',
-            default: ''
+            default: '',
+            when(answers) {
+                return path.extname(answers.languagePath) !== '.json'
+            }
+        }, {
+            type: 'input',
+            name: 'keyName',
+            message: 'key对应列', //指代代码中的词条需要被那一列的数据替换
+            default: 'EN',
+            when(answers) {
+                return path.extname(answers.languagePath) !== '.json'
+            }
+        }, {
+            type: 'input',
+            name: 'valueName',
+            message: 'value对应列', //指代代码中目前需要被替换的语言
+            default: '', // 空代表所有
+            when(answers) {
+                return path.extname(answers.languagePath) !== '.json'
+            }
         }],
         [{
             type: 'input',
             name: 'baseCheckPath',
             message: '待检查文件根目录',
-            validate: validate.folder
+            validate: valid.folder
         }, {
             type: 'input',
             name: 'langJsonPath',
             message: '语言包json文件地址',
-            validate: validate.filePath
+            validate: valid.filePath
         }, {
             type: 'input',
             name: 'hongPath',
             message: '宏文件地址',
-            validate: validate.specialfile
+            validate: valid.specialfile
         }, {
             type: 'input',
             name: 'logPath',
             message: '检查信息输出路径',
-            validate: validate.specialFolder,
+            validate: valid.specialFolder,
             default (answers) {
                 return getDirname(answers.baseCheckPath);
             }
@@ -198,12 +207,12 @@ const baseQuestions = [{
             type: 'input',
             name: 'excelPath',
             message: 'Excel文件地址',
-            validate: validate.filePath
+            validate: valid.filePath
         }, {
             type: 'input',
             name: 'outJsonPath',
             message: '输出json文件目录',
-            validate: validate.specialFolder,
+            validate: valid.specialFolder,
             default (answers) {
                 return getDirname(answers.excelPath);
             }
@@ -212,26 +221,31 @@ const baseQuestions = [{
             type: 'input',
             name: 'jsonPath',
             message: 'json文件地址',
-            validate: validate.filePath
+            validate: valid.filePath
         }, {
             type: 'input',
             name: 'outExcelPath',
             message: '输出Excel文件目录',
-            validate: validate.specialFolder,
+            validate: valid.specialFolder,
             default (answers) {
                 return getDirname(answers.jsonPath);
             }
         }],
         [{
             type: 'input',
-            name: 'baseJsonPath',
-            message: 'json文件地址',
-            validate: validate.folder
+            name: 'mainJsonPath',
+            message: '主json文件地址',
+            validate: valid.filePath
+        }, {
+            type: 'input',
+            name: 'mergeJsonPath',
+            message: '次json文件地址',
+            validate: valid.filePath
         }, {
             type: 'input',
             name: 'outMergeJsonPath',
             message: '合并后输出的地址',
-            validate: validate.specialFolder,
+            validate: valid.specialFolder,
             default (answers) {
                 return getDirname(answers.baseJsonPath);
             }
@@ -251,6 +265,6 @@ module.exports = {
     COMMAD,
     COMMAD_TEXT,
     questions,
-    validate,
+    valid,
     baseQuestions
 };

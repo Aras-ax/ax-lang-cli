@@ -39,7 +39,7 @@ function excel2json(option) {
 
                 promiseList.push(writeJson(data[key], outPath));
             }
-            return Promise.all(promiseList).then((data) => {
+            return Promise.all(promiseList).then((data1) => {
                 console.log(`Excel to Json文件已写入地址：${option.outPath}`);
                 return data;
             }).catch((error) => {

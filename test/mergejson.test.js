@@ -1,4 +1,4 @@
-const merge = require('../src/mergeObject');
+const { mergeObject } = require('../src/util/index');
 
 let obj = {
         a: 1,
@@ -60,14 +60,14 @@ let arr = [1, 2, 3, 4],
     arr1 = [3, 4, 6, 8],
     arrarr1 = [1, 2, 3, 4, 6, 8];
 
-describe('验证[mergeJson]的正确性', () => {
+describe('验证[mergeObject]的正确性', () => {
     test('对象合并', () => {
-        expect(merge(obj, obj1)).toEqual(objobj1);
+        expect(mergeObject(obj, obj1)).toEqual(objobj1);
     });
     test('数组合并', () => {
-        expect(merge(arr, arr1)).toEqual(arrarr1);
+        expect(mergeObject(arr, arr1)).toEqual(arrarr1);
     });
     test('对象深度合并', () => {
-        expect(merge(obj2, obj3)).toEqual(obj4);
+        expect(mergeObject(obj2, obj3)).toEqual(obj4);
     });
 });

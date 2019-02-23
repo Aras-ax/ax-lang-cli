@@ -49,6 +49,18 @@ module.exports = {
      * 宏文件地址
      */
     hongPath: '',
+    /**
+     * key对应列
+     */
+    keyName: '',
+    /**
+     * value对应列
+     */
+    valueName: '',
+    /**
+     * Excel对应的sheet名称
+     */
+    sheetName: '',
 
     // 翻译检查陪着
     /**
@@ -101,6 +113,7 @@ module.exports = {
     outExcelPath: '',
 
     // json合并配置
-    baseJsonPath: '',
+    mainJsonPath: '',
+    mergeJsonPath: '',
     outMergeJsonPath: ''
 }
