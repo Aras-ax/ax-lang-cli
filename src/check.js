@@ -1,12 +1,12 @@
 const start = require('../src/index');
 const { COMMAD } = require('../src/util/config');
 
-const hongPath = 'D:\\Git\\translate\\test\\TestFile\\config\\macro_config.js';
+const hongPath = './test/TestFile/config/macro_config.js';
 
 // start({
 //     commandType: COMMAD.GET_WORDS,
-//     baseReadPath: 'D:\\Git\\translate\\test\\TestFile\\simpleTest\\allTest',
-//     baseOutPath: 'D:\\Git\\translate\\test\\TestFile\\output\\allTest',
+//     baseReadPath: './test/TestFile/simpleTest/allTest',
+//     baseOutPath: './test/TestFile/output/allTest',
 //     hongPath
 // }).then(data => {
 //     let t = data;
@@ -14,9 +14,9 @@ const hongPath = 'D:\\Git\\translate\\test\\TestFile\\config\\macro_config.js';
 
 // start({
 //     commandType: COMMAD.TRANSLATE,
-//     baseTranslatePath: 'D:\\Git\\translate\\test\\TestFile\\simpleTest\\allTest',
-//     baseTransOutPath: 'D:\\Git\\translate\\test\\TestFile\\output\\allTest',
-//     languagePath: 'D:/Git/translate/test/TestFile/simpleTestData/allTest/translate.xlsx',
+//     baseTranslatePath: './test/TestFile/simpleTest/allTest',
+//     baseTransOutPath: './test/TestFile/output/allTest',
+//     languagePath: './test/TestFile/simpleTestData/allTest/translate.xlsx',
 //     hongPath,
 //     sheetName: '',
 //     keyName: 'CN',
@@ -27,16 +27,16 @@ const hongPath = 'D:\\Git\\translate\\test\\TestFile\\config\\macro_config.js';
 
 // start({
 //     commandType: COMMAD.CHECK_TRANSLATE,
-//     baseCheckPath: 'D:\\Git\\translate\\test\\TestFile\\simpleTestData\\allTest\\translate',
-//     langJsonPath: 'D:\\Git\\translate\\test\\TestFile\\simpleTestData\\allTest\\translate\\lang.json',
+//     baseCheckPath: './test/TestFile/simpleTestData/allTest/translate',
+//     langJsonPath: './test/TestFile/simpleTestData/allTest/translate/lang.json',
 //     hongPath,
-//     logPath: 'D:\\Git\\translate\\test\\TestFile\\output\\allTest\\test'
+//     logPath: './test/TestFile/output/allTest/test'
 // }).then(data => {
 //     let t = '';
 // });
 
-start({
-    commandType: COMMAD.JSON_TO_EXCEL,
-    jsonPath: 'D:\\Git\\translate\\test\\TestFile\\simpleTestData\\onlyZH.json',
-    outExcelPath: 'D:\\Git\\translate\\test\\TestFile\\output\\test1.xlsx'
-})
+// start({
+//     commandType: COMMAD.JSON_TO_EXCEL,
+//     jsonPath: './test/TestFile/simpleTestData/onlyZH.json',
+//     outExcelPath: './test/TestFile/output/test1.xlsx'
+// })

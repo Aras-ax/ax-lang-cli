@@ -147,6 +147,7 @@ function loadExcel(xlsxPath, sheetName) {
  * @param {String} outPath 导出的excel文件名+地址(绝对路径)
  */
 function writeExcel(data, outPath, sheetName) {
+    console.log(1);
     createFolder(path.dirname(outPath));
     if (data && data.length > 0 && typeof data[0] !== 'object') {
         data = data.map(item => [item]);
@@ -267,13 +268,15 @@ function createFolder(folder, callback) {
     try {
         if (fs.existsSync(folder)) return;
 
-        while (!fs.existsSync(folder + '/..')) { //检查父目录是否存在
-            folder += '/..';
+        let list = [folder];
+        folder = path.dirname(folder);
+        while (!fs.existsSync(folder)) { //检查父目录是否存在
+            list.push(folder);
+            folder = path.dirname(folder);
         }
 
-        while (originDir.length <= folder.length) { //如果目录循环创建完毕，则跳出循环
-            fs.mkdirSync(folder, '0777');
-            folder = folder.substring(0, folder.length - 3);
+        while (list.length > 0) {
+            fs.mkdirSync(list.pop());
         }
 
         if (callback) callback();

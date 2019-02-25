@@ -51,6 +51,9 @@ const valid = {
         return valid.existFile(val);
     },
     folder(val) {
+        if (val === '') {
+            return '必填';
+        }
         if (!path.isAbsolute(val)) {
             val = path.resolve(process.cwd(), val);
         }

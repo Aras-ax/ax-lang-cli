@@ -45,11 +45,17 @@ class ExtractFile {
         this.outData = [];
 
         if (this.option.config_hong_path) {
-            require(this.option.config_hong_path);
+            console.log(this.option.config_hong_path);
+            try {
+                require(this.option.config_hong_path);
+                this.CONFIG_HONG = (global.R && global.R.CONST) || {};
+                // global.R = null;
+            } catch (e) {
+                this.CONFIG_HONG = {};
+                console.error(`宏文件解析错误，宏文件地址【${this.option.config_hong_path}】`);
+            }
         }
 
-        this.CONFIG_HONG = (global.R && global.R.CONST) || {};
-        // global.R = null;
 
         this.init();
     }
@@ -113,6 +119,7 @@ class ExtractFile {
         }
 
         // 将未翻译的文件以错误的形式输出
+
         // 将提取的词条文件，输出为excel
         return Promise.all([this.handleHtml(), this.handleJs()]).then((data) => {
             let sheetName = this.extractJS.option.onlyZH ? 'CN' : 'EN';

@@ -137,7 +137,7 @@ function fullPath(cfg) {
             return true;
         }
 
-        if (path.isAbsolute(val)) {
+        if (!path.isAbsolute(val)) {
             cfg[field] = path.resolve(cwd, val);
         }
     });

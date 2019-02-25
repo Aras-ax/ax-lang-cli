@@ -6,6 +6,9 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
+    "bin": {
+        "b28-cli": "index.js"
+    },
     "author": "moshang",
     "license": "ISC",
     "devDependencies": {
