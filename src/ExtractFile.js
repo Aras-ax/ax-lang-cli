@@ -4,6 +4,8 @@ const minimatch = require("minimatch");
 const {
     EXCLUDE_FILE,
     EXCLUDE_FILE_END,
+    EXTNAME_JS,
+    EXTNAME_HTML,
     LOG_TYPE
 } = require('../src/util/config');
 
@@ -26,6 +28,7 @@ class ExtractFile {
             baseWritePath: '',
             onlyZH: false,
             isTranslate: false,
+            isCheckTrans: false,
             config_hong_path: '',
             transWords: {}
         }, option)
@@ -46,7 +49,7 @@ class ExtractFile {
         }
 
         this.CONFIG_HONG = (global.R && global.R.CONST) || {};
-        global.R = null;
+        // global.R = null;
 
         this.init();
     }
@@ -57,12 +60,13 @@ class ExtractFile {
             onlyZH: this.option.onlyZH,
             transWords: this.option.transWords,
             isTranslate: this.option.isTranslate,
+            isCheckTrans: this.option.isCheckTrans,
             baseWritePath: this.option.baseWritePath,
             baseReadPath: this.option.baseReadPath,
             // 词条提取完成后的操作
             onComplete: (filePath, words) => {
                 if (words.length > 0) {
-                    this.outData.push([`${correctPath(filePath)}`]);
+                    this.outData.push(correctPath(filePath));
                     this.outData = this.outData.concat(words);
                 }
             }
@@ -73,12 +77,13 @@ class ExtractFile {
             onlyZH: this.option.onlyZH,
             transWords: this.option.transWords,
             isTranslate: this.option.isTranslate,
+            isCheckTrans: this.option.isCheckTrans,
             baseWritePath: this.option.baseWritePath,
             baseReadPath: this.option.baseReadPath,
             // 词条提取完成后的操作
             onComplete: (filePath, words) => {
                 if (words.length > 0) {
-                    this.outData.push([correctPath(filePath)]);
+                    this.outData.push(correctPath(filePath));
                     this.outData = this.outData.concat(words);
                 }
             }
@@ -90,16 +95,16 @@ class ExtractFile {
         if (fs.lstatSync(this.option.baseReadPath).isDirectory()) {
             this.getFileList();
         } else {
-            this.fileList.transList.push(this.option.baseReadPath);
+            this.addFile(this.option.baseReadPath)
         }
 
         this.fileList.transList.forEach((filePath) => {
-            if (path.extname(filePath) === '.js') {
-                // todo by xc js文件解析
+            if (minimatch(filePath, EXTNAME_JS)) {
                 this.extractJS.addTask(filePath);
-            } else {
-                // this.handleHtml(filePath);
+            } else if (minimatch(filePath, EXTNAME_HTML)) {
                 this.extractHTML.addTask(filePath);
+            } else {
+                this.fileList.copyList.push(filePath);
             }
         });
 
@@ -111,16 +116,20 @@ class ExtractFile {
         // 将提取的词条文件，输出为excel
         return Promise.all([this.handleHtml(), this.handleJs()]).then((data) => {
             let sheetName = this.extractJS.option.onlyZH ? 'CN' : 'EN';
-            if (!this.option.isTranslate) {
+
+            if (this.option.isTranslate) {
+                console.log(`翻译后的文件输出到路径【${this.option.baseWritePath}】下.`)
+            } else if (!this.option.isCheckTrans) {
                 this.outData.unshift(sheetName);
             }
-            let outPath = path.join(this.option.baseWritePath, (this.option.isTranslate ? '未匹配的词条' : '词条') + `${sheetName}.xlsx`);
+
+            let outPath = path.join(this.option.baseWritePath, (this.option.isTranslate ? '未匹配的词条' : '提取词条') + `${sheetName}.xlsx`);
 
             if (this.outData.length > 0) {
                 this.writeWordToExcel(outPath, sheetName);
 
-                if (this.option.isTranslate) {
-                    console.error('还有部分词条未被翻译，见输出的Excel');
+                if (this.option.isTranslate || this.option.isCheckTrans) {
+                    console.error(`还有部分词条未被翻译，见输出的Excel【${outPath}】`);
                 }
             }
             //重置
@@ -147,7 +156,7 @@ class ExtractFile {
             })
             .catch(error => {
                 log(error.message, LOG_TYPE.error);
-                let outPath = path.join(this.option.baseWritePath, (this.option.isTranslate ? '未匹配的词条' : '词条') + `${new Date().getTime()}.xlsx`);
+                let outPath = path.join(this.option.baseWritePath, (this.option.isTranslate ? '未匹配的词条' : '提取词条') + `${new Date().getTime()}.xlsx`);
                 this.writeWordToExcel(outPath, sheetName)
             });
     }
@@ -186,14 +195,18 @@ class ExtractFile {
         this.fileList.folders = scanData.folders;
 
         scanData.files.forEach((val) => {
-            if (minimatch(val, EXCLUDE_FILE) || minimatch(val, EXCLUDE_FILE_END)) {
-                if (this.option.isTranslate) {
-                    this.fileList.copyList.push(val);
-                }
-            } else {
-                this.fileList.transList.push(val);
-            }
+            this.addFile(val);
         });
+    }
+
+    addFile(filePath) {
+        if (minimatch(filePath, EXCLUDE_FILE) || minimatch(filePath, EXCLUDE_FILE_END) || (!minimatch(filePath, EXTNAME_HTML) && !minimatch(filePath, EXTNAME_JS))) {
+            if (this.option.isTranslate) {
+                this.fileList.copyList.push(filePath);
+            }
+        } else {
+            this.fileList.transList.push(filePath);
+        }
     }
 }
 

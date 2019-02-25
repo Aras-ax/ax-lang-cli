@@ -1,13 +1,11 @@
 const path = require('path');
-const fs = require('fs');
-const inquirer = require('inquirer');
 
 const ExtractFile = require('./ExtractFile.js');
 const excel2json = require('./excel2json');
 const json2excel = require('./json2excel');
 const mergeJson = require('./mergeJson');
-const { COMMAD, questions, baseQuestions, COMMAD_TEXT, valid } = require('./util/config');
-const { getDirname, loadJsonSync } = require('./util/index');
+const { COMMAD } = require('./util/config');
+const { loadJsonSync } = require('./util/index');
 
 function handle(cfg) {
     switch (cfg.commandType) {
@@ -71,7 +69,7 @@ function translate(cfg) {
             outPath: cfg.baseTransOutPath,
             sheetName: cfg.sheetName,
             key: cfg.keyName,
-            value: ''
+            value: 'ALL'
         }).then(data => {
             let langData = {};
             data = data[cfg.valueName.toUpperCase() || 'CN'];
@@ -86,11 +84,15 @@ function translate(cfg) {
 }
 
 function check(cfg) {
+    // 通过JSON文件直接翻译
+    let langData = loadJsonSync(cfg.langJsonPath);
+
     let extract = new ExtractFile({
         baseReadPath: cfg.baseCheckPath,
         baseWritePath: cfg.logPath,
         config_hong_path: cfg.hongPath,
-        transWords: cfg.langJsonPath
+        isCheckTrans: true,
+        transWords: langData
     });
 
     return extract.scanFile();

@@ -29,6 +29,14 @@ let data1 = [
         '日志内容'
     ];
 
+// excel2json({
+//     excelPath: 'D:\\Git\\translate\\test\\TestFile\\simpleTestData\\excel2json.xlsx',
+//     outPath: 'D:\\Git\\translate\\test\\TestFile\\output',
+//     sheetName: '',
+//     key: 'EN',
+//     value: ''
+// });
+
 describe('excel2json正确性验证', () => {
     it('第一列缺少验证', () => {
         expect.assertions(1);
@@ -69,7 +77,7 @@ describe('excel2json正确性验证', () => {
             outPath: 'D:\\Git\\translate\\test\\TestFile\\output',
             sheetName: '',
             key: 'EN',
-            value: 'CN,ZH'
+            value: 'ALL'
         }).then(data => {
             return expect(Object.keys(data.CN).sort()).toEqual(Object.keys(data.ZH).sort())
         });

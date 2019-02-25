@@ -1,11 +1,13 @@
+const LOG_TYPE = {
+    warning: 1,
+    error: 2,
+    log: 3
+};
+
 const fs = require('fs');
 const path = require('path');
 const xlsx = require('node-xlsx').default;
-const iconv = require('iconv-lite');
 
-const {
-    LOG_TYPE
-} = require('./config');
 /**
  * 对字符串重新编码，字符串前面加上8位的特殊编码
  * @param {String} key 需要进行重新编码的字符串 
@@ -145,6 +147,7 @@ function loadExcel(xlsxPath, sheetName) {
  * @param {String} outPath 导出的excel文件名+地址(绝对路径)
  */
 function writeExcel(data, outPath, sheetName) {
+    createFolder(path.dirname(outPath));
     if (data && data.length > 0 && typeof data[0] !== 'object') {
         data = data.map(item => [item]);
     }
@@ -320,6 +323,7 @@ module.exports = {
     correctPath,
     writeJson,
     mergeObject,
+    getDirname,
     trim,
     log
 };

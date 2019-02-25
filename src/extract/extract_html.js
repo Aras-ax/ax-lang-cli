@@ -181,7 +181,7 @@ class ExtractHTML extends Extract {
 
     // 翻译节点
     transWord(element, type, value, field) {
-        if (this.option.isTranslate && value) {
+        if (value) {
             switch (type) {
                 case Edit_TYPE.attribute:
                     element.setAttribute(field, value);
@@ -190,7 +190,7 @@ class ExtractHTML extends Extract {
                     element.innerHTML = value;
                     break;
                 case Edit_TYPE.value:
-                    element.value = value;
+                    element.setAttribute("value", value);
                     break;
                 case Edit_TYPE.nodeValue:
                     element.nodeValue = value;

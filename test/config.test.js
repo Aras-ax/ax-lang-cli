@@ -38,18 +38,6 @@ describe('测试排除文件夹正则正确性', () => {
         expect(minimatch('git/cgi-bin', EXCLUDE_FILE_END)).toBeTruthy();
     });
 
-    test('用例：a/a.css', () => {
-        expect(minimatch('a/a.css', EXCLUDE_FILE_END)).toBeTruthy();
-    });
-
-    test('用例：common/t.svn', () => {
-        expect(minimatch('common/t.svn', EXCLUDE_FILE_END)).toBeTruthy();
-    });
-
-    test('用例：common/t.git', () => {
-        expect(minimatch('common/t.git', EXCLUDE_FILE_END)).toBeTruthy();
-    });
-
     test('用例：common/t.min.js', () => {
         expect(minimatch('common/t.min.js', EXCLUDE_FILE_END)).toBeTruthy();
     });

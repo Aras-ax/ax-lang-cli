@@ -23,6 +23,8 @@ class Extract {
             transWords: {},
             // 是否是翻译文件
             isTranslate: false,
+            // 是否是检查翻译
+            isCheckTrans: false,
             // 翻译文件时，写入的根目录
             baseWritePath: '',
             baseReadPath: '',
@@ -135,10 +137,10 @@ class Extract {
 
 
             if (addValue) {
-                if (this.option.isTranslate) {
+                if (this.option.isTranslate || this.option.isCheckTrans) {
                     let transVal = this.option.transWords[addValue];
                     if (transVal) {
-                        return transVal;
+                        return this.option.isCheckTrans ? "" : transVal;
                     }
                 }
                 this.addWord(addValue);

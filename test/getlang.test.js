@@ -10,6 +10,7 @@ let extract = new ExtractFile({
     config_hong_path: 'D:\\Git\\translate\\test\\TestFile\\config\\macro_config.js',
     transWords: {}
 });
+// extract.scanFile();
 
 describe('验证js文件语言提取的正确性', () => {
     it('根据宏提取词条', () => {

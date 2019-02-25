@@ -66,18 +66,12 @@ function transferData(data, option) {
     keyValueRow = keyValueRow.join(',').toUpperCase().split(',');
 
     let keyIndex = keyValueRow.indexOf(key);
-    // 多列解析，同时对重复的词条进行重新编码
-    value = value.split(',');
-
-    if (value === '' || value === 'ALL') {
-        value = keyValueRow.filter(item => !!(item.replace(/\s/g, '')) && item !== key);
-    }
 
     if (data.length === 0) {
         return outData;
     }
 
-    if (value.length === 0) {
+    if (value === '') {
         data.forEach(item => {
             let value = trim(item[keyIndex]),
                 i = 0;
@@ -87,6 +81,13 @@ function transferData(data, option) {
             outData.push(value);
         })
         return outData;
+    }
+
+    // 多列解析，同时对重复的词条进行重新编码
+    value = value.toUpperCase().split(',');
+
+    if (value.length === 1 && value[0] === 'ALL') {
+        value = keyValueRow.filter(item => !!(item.replace(/\s/g, '')) && item !== key);
     }
 
     let valueIndex = {};

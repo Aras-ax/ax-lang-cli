@@ -7,7 +7,7 @@ const { getDirname } = require('./index');
  * 不同消息不同的log打印
  */
 const LOG_TYPE = {
-    warn: 1,
+    warning: 1,
     error: 2,
     log: 3
 };
@@ -42,23 +42,17 @@ const COMMAD = {
 const COMMAD_TEXT = ['提取词条', '翻译文件', '翻译检查', 'Excel转JSON', 'JSON转Excel', 'JSON合并'];
 
 const valid = {
-    filePath(val) {
-        if (path.extname(val) === '' || valid.folder(val) !== true) {
-            return '请输入有效的文件地址'
-        }
-
-        return true;
-    },
+    // 空或者存在的地址
     specialfile(val) {
         if (val === '' || val === undefined) {
             return true;
         }
 
-        return valid.filePath(val);
+        return valid.existFile(val);
     },
     folder(val) {
         if (!path.isAbsolute(val)) {
-            val = path.join(process.cwd(), val);
+            val = path.resolve(process.cwd(), val);
         }
 
         if (!fs.existsSync(val)) {
@@ -66,18 +60,15 @@ const valid = {
         }
         return true;
     },
-    specialFolder(val) {
-        if (val === '' || val === undefined) {
-            return true;
+    // 存在的文件非文件夹
+    existFile(val) {
+        if (!path.isAbsolute(val)) {
+            val = path.resolve(process.cwd(), val);
         }
-
-        return valid.folder(val);
-    },
-    required(val) {
-        if (!!val) {
-            return true;
+        if (path.extname(val) !== '' && !fs.existsSync(val)) {
+            return '请输入有效的文件地址'
         }
-        return '必填'
+        return true;
     }
 }
 
@@ -99,12 +90,11 @@ const baseQuestions = [{
             type: 'input',
             name: 'baseReadPath',
             message: '待提取文件地址',
-            validate: valid.folder
+            validate: valid.folder // 必填，可以是文件也可以是文件夹
         }, {
             type: 'input',
             name: 'baseOutPath',
             message: '提取的Excel文件输出地址',
-            validate: valid.specialFolder,
             default (answers) {
                 return getDirname(answers.baseReadPath);
             }
@@ -119,12 +109,11 @@ const baseQuestions = [{
             type: 'input',
             name: 'baseTranslatePath',
             message: '待翻译文件根目录',
-            validate: valid.folder
+            validate: valid.folder // 必填，可以是文件也可以是文件夹
         }, {
             type: 'input',
             name: 'baseTransOutPath',
             message: '翻译后文件输出根目录',
-            validate: valid.specialFolder,
             default (answers) {
                 return getDirname(answers.baseTransOutPath);
             }
@@ -132,7 +121,7 @@ const baseQuestions = [{
             type: 'input',
             name: 'languagePath',
             message: '语言包文件地址',
-            validate: valid.filePath
+            validate: valid.existFile
         }, {
             type: 'input',
             name: 'hongPath',
@@ -159,7 +148,7 @@ const baseQuestions = [{
             type: 'input',
             name: 'valueName',
             message: 'value对应列', //指代代码中目前需要被替换的语言
-            default: '', // 空代表所有
+            default: 'CN', // ALL代表所有
             when(answers) {
                 return path.extname(answers.languagePath) !== '.json'
             }
@@ -173,7 +162,7 @@ const baseQuestions = [{
             type: 'input',
             name: 'langJsonPath',
             message: '语言包json文件地址',
-            validate: valid.filePath
+            validate: valid.existFile
         }, {
             type: 'input',
             name: 'hongPath',
@@ -183,7 +172,6 @@ const baseQuestions = [{
             type: 'input',
             name: 'logPath',
             message: '检查信息输出路径',
-            validate: valid.specialFolder,
             default (answers) {
                 return getDirname(answers.baseCheckPath);
             }
@@ -197,7 +185,7 @@ const baseQuestions = [{
             type: 'input',
             name: 'valueName',
             message: 'value对应列',
-            default: 'ALL' // 空代表所有
+            default: '' // ALL代表所有
         }, {
             type: 'input',
             name: 'sheetName',
@@ -207,12 +195,11 @@ const baseQuestions = [{
             type: 'input',
             name: 'excelPath',
             message: 'Excel文件地址',
-            validate: valid.filePath
+            validate: valid.existFile
         }, {
             type: 'input',
             name: 'outJsonPath',
             message: '输出json文件目录',
-            validate: valid.specialFolder,
             default (answers) {
                 return getDirname(answers.excelPath);
             }
@@ -221,12 +208,11 @@ const baseQuestions = [{
             type: 'input',
             name: 'jsonPath',
             message: 'json文件地址',
-            validate: valid.filePath
+            validate: valid.existFile
         }, {
             type: 'input',
             name: 'outExcelPath',
             message: '输出Excel文件目录',
-            validate: valid.specialFolder,
             default (answers) {
                 return getDirname(answers.jsonPath);
             }
@@ -235,19 +221,18 @@ const baseQuestions = [{
             type: 'input',
             name: 'mainJsonPath',
             message: '主json文件地址',
-            validate: valid.filePath
+            validate: valid.existFile
         }, {
             type: 'input',
             name: 'mergeJsonPath',
             message: '次json文件地址',
-            validate: valid.filePath
+            validate: valid.existFile
         }, {
             type: 'input',
             name: 'outMergeJsonPath',
             message: '合并后输出的地址',
-            validate: valid.specialFolder,
             default (answers) {
-                return getDirname(answers.baseJsonPath);
+                return getDirname(answers.mainJsonPath);
             }
         }]
     ];
@@ -256,7 +241,9 @@ const baseQuestions = [{
  * 忽略文件正则
  */
 const EXCLUDE_FILE = '**/{img,lang,b28,goform,cgi-bin,css}/**';
-const EXCLUDE_FILE_END = '**/{img,lang,b28,goform,cgi-bin,*.css,*.scss,*.less,*.svn,*.json,*.git,*.min.js,*shiv.js,*respond.js,*shim.js}';
+const EXCLUDE_FILE_END = '**/{img,lang,b28,goform,cgi-bin,*.min.js,*shiv.js,*respond.js,*shim.js}';
+const EXTNAME_JS = '**/*.js';
+const EXTNAME_HTML = '**/{*.aspx,*.asp,*.ejs,*.html,*.htm}';
 
 module.exports = {
     LOG_TYPE,
@@ -266,5 +253,7 @@ module.exports = {
     COMMAD_TEXT,
     questions,
     valid,
+    EXTNAME_HTML,
+    EXTNAME_JS,
     baseQuestions
 };

@@ -1,0 +1,1301 @@
+/* 变量定义 */
+$active-color: #ed7020;
+$font-color: #1e282f;
+$font-color-light: #a9b3bb;
+$bg-color: #eceff2;
+$form-line-height: 30px;
+$form-width:170px; /*组件宽度*/
+
+/* 功能函数定义 */
+@mixin opacity($opacity: 0.3) {
+  opacity: $opacity;
+  filter: alpha(opacity=$opacity * 100);
+}
+
+@mixin btn($border-color, $bg-color, $color:#fff) {
+  border-color: $border-color;
+  background-color: $bg-color;
+  color: $color;
+}
+
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+  -moz-border-radius: $radius;
+  border-radius: $radius;
+}
+
+@mixin shadow($s) {
+  -moz-box-shadow: $s;
+  -webkit-box-shadow: $s;
+  box-shadow: $s;
+}
+
+@mixin transition($t...) {
+  -moz-transition: $t;
+  -webkit-transition: $t;
+  transition: $t;
+
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -ms-backface-visibility: hidden;
+  backface-visibility: hidden;
+
+  -webkit-perspective: 1000;
+  -moz-perspective: 1000;
+  -ms-perspective: 1000;
+  perspective: 1000;
+}
+
+@mixin scale($s) {
+  -webkit-transform: scale($s);
+  -moz-transform: scale($s);
+  -ms-transform: scale($s);
+  -o-transform: scale($s);
+  transform: scale($s);
+}
+
+@mixin rotate($s) {
+  -webkit-transform: $s;
+  -moz-transform: $s;
+  -ms-transform: $s;
+  -o-transform: $s;
+  transform: $s;
+}
+
+@mixin transformOrigin($s){
+  -webkit-transform-origin: $s;
+  -moz-transform-origin: $s;
+  -ms-transform-origin: $s;
+  -o-transform-origin: $s;
+  transform-origin: $s;
+}
+
+/* 弹出框 */
+.md-overlay {
+  &.md-show {
+    background-color: #000;
+  }
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  visibility: hidden;
+  z-index: 1100;
+  opacity: 0;
+  background-color: transparent;
+  @include opacity(0.3);
+  @include transition(visibility 0.3s, opacity 0.3s);
+}
+
+.md-modal-wrap {
+  max-height: 100%;
+  top: 0;
+  right: 0;
+  left: 0;
+  position: fixed;
+  visibility: hidden;
+  z-index: 1101;
+  overflow: auto;
+  overflow-x: hidden;
+}
+
+.md-modal {
+  position: relative;
+  top: 0;
+  left: 50%;
+  float: left;
+  overflow: visible;
+  visibility: hidden;
+  border-radius: 4px;
+  max-width: 90%;
+  margin: 40px 0 0;
+
+  .md-content {
+    margin-bottom: 40px;
+    position: relative;
+    top: 0;
+    left: -50%;
+    // padding: 0 50px;
+    background: #fff;
+    min-width: 360px;
+    opacity: 0;
+    border-radius: 6px;
+    box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+
+    opacity: 0;
+    @include scale(0.7);
+    @include transition(visibility 0.3s, opacity 0.3s, transform 0.3s);
+  }
+
+  &.iniframe {
+    /* G0特有 */
+    margin-left: -115px;
+  }
+
+  .md-header, .md-close, .md-toolbar {
+    height: 80px;
+    font-size: 14px;
+    line-height: 80px;
+    text-align: center;
+  }
+
+  .md-header {
+    background-color: #fff;
+    padding: 0;
+    margin: 0 50px;
+    position: relative;
+  }
+
+  .md-title {
+    border-bottom: 1px solid #eee;
+    margin: 0;
+    font-size: 16px;
+    height: 100%;
+    line-height: 80px;
+    text-align: left;
+    font-weight: normal;
+    color: #333;
+  }
+
+  .md-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40px;
+    border: 0;
+    background-color: transparent;
+    outline:none;
+    cursor: pointer;
+    font-size: 24px;
+    @include transition(transform .3s);
+
+    &:link,
+    &:visited,
+    &:hover,
+    &:active {
+      outline: none;
+    }
+    &:hover{
+      @include rotate(rotateZ(180deg));
+    }
+  }
+
+  .md-con-body {
+    padding: 40px 50px 24px;
+    // min-width: 260px;
+    min-height: 100px;
+    max-width: 100%;
+    box-sizing: border-box;
+    transition: all 0.3s;  
+    word-wrap: break-word;
+    word-break: break-all;
+  }
+
+  .md-content iframe {
+    border: 0;
+  }
+
+}
+  .md-toolbar {
+    padding-left: 0;
+    /*border-top: 1px solid #eee;*/
+    text-align: center;
+
+    .md-btn {
+      border: 0;
+      padding: .4em 1em;
+      min-width: 100px;
+      box-sizing: border-box;
+      border: 1px solid $font-color-light;
+      margin: 0 1em;
+      cursor: pointer;
+      font-size: 14px;
+      @include btn($font-color-light, #fff, #333);
+      @include border-radius(4px);
+
+      &.ok, &.success {
+        @include btn($active-color, $active-color);
+      }
+
+      &.info {
+        @include btn(#46b8da, #5bc0de);
+      }
+
+      &.warning {
+        @include btn(#eea236, #f0ad4e);
+      }
+
+      &.danger {
+        @include btn(#d43f3a, #d9534f);
+      }
+
+      &.primary {
+        @include btn(#2e6da4, #286090);
+      }
+    }
+  }
+
+.modal-iframe, .overhiden {
+  overflow: hidden;
+}
+
+.modal-iframe {
+  width: 100%;
+  border: 0;
+}
+
+.md-show {
+  visibility: visible;
+  height: auto;
+  width: auto;
+  // opacity: 1;
+
+  .md-modal {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .md-content {
+    @include scale(1);
+    opacity: 1;
+  }
+}
+
+/* 弹出框 end */
+.form-mess-con{
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  margin-left: -120px;
+  width: 240px;
+  z-index: 9999;
+}
+
+.form-message {
+  width: 100%;
+  padding: 28px 8px;
+  margin-bottom: .2em;
+  color: #fff;
+  font-size: 14px;
+  text-align: center;
+  background-color: #000;
+  @include border-radius(5px);
+
+  &.ani-init {
+    transition: all 0.3s ease-out;
+    // transform: translateY(0);
+    margin-top: -75px;
+    @include opacity(0);
+  }
+
+  &.ani-final {
+    // transform: translateY(30px);
+    // margin-top: 0;
+    @include opacity(0.6);
+  }
+}
+
+/* 弹出框内部UI end */
+
+/* --- formtable --- */
+.form-table {
+  width: 100%;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #666;
+  text-align: left;
+}
+
+.form-table-th {
+  height: 40px;
+  font-weight: normal;
+  padding: 0 0 0 8px;
+  vertical-align: middle;
+  background-color: $bg-color;
+  border-bottom: 1px solid #fff;
+  text-align: center;
+  color: $active-color;
+
+  &.check{
+    padding-left: 1em;
+    width: 40px;
+  }
+}
+
+.sortabled {
+  cursor: pointer;
+  position: relative;
+  padding-right: 12px;
+
+  &:hover{
+    background-color: #e4e6e8;
+  }
+}
+
+.form-table-tr {
+  height: 50px;
+  color: #666;
+  background-color: #fff;
+  vertical-align: middle;
+  text-align: center;
+  border-bottom: 1px solid #fafafa;
+
+  td {
+    padding: 1em 0 0 1em;
+    vertical-align: middle;
+  }
+
+  &:hover {
+    background-color: $bg-color;
+  }
+}
+
+.form-table-empty {
+  height: 150px;
+}
+
+.form-table-footbar {
+  margin-bottom: 15px;
+}
+
+.select-page {
+  height: $form-line-height;
+  margin: 0 0.5em;
+  width: 50px;
+}
+
+.btn-page {
+  height: $form-line-height;
+  line-height: $form-line-height;
+  padding: 0 14px;
+  font-size: 13px;
+  color: #333;
+  border: 1px solid $font-color-light;
+  background-color: #fff;
+  margin-left: 3px;
+  cursor: pointer;
+  display: inline-block;
+
+  &:hover {
+    color: #ff6a17;
+  }
+
+  &.active {
+    @include btn(transparent, #fff, #ff6a17);
+  }
+
+  &.disabled {
+    color: #ccc;
+    background-color: #eee;
+    cursor: no-drop;
+    text-decoration: none;
+  }
+}
+
+.page-right {
+  float: right;
+}
+
+.disabled {
+  color: #ccc;
+  background-color: #eee;
+  cursor: no-drop;
+  text-decoration: none;
+}
+
+.page-left {
+  float: left;
+}
+
+.page-left, .page-right {
+  height: $form-line-height;
+  line-height: $form-line-height;
+}
+
+.page-total {
+  color: #aaa;
+  font-style: normal;
+  font-size: 13px;
+  padding: 0 1em;
+}
+
+/* --- formtable end --- */
+
+/**
+ * 表单组件
+ */
+.error {
+  border: 1px solid #f00;
+}
+
+.cm-title {
+  text-align: left;
+}
+
+.right .cm-title {
+  text-align: right;
+}
+
+.check-label {
+  position: relative;
+  display: inline-block;
+  margin-right: .5em;
+  top: 5px;
+  width: 34px;
+  height: 22px;
+  background-color: #fff;
+  box-sizing: border-box;
+  border: 2px solid #cdcdcd;
+  cursor: pointer;
+  @include border-radius(23px);
+  @include shadow(none);
+  @include transition(all .2s);
+
+  &:before {
+    content: "";
+    position: absolute;
+    left: -2px;
+    top: -2px;
+    width: 22px;
+    height: 22px;
+    background-color: #fff;
+    box-sizing: border-box;
+    border: 2px solid #c9c9c9;
+    @include border-radius(14px);
+    @include shadow(none);
+    @include transition(all .2s);
+  }
+
+  &.active {
+    background-color: $active-color;
+    border: 2px solid $active-color;
+  }
+}
+
+.active.check-label:before {
+  left: 12px;
+  width: 22px;
+  height: 22px;
+  background-color: #fff;
+  border-color: $active-color;
+}
+
+.form-container {
+  line-height: $form-line-height;
+  font-size: 14px;
+  margin: 0;
+  min-width: 170px;
+  display: inline-block;
+
+  .form-radiolist, .form-checklist {
+    vertical-align: text-bottom;
+    margin-bottom: 2px;
+    margin-right: 4px;
+  }
+
+  .form-label {
+    padding: 0 2em 0 0;
+    cursor: pointer;
+    margin-bottom: 0;
+  }
+}
+
+.host-name {
+  margin-bottom: 0;
+}
+.form-multi{
+  line-height: $form-line-height;
+  font-size: 14px;
+  margin: 0;
+  min-width: 170px;
+  display: inline-block;
+}
+.form-input {
+  height: $form-line-height;
+  line-height: $form-line-height - 2px;
+  padding-left: 12px;
+  box-sizing: border-box;;
+  border: 1px solid $font-color-light;
+}
+.form-select, .form-input{
+  width: $form-width;
+  border-radius: 2px;
+}
+
+.form-inputread {
+  height: $form-line-height;
+  line-height: $form-line-height;
+  width: $form-width;
+  position: relative;
+
+  .edit-icon {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    margin-top: -0.5em;
+    cursor: pointer;
+  }
+}
+
+.form-inputmess {
+  padding-right: 1em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.form-row {
+  position: relative;
+  line-height: 50px;
+  font-size: 14px;
+
+  &:after {
+    content: "";
+    display: block;
+    visibility: hidden;
+    height: 0;
+    clear: both;
+  }
+
+  .form-title {
+    text-align: right;
+    margin: 0;
+    color: #666;
+    line-height: 50px;
+    font-weight: normal;
+  }
+
+  .form-text {
+    color: #333;
+  }
+}
+
+.form-hideerror {
+  position: absolute;
+  top: 50%;
+  margin-top: -7px;
+  cursor: pointer;
+  color: #f60;
+  font-size: 14px;
+}
+
+.form-error {
+  border-radius: 2px;
+  font-size: 14px;
+  padding: 5px 6px;
+  max-width: 180px;
+  min-width: 100px;
+  line-height: 18px;
+  left: 100px;
+  color: #f00;
+  margin: 0;
+  cursor: pointer;
+  position: absolute;
+  z-index: 111;
+  border: 1px solid #c93;
+  background-color: #ffc;
+
+  &:before {
+    content: "";
+    height: 0;
+    width: 0;
+    border: 8px solid transparent;
+    position: absolute;
+    left: -16px;
+    //margin-top: -8px;
+    top: 6px;
+  }
+
+  &:after {
+    content: "";
+    height: 0;
+    width: 0;
+    border: 8px solid transparent;
+    position: absolute;
+    left: -15px;
+    top: 6px;
+    //margin-top: -8px;
+  }
+}
+
+.error-left {
+  &.form-error:before {
+    border-right-color: #a96b01;
+  }
+
+  &.form-error:after {
+    border-right-color: #ffc;
+  }
+}
+
+.error-top {
+  &.form-error:before {
+    border-bottom: 8px solid #a96b01;
+    left: 1em;
+    top: -16px;
+    margin-top: 0;
+  }
+  &.form-error:after {
+    border-bottom: 8px solid #ffc;
+    left: 1em;
+    top: -15px;
+    margin-top: 0;
+  }
+}
+
+.error-tip {
+  outline: 1px solid #f00;
+  border-color: transparent;
+
+  &.form-input {
+    outline: 0;
+    border: 1px solid #f00;
+  }
+}
+
+.hide{
+  visibility: hidden;
+}
+
+.form-select {
+  height: $form-line-height;
+  padding: 3px 0 3px 8px;
+  border: 1px solid #a9b3bb;
+}
+
+.none {
+  display: none;
+}
+
+.hide{
+  visibility: hidden;
+}
+
+.control-wrap {
+  position: relative;
+}
+
+.form-title, .form-content {
+  float: left;
+  margin: 0;
+  padding-left: 15px;
+  position: relative;
+}
+.col-xs-6.form-title{
+  width: 43.3%;
+}
+.form-title {
+  line-height: $form-line-height;
+  width: 33.3%;
+  text-align: right;
+}
+
+.form-content {
+  width: 62.6%;
+}
+
+.form-wrap .control-wrap {
+  margin-bottom: 15px;
+}
+
+.table-icon {
+  color: #666;
+  padding: 12px 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.table-icon:hover {
+  color: #914514;
+  text-decoration: none;
+}
+
+.active-text {
+  color: #009F05;
+}
+
+.cell-red {
+  border: 1px solid #f00;
+  color: #f00;
+  border-radius: 3px;
+  padding: 2px;
+  font-size: 12px;
+  margin-left: 0.5em;
+}
+
+/*---------- dropdownlist -------- start----*/
+
+.dropdownlist {
+  position: relative;
+  height: $form-line-height;
+  // font-size: 0;
+
+  .drop-handle {
+    height: $form-line-height;
+    border: 1px solid $font-color-light;
+    border-radius: 3px;
+    width: $form-width;
+    padding:0 0 0 0;
+    box-sizing: border-box;
+    position: relative;
+    cursor: pointer;
+    line-height: $form-line-height - 2px;
+    font-size: 14px;
+    background-color: #fff;
+  }
+
+  .drop-list {
+    font-size: 14px;
+  }
+
+  .drop-btn:before {
+    content: "";
+    width: 0;
+    height: 0;
+    position: absolute;
+    border: 5px solid transparent;
+    border-width: 6px 3px;
+    border-top-color: #555;
+    top: 50%;
+    left: 50%;
+    margin-top: -3px;
+    margin-left: -3px;
+  }
+
+  .control-wrap {
+    font-size: 0;
+  }
+
+  .form-input {
+    width: 100%;
+    font-size: 14px;
+    line-height: inherit;
+    height: 28px;
+    border: 0 !important;
+  }
+
+  .drop-btn {
+    background-color: #fff;
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    height: 100%;
+    border-radius: 0 3px 3px 0;
+    width: $form-line-height;
+    border: 1px solid $font-color-light;
+    border-left: 0;
+    cursor: pointer;
+    box-sizing: content-box;
+  }
+
+  .drop-text-wrap {
+    width: 100%;
+    height: $form-line-height - 2px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0 $form-line-height 0 0;
+  }
+}
+
+.drop-list,
+.drop-list li {
+  padding: 0;
+  margin: 0;
+}
+
+.drop-list {
+  display: none;
+  list-style: none;
+  border: 1px solid $font-color-light;
+  border-radius: 0 0 3px 3px;
+  background-color: #fff;
+  box-shadow: 0 0px 5px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  /*min-width: $form-width;*/
+  z-index: 1000;
+  box-sizing: border-box;
+  max-height: 300px;
+  overflow: auto;
+  overflow-x: hidden;
+  background-color: #fff;
+  top: 29px;
+
+  &.top {
+    top: auto;
+    bottom: 29px;
+  }
+}
+
+.dropdownlist-item {
+  &.active {
+    background-color: #4b9bed;
+    border-bottom: 0;
+
+    .drop-item-btn {
+      color: #fff;
+    }
+  }
+
+  &:hover {
+    background-color: #4b9bed;
+  }
+}
+
+.drop-item-btn {
+  text-align: left;
+  height: 24px;
+  display: block;
+  line-height: 24px;
+  font-size: 12px;
+  padding-right: 10px;
+  color: #565656;
+  min-width: 100%;
+  white-space: nowrap;
+  cursor: pointer;
+  padding-left: 12px;
+
+  &:hover {
+    background-color: #4b9bed;
+    color: #fff;
+    text-decoration: none;
+  }
+}
+
+.drop-text {
+  display: block;
+  padding-left: 12px;
+  width: 100%;
+  height:100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.table .form-control {
+  width: 140px;
+  min-width: 140px;
+}
+
+/*----------- end ---------- end ----*/
+
+/*----------- 日历组件 ------------*/
+.form-calendar {
+  border-left: 1px solid $font-color-light;
+  border-top: 1px solid $font-color-light;
+  width: 197px;
+  /*font-family: '微软雅黑', arial,sans-serif;*/
+  border-right: 0;
+  position: absolute;
+  background-color: #fff;
+  z-index: 2000;
+}
+
+dl, dt, dd {
+  margin: 0;
+  padding: 0;
+}
+
+.form-calendar {
+  dl {
+    list-style: none;
+    font-size: 0;
+
+    dt, dd a {
+      display: inline-block;
+      width: 28px;
+      height: 26px;
+      text-align: center;
+      line-height: 24px;
+      font-size: 14px;
+      border-bottom: 1px solid $font-color-light;
+      border-right: 1px solid $font-color-light;
+    }
+
+    dt.form-calen-head {
+      display: block;
+      width: 196px;
+      font-size: 14px;
+
+      a {
+        cursor: pointer;
+        line-height: 24px;
+        height: 26px;
+        width: 28px;
+
+        &.fc-left {
+          border-right: 1px solid $font-color-light;
+          float: left;
+        }
+        &.fc-right {
+          border-left: 1px solid $font-color-light;
+          float: right;
+        }
+      }
+
+      select {
+        margin: 0 2px;
+        font-size: 12px;
+        height: 20px;
+      }
+    }
+  }
+
+  .select-wrap {
+    float: left;
+    line-height: 26px;
+    width: 138px;
+    text-align: center;
+  }
+
+  dl dd a {
+    cursor: pointer;
+
+    &.today {
+      color: $active-color;
+    }
+
+    &.selected {
+      background-color: $font-color-light;
+    }
+
+    &.last, &.next {
+      color: #BDB8B8;
+    }
+  }
+}
+
+/*----------- 日历组件 end------------*/
+.formtab {
+  .btn-tab{
+    line-height: 34px;
+    display: inline-block;
+    text-decoration: none;
+    cursor: pointer;
+    background-color: #fff;
+  }
+
+  &.bg-theme{
+    .btn-tab {
+      padding: 0 1em;
+      color: $active-color;
+      border: 1px solid $active-color;
+      border-right: 0;
+  
+      &.first {
+        border-radius: 3px 0 0 3px;
+      }
+  
+      &.last {
+        border-radius: 0 3px 3px 0;
+        border-right: 1px solid $active-color;
+      }
+  
+      &.active {
+        background-color: $active-color;
+        color: #fff;
+      }
+    }
+  }
+  
+  &.line-theme{
+    .btn-tab {
+      padding: 0 2px;
+      margin-right: 1em;
+      color: #000;
+      border-bottom: 2px solid #aaa;
+
+      &.active {
+        color: #f60;
+        border-bottom: 2px solid #f60;
+      }
+    }
+  }
+}
+
+.form-row-title {
+  border-top: 1px solid #e4e4e4;
+  padding: 35px 0 0 0;
+  position: relative;
+  top: 35px;
+}
+
+.form-description {
+  font-style: normal;
+  margin-left: .5em;
+  font-size: 13px;
+  color: #999;  
+  position: relative;
+  position: absolute;
+  background-color: transparent;
+  line-height: $form-line-height;
+  white-space: nowrap;
+}
+
+.form-input-min {
+  width: 100%;
+
+  input {
+    width: 140px;
+    min-width: 140px;
+  }
+}
+
+.form-control.disabled, .form-control.disabled .drop-btn {
+  background-color: $bg-color;
+  cursor: no-drop;
+}
+
+.form-input-eyes {
+  height: 100%;
+  width: 30px;
+  cursor: pointer;
+  text-align: center;
+  position: absolute;
+  line-height: 30px;
+  line-height: 30px;
+  left: 0;    
+  top: 50%;
+  margin-top: -9px;
+  font-size: 18px;
+  z-index: 11;
+}
+
+.active.icon-eyes-close:before {
+  content: "\e909";
+}
+
+.table-sort {
+  position: absolute;
+
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #acacad;
+  font-size: 12px;
+  right: 4px;
+  height: 14px;
+  width: 10px;
+  top: 50%;
+  margin-top: -7px;
+  margin-top: -4px\9;
+
+  &:before {
+    content: '\e917';
+    position: absolute;
+    top: 6px;
+    
+    @include scale(0.7);
+    zoom: 0.7\9;
+    @include transformOrigin(top center);
+  }
+
+  &:after {
+    content: '\e918';
+    position: absolute;
+    top: -4px;
+    
+    @include scale(0.7);
+    zoom: 0.7\9;
+    @include transformOrigin(bottom center);
+  }
+}
+
+//降序
+.desc.table-sort {
+  &:before {
+    top: 0;
+    @include transformOrigin(center center);
+  }
+  &:after {
+    content: '';
+  }
+}
+
+//升序
+.asc.table-sort {
+  &:before {
+    content: '';
+  }
+  &:after {
+    top: 0;
+    @include transformOrigin(center center);
+  }
+
+}
+
+.form-disabled{
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+.ellipsis{
+    display: block;
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: nowrap;
+}
+
+.info-hidden-flag{
+  letter-spacing: 4px;
+  padding: 0 6px;
+}
+
+.bold{
+  color: #a94442;
+}
+
+.gray{
+  color: #a9b3bb;
+}
+
+.cm-footbar{
+  text-align: left;
+  padding: 1em 1em 1em 26%
+}
+
+.form-multi-wrap{
+  display: inline-block;
+
+  .form-multi-input{
+    display:inline-block;
+    width: 30px;
+    margin: 0 2px;
+    padding: 0;
+    padding-left:4px;
+  }
+}
+.form-multi-input .form-input{
+  width:100%;
+}
+
+.form-percent{
+  height: 30px;
+  padding-top: 9px;
+}
+
+.form-per-wrap{
+  width:$form-width;
+  height: 10px;
+  border-radius: 3px;
+  background-color: #ededed;
+  position: relative;
+  border: 1px solid #ccc;
+
+  .form-per-val{
+    font-size: 12px;
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    min-width: 28px;
+    margin-left: -14px;
+    border-radius: 2px;
+    color: #fff;
+    padding: 1px 0;
+    text-align: center;
+    background-color: #ababab;
+    display: none;
+    &:hover{
+      display: block;
+    }
+
+    &::before{
+      content: "";
+      position: absolute;
+      height: 0;
+      width: 0;
+      top: 100%;
+      left: 50%;
+      margin-left: -3px;
+      border: 3px solid transparent;
+      border-top-color: #ababab;
+    }
+  }
+
+  .form-per-bar{
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    cursor: move;
+    top: 50%;
+    left:0;
+    margin-top: -8px;
+    background-color: transparent;
+
+    .bar{
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      left: 0;
+      background-color: #ededed;
+      border: 1px solid #cccccc;
+      border-radius: 2px;
+    }
+  }
+  .form-per-s,.form-per-e{
+    font-style: normal;
+    position: absolute;
+    top: 100%;
+    margin-top: 2px;
+    font-size: 12px;
+    color: #9e9e9e;
+  }
+
+  .form-per-s{
+    left: 0;
+  }
+
+  .form-per-e{
+    right: 0;
+  }
+}
+
+.form-upload{
+  height: $form-line-height;
+  line-height: $form-line-height;
+
+  .form-upload-text{
+    height: 100%;
+    border: 0;
+    background-color: #e3e3e3;
+    border: 1px solid $font-color-light;
+    border-right: 0;
+    @include border-radius(4px 0 0 4px);
+    padding-left: 1em;
+    
+    vertical-align: top;
+    line-height: $form-line-height;
+  }
+
+  .form-upload-btn{
+    height: 100%;
+    border: 0;
+    cursor: pointer;
+    padding: 0 1em;
+    @include border-radius(0 4px 4px 0);
+    background-color: #fff;
+    border: 1px solid $font-color-light;
+  }
+
+  .form-upload-file{
+    display: none;
+  }
+
+  .form-btn-up{
+    margin-left: 2em;
+    background-color: #009f05;
+    border-color: #009f05;
+    @include border-radius(4px);
+    color: #fff;
+  }
+}

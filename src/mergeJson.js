@@ -12,10 +12,10 @@ function merge(obj, ...others) {
 
 function mergeJson(main, file, outPath) {
     let promises = [];
-    promises.push(loadJson(main));
     file.split(',').forEach(item => {
         promises.push(loadJson(item));
     });
+    promises.push(loadJson(main));
 
     return Promise.all(promises).then(data => {
         return merge(...data);

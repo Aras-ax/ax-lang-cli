@@ -1,0 +1,64 @@
+<!doctype html>	
+<head>
+    <meta charset="utf-8">
+    <title>你好，标题</title>
+    <link rel="stylesheet" type="text/css" href="css/screen.css">
+    <script src="js/b28n_async.js"></script>
+    <script>
+        B.setTextDomain(["translate"]);
+</script>
+</head>
+
+<body class="inner-window">
+    <div class="middle-header clearfix" style="padding-top: 0px;">
+    </div>
+    <div data-nowrap="1">注意：<b id="doReboot">重置</b>为正确项。</div>
+    <div data-nowrap="1">注意：我也不知道<b id="doRebootKiKi">这个</b>怎么翻译。</div>
+    <div id="main-info-box">
+        <div class="access-controls controls">
+            <div style="float: left;">
+                <label class="control-label" data-title="这个是data-title" data-lang="data-lang词条">随机码：</label>
+                <a id="accessUrl" href="" target="_blank" style="color:#2ca0ad;">http://localhost/new_svn/web_ipcomv2/generateCode.html?123456</a>
+            </div>
+            <div style=" width:258px;float: right;">
+                <button id="copy_input" class="btn btn-ok-small" data-lang="复制">复制</button>
+                <button id="reGenerate" class="btn btn-ok-small" data-lang="重生">reBorn</button>
+            </div>
+            <div style="clear: both;"><pre class="access-label-info">农村人不知道这是个啥</pre></div>
+        </div>
+        <div class="access-controls controls" data-hong="CONFIG_ADVANCE_DDNS">
+            <label class="control-label" data-lang="什么鬼">这个又是什么鬼</label>
+            <label class="checkbox" for="noAuth">
+                <input type="radio" name="generationMethod" value="0" id="noAuth" checked=""><span data-lang="Login">White Auth</span>
+            </label>
+            <label class="checkbox" for="idCard">
+                <input type="radio" name="generationMethod" value="1" id="idCard"><span data-lang="身份证">身份证</span>
+            </label>
+            <label class="checkbox" for="phoneNum">
+                <input type="radio" name="generationMethod" value="2" id="phoneNum"><span data-lang="电话号码">电话号码</span>
+            </label>
+        </div>
+        <div class="access-controls controls" data-hong="CONFIG_ADVANCE_FALSE">
+            <label class="control-label" data-lang="defTime">默认有效使用时长：</label>
+            <input type="text" id="day" class="input-minic" value="00"><span class="access-label" data-lang="day">天</span>
+            <input type="text" id="hour" class="input-minic" value="01"><span class="access-label" data-lang="hour">小时</span>
+            <input type="text" id="minute" class="input-minic" value="00"><span class="access-label" data-lang="minute">分钟</span>
+            <div><span class="access-label-info" data-lang="allTime">设置随机密码可以使用的总时长，不限制请填0.</span></div>
+        </div>
+        <!-- <div class=" controls">
+            <label class="control-label" data-lang="">密码条Logo设置：</label>
+            <img src="" id="adPicName">
+            <label id="fileLabel" class="file" for="_addPic">浏览<input type="file" name="_adPic" id="_addPic"></label>
+        </div> -->
+        <div class="controls">
+            <label id="btnLabel" class="control-label"></label>
+            <input type="button" class="btn btn-ok-small" id="save" value="保存" data-lang="保存1">
+        </div>
+    </div>
+    <div class="main-bottom clearfix">
+        <div id="page" class="no-text-select"></div>
+    </div>
+    <div id="saveMsg" class="none"></div>
+
+
+</body>
