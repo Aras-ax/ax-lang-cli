@@ -49,7 +49,7 @@ describe('全功能，统一入口，功能正确性验证', () => {
             onlyZH: false,
             hongPath
         }).then(data => {
-            return expect(data).toEqual(words);
+            return expect(data.sort()).toEqual(words.sort());
         });
     });
 
@@ -75,8 +75,8 @@ describe('全功能，统一入口，功能正确性验证', () => {
             languagePath: 'D:/Git/translate/test/TestFile/testData/allTest/translate.xlsx',
             hongPath,
             sheetName: '',
-            keyName: 'CN',
-            valueName: 'EN'
+            keyName: 'EN',
+            valueName: 'CN'
         }).then(data => {
             return expect(data).toEqual([]);
         });

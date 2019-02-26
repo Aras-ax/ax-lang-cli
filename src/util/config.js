@@ -3,14 +3,7 @@ const fs = require('fs');
 
 const { getDirname } = require('./index');
 
-/**
- * 不同消息不同的log打印
- */
-const LOG_TYPE = {
-    warning: 1,
-    error: 2,
-    log: 3
-};
+const CONFIG_FILE_NAME = 'b28.config.js';
 
 const COMMAD = {
     /**
@@ -44,14 +37,18 @@ const COMMAD_TEXT = ['提取词条', '翻译文件', '翻译检查', 'Excel转JS
 const valid = {
     // 空或者存在的地址
     specialfile(val) {
-        if (val === '' || val === undefined) {
+        val = val || '';
+        val = val.replace(/(^\s*)|(\s*$)/g, '');
+        if (val === '') {
             return true;
         }
 
         return valid.existFile(val);
     },
     folder(val) {
-        if (val === '' || val === undefined) {
+        val = val || '';
+        val = val.replace(/(^\s*)|(\s*$)/g, '');
+        if (val === '') {
             return '必填';
         }
         if (!path.isAbsolute(val)) {
@@ -64,9 +61,12 @@ const valid = {
     },
     // 存在的文件非文件夹
     existFile(val) {
-        if (val === '' || val === undefined) {
+        val = val || '';
+        val = val.replace(/(^\s*)|(\s*$)/g, '');
+        if (val === '') {
             return '必填';
         }
+
         if (!path.isAbsolute(val)) {
             val = path.resolve(process.cwd(), val);
         }
@@ -124,15 +124,15 @@ const baseQuestions = [{
             }
         }, {
             type: 'input',
-            name: 'languagePath',
-            message: '语言包文件地址：',
-            validate: valid.existFile
-        }, {
-            type: 'input',
             name: 'hongPath',
             message: '宏文件地址：',
             default: '',
             validate: valid.specialfile
+        }, {
+            type: 'input',
+            name: 'languagePath',
+            message: '语言包文件地址：',
+            validate: valid.existFile
         }, {
             type: 'input',
             name: 'sheetName',
@@ -183,6 +183,16 @@ const baseQuestions = [{
         }],
         [{
             type: 'input',
+            name: 'excelPath',
+            message: 'Excel文件地址：',
+            validate: valid.existFile
+        }, {
+            type: 'input',
+            name: 'sheetName',
+            message: 'Excel中对应的sheet：',
+            default: ''
+        }, {
+            type: 'input',
             name: 'keyName',
             message: 'key对应列：',
             default: 'EN'
@@ -191,16 +201,6 @@ const baseQuestions = [{
             name: 'valueName',
             message: 'value对应列：',
             default: '' // ALL代表所有
-        }, {
-            type: 'input',
-            name: 'sheetName',
-            message: 'Excel中对应的sheet：',
-            default: ''
-        }, {
-            type: 'input',
-            name: 'excelPath',
-            message: 'Excel文件地址：',
-            validate: valid.existFile
         }, {
             type: 'input',
             name: 'outJsonPath',
@@ -251,9 +251,9 @@ const EXTNAME_JS = '**/*.js';
 const EXTNAME_HTML = '**/{*.aspx,*.asp,*.ejs,*.html,*.htm}';
 
 module.exports = {
-    LOG_TYPE,
     EXCLUDE_FILE,
     EXCLUDE_FILE_END,
+    CONFIG_FILE_NAME,
     COMMAD,
     COMMAD_TEXT,
     questions,

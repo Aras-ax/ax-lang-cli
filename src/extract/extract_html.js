@@ -3,12 +3,9 @@ const {
 } = require("jsdom");
 const {
     log,
-    loadFile,
+    LOG_TYPE,
     trim
 } = require('../util/index');
-const {
-    LOG_TYPE
-} = require('../util/config');
 
 const HANDLE_ATTRIBUTE = ['alt', 'placeholder', 'title', 'data-title'];
 const Edit_TYPE = {
@@ -121,7 +118,7 @@ class ExtractHTML extends Extract {
                                     nextSibling && this.listNode(nextSibling);
                                 })
                                 .catch(error => {
-                                    log(error, LOG_TYPE.error);
+                                    log(`内联JS处理出错- ${error}`, LOG_TYPE.error);
                                     nextSibling && this.listNode(nextSibling);
                                 });
                         } else {
@@ -152,7 +149,7 @@ class ExtractHTML extends Extract {
                         curValue.msg = this.getWord(curValue.msg);
                         curValue.msg && this.transWord(element, Edit_TYPE.attribute, JSON.stringify(curValue), 'data-options');
                     } catch (e) {
-                        log("data-option 不是json格式数据", LOG_TYPE.error);
+                        log("data-option 不是json格式数据", LOG_TYPE.WARNING);
                     }
                 } else {
                     curValue = this.getWord(element.getAttribute("data-lang"));

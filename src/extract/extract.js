@@ -2,11 +2,10 @@ const {
     log,
     loadFile,
     trim,
+    LOG_TYPE,
     writeTextFile
 } = require('../util/index');
-const {
-    LOG_TYPE
-} = require('../util/config');
+
 const path = require('path');
 
 /**
@@ -47,7 +46,7 @@ class Extract {
     }
 
     handleFile(filePath) {
-        log(`开始提取文件[${filePath}]`);
+        log(`开始提取文件-${filePath}`);
         this.isWorking = true;
         this.curFilePath = filePath;
         return loadFile(filePath)
@@ -60,14 +59,14 @@ class Extract {
             .then((fileData) => {
                 if (this.option.isTranslate) {
                     // 写入文件
-                    log(`翻译文件[${filePath}]`);
+                    log(`翻译文件-${filePath}`);
                     writeTextFile(path.resolve(this.option.baseWritePath, path.relative(this.option.baseReadPath, this.curFilePath)), fileData);
                 }
                 this.complete();
                 return this.startTrans();
             })
             .catch(error => {
-                log(error, LOG_TYPE.error);
+                log(`文件处理出错- ${error}`, LOG_TYPE.ERROR);
             });
     }
 

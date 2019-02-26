@@ -1,4 +1,4 @@
-const { mergeObject, loadJson, writeJson } = require('./util/index');
+const { mergeObject, loadJson, writeJson, LOG_TYPE, log } = require('./util/index');
 const path = require('path');
 
 function merge(obj, ...others) {
@@ -26,10 +26,10 @@ function mergeJson(main, file, outPath) {
         }
 
         return writeJson(data, outPath).then((data) => {
-            console.log(`Merge Json文件已写入地址：${outPath}`);
+            log(`Merge Json 文件已写入地址-${outPath}`);
             return data;
         }).catch((error) => {
-            console.error(`Merge Json失败，${error}`);
+            log(`Merge Json 失败，${error}`, LOG_TYPE.ERROT);
             return {};
         });
     });

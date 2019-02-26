@@ -1,13 +1,13 @@
 const handle = require('./handle');
-const { COMMAD, valid, questions, baseQuestions, COMMAD_TEXT } = require('./util/config');
-const { getDirname } = require('./util/index');
+const { COMMAD, valid, questions, baseQuestions, COMMAD_TEXT, CONFIG_FILE_NAME } = require('./util/config');
+const { getDirname, LOG_TYPE, log } = require('./util/index');
 
 const path = require('path');
 const fs = require('fs');
 const inquirer = require('inquirer');
 
 let cwd = process.cwd();
-let configFilepath = path.join(cwd, 'b281.config.js');
+let configFilepath = path.join(cwd, CONFIG_FILE_NAME);
 
 //将命令和参数分离
 
@@ -77,7 +77,7 @@ function gerArgs() {
 
 function main(config) {
     if (config || fs.existsSync(configFilepath)) {
-        console.log('读取配置···');
+        log('读取配置···');
         config = config || require(configFilepath);
         return correctCfg(config);
     } else {
@@ -104,18 +104,18 @@ function getCfg() {
  */
 function correctCfg(cfg) {
     if (cfg.commandType === undefined || cfg.commandType === '') {
-        console.error('请选择您需要使用的功能！');
+        log('请选择您需要使用的功能！', LOG_TYPE.WARNING);
         return getCfg();
     }
 
-    console.log(`您已选择[${COMMAD_TEXT[cfg.commandType]}]功能；`);
+    log(`您已选择-${COMMAD_TEXT[cfg.commandType]}功能；`);
 
     fullPath(cfg);
 
     let error = validate[cfg.commandType](cfg);
 
     if (error) {
-        console.error('参数配置错误，请重新配置：');
+        log('参数配置错误，请重新配置！', LOG_TYPE.WARNING);
 
         return inquirer.prompt(questions[cfg.commandType]).then(answers => {
             answers.commandType = cfg.commandType;
@@ -132,8 +132,9 @@ function fullPath(cfg) {
 
     // 将相对地址转为绝对地址
     fullField.forEach(field => {
-        let val = cfg[field];
-        if (val == '' || val === undefined) {
+        let val = cfg[field] || '';
+        val = val.replace(/(^\s*)|(\s*$)/g, '');
+        if (val == '') {
             return true;
         }
 

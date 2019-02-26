@@ -5,8 +5,7 @@ const {
     EXCLUDE_FILE,
     EXCLUDE_FILE_END,
     EXTNAME_JS,
-    EXTNAME_HTML,
-    LOG_TYPE
+    EXTNAME_HTML
 } = require('../src/util/config');
 
 const ExtractHTML = require('./extract/extract_html');
@@ -18,6 +17,7 @@ const {
     copyFile,
     writeExcel,
     correctPath,
+    LOG_TYPE,
     log
 } = require('./util/index');
 
@@ -45,14 +45,12 @@ class ExtractFile {
         this.outData = [];
 
         if (this.option.config_hong_path) {
-            console.log(this.option.config_hong_path);
             try {
                 require(this.option.config_hong_path);
                 this.CONFIG_HONG = (global.R && global.R.CONST) || {};
-                // global.R = null;
             } catch (e) {
                 this.CONFIG_HONG = {};
-                console.error(`宏文件解析错误，宏文件地址【${this.option.config_hong_path}】`);
+                log(`宏文件解析错误，宏文件地址-${this.option.config_hong_path}`, LOG_TYPE.WARNING);
             }
         }
 
@@ -125,7 +123,7 @@ class ExtractFile {
             let sheetName = this.extractJS.option.onlyZH ? 'CN' : 'EN';
 
             if (this.option.isTranslate) {
-                console.log(`翻译后的文件输出到路径【${this.option.baseWritePath}】下.`)
+                log(`翻译后的文件输出到路径-${this.option.baseWritePath}下.`);
             } else if (!this.option.isCheckTrans) {
                 this.outData.unshift(sheetName);
             }
@@ -136,14 +134,16 @@ class ExtractFile {
                 this.writeWordToExcel(outPath, sheetName);
 
                 if (this.option.isTranslate || this.option.isCheckTrans) {
-                    console.error(`还有部分词条未被翻译，见输出的Excel【${outPath}】`);
+                    log(`还有部分词条未被翻译，见输出的Excel-${outPath}`, LOG_TYPE.WARNING);
                 }
+            } else if (this.option.isTranslate || this.option.isCheckTrans) {
+                log(`success, 未发现未翻译的词条`);
             }
             //重置
             this.reset();
             return this.outData;
         }).catch(err => {
-            console.error(err);
+            log(`文件处理出错，${err}`, LOG_TYPE.ERROR);
         });
     }
 
@@ -161,7 +161,9 @@ class ExtractFile {
     writeWordToExcel(outPath, sheetName) {
         writeExcel(this.outData, outPath, sheetName)
             .then(() => {
-                log(`语言文件输出为[${outPath}]`);
+                if (!this.option.isTranslate && !this.option.isCheckTrans) {
+                    log(`语言文件输出为-${outPath}`);
+                }
             })
             .catch(error => {
                 log(error.message, LOG_TYPE.error);

@@ -1,19 +1,30 @@
 {
-    "name": "translate-cli",
+    "name": "b28-cli",
     "version": "1.0.0",
     "description": "语言提取和替换",
-    "main": "index.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
+    "main": "./index.js",
     "bin": {
         "b28-cli": "index.js"
     },
     "author": "moshang",
+    "keywords": [
+        "translation",
+        "b28",
+        "Excel2JSON",
+        "JSON2Excel",
+        "translate file",
+        "mergeJSON",
+        "mergeObject",
+        "getWords",
+        "gettext"
+    ],
     "license": "ISC",
     "repository": {
         "type": "git",
         "url": "https://github.com/moshang-xc/translate-cli.git"
+    },
+    "scripts": {
+        "test": "cd test & jest"
     },
     "devDependencies": {
         "escodegen": "^1.11.0",

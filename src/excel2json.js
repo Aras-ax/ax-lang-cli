@@ -1,4 +1,13 @@
-const { loadExcel, writeJson, formatKey, decodeKey, writeExcel } = require('./util/index');
+const {
+    loadExcel,
+    writeJson,
+    formatKey,
+    decodeKey,
+    writeExcel,
+    log,
+    LOG_TYPE
+} = require('./util/index');
+
 const path = require('path');
 
 /**
@@ -15,7 +24,7 @@ function excel2json(option) {
         option.value = option.value.toUpperCase();
     }
     if (data.length === 0) {
-        console.error(`数据为空，可能是sheetname不存在导致的`);
+        log(`数据为空，可能是sheetname不存在导致的`, LOG_TYPE.WARNING);
         return Promise.resolve([]);
     }
     data = transferData(data, option);
@@ -25,10 +34,10 @@ function excel2json(option) {
             let outPath = path.join(option.outPath, option.fileName || 'lang.json');
 
             return writeJson(data, outPath).then((data) => {
-                console.log(`Excel to Json文件已写入地址：${outPath}`);
+                log(`Excel to Json文件已写入地址-${outPath}`);
                 return data;
             }).catch((error) => {
-                console.error(`Excel to Json失败，${error}`);
+                log(`Excel to Json失败，${error}`, LOG_TYPE.ERROR);
                 return {};
             });
         } else {
@@ -40,15 +49,15 @@ function excel2json(option) {
                 promiseList.push(writeJson(data[key], outPath));
             }
             return Promise.all(promiseList).then((data1) => {
-                console.log(`Excel to Json文件已写入地址：${option.outPath}`);
+                log(`Excel to Json文件已写入文件夹-${option.outPath}下`);
                 return data;
             }).catch((error) => {
-                console.error(`Excel to Json失败，${error}`);
+                log(`Excel to Json失败，${error}`, LOG_TYPE.ERROR);
                 return {};
             });
         }
     } else {
-        console.log(`Excel to Json成功，无需保存到本地`);
+        log(`Excel to Json成功，无需保存到本地`);
         return Promise.resolve(data);
     }
 }

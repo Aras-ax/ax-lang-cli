@@ -1,12 +1,12 @@
-const LOG_TYPE = {
-    warning: 1,
-    error: 2,
-    log: 3
-};
-
 const fs = require('fs');
 const path = require('path');
 const xlsx = require('node-xlsx').default;
+
+const LOG_TYPE = {
+    WARNING: 1,
+    ERROR: 2,
+    LOG: 3
+};
 
 /**
  * 对字符串重新编码，字符串前面加上8位的特殊编码
@@ -104,12 +104,15 @@ function writeJson(data, outPath) {
  * @param {String} message 日志信息
  * @param {Number} type 日志类型
  */
-function log(message, type) {
+function log(message, type = LOG_TYPE.LOG) {
+    let logText = ['', 'Warning', 'Error', 'Log']
+    message = `[${logText[type]}][${message}]`;
+
     switch (type) {
-        case LOG_TYPE.warning:
+        case LOG_TYPE.WARNING:
             console.warn(message);
             break;
-        case LOG_TYPE.error:
+        case LOG_TYPE.ERROR:
             console.error(message);
             break;
         default:
@@ -147,7 +150,6 @@ function loadExcel(xlsxPath, sheetName) {
  * @param {String} outPath 导出的excel文件名+地址(绝对路径)
  */
 function writeExcel(data, outPath, sheetName) {
-    console.log(1);
     createFolder(path.dirname(outPath));
     if (data && data.length > 0 && typeof data[0] !== 'object') {
         data = data.map(item => [item]);
@@ -327,6 +329,7 @@ module.exports = {
     writeJson,
     mergeObject,
     getDirname,
+    LOG_TYPE,
     trim,
     log
 };

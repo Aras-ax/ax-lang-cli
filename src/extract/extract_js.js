@@ -1,15 +1,6 @@
 const esprima = require('esprima');
 const escodegen = require('escodegen');
 
-const {
-    log,
-    loadFile,
-    trim
-} = require('../util/index');
-const {
-    LOG_TYPE
-} = require('../util/config');
-
 const Extract = require('./extract');
 
 /**

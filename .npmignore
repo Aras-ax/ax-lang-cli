@@ -1,8 +1,8 @@
 node_modules/
-dist/
 test/
 .vscode/
-mess.md
-t.js
+.eslintrc.js
+.gitignore
+b28.config.js
 src/check.js
-src/b28.config.js
+mess.md

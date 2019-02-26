@@ -1,9 +1,8 @@
-#npm
 node_modules/
 dist/
-**/output/
 .vscode/
 **/*_copy.xlsx
+**/output
 mess.md
-t.js
 src/check.js
+b28.config.js
