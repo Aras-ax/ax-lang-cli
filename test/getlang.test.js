@@ -1,13 +1,13 @@
 const ExtractFile = require('../src/ExtractFile');
-const htmlData = require('./TestFile/simpleTestData/html/index');
-const jsData = require('./TestFile/simpleTestData/js/index');
+const htmlData = require('./TestFile/testData/html/index');
+const jsData = require('./TestFile/testData/js/index');
 
 let extract = new ExtractFile({
-    baseReadPath: 'D:\\Git\\translate\\test\\TestFile\\simpleTest\\js',
-    baseWritePath: 'D:\\Git\\translate\\test\\TestFile\\output',
+    baseReadPath: 'D:/Git/translate/test/TestFile/test/js',
+    baseWritePath: 'D:/Git/translate/test/TestFile/output',
     onlyZH: false,
     isTranslate: false,
-    config_hong_path: 'D:\\Git\\translate\\test\\TestFile\\config\\macro_config.js',
+    config_hong_path: 'D:/Git/translate/test/TestFile/config/index.js',
     transWords: {}
 });
 // extract.scanFile();
@@ -38,7 +38,7 @@ describe('验证HTML文件语言提取的正确性', () => {
     it('根据宏提取词条', () => {
         expect.assertions(1);
         extract.setAttr({
-            'baseReadPath': 'D:\\Git\\translate\\test\\TestFile\\simpleTest\\html',
+            'baseReadPath': 'D:/Git/translate/test/TestFile/test/html',
             CONFIG_HONG: {
                 CONFIG_ADVANCE_FALSE: false,
                 CONFIG_ADVANCE_DDNS: true

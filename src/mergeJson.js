@@ -1,4 +1,5 @@
 const { mergeObject, loadJson, writeJson } = require('./util/index');
+const path = require('path');
 
 function merge(obj, ...others) {
     let outData = Object.assign(Object.prototype.toString.call(obj) === '[object Object]' ? {} : [], obj);
@@ -20,11 +21,15 @@ function mergeJson(main, file, outPath) {
     return Promise.all(promises).then(data => {
         return merge(...data);
     }).then(data => {
+        if (!path.extname(outPath)) {
+            outPath = path.join(outPath, 'merge.json');
+        }
+
         return writeJson(data, outPath).then((data) => {
-            console.log(`Excel to Json文件已写入地址：${outPath}`);
+            console.log(`Merge Json文件已写入地址：${outPath}`);
             return data;
         }).catch((error) => {
-            console.error(`Excel to Json失败，${error}`);
+            console.error(`Merge Json失败，${error}`);
             return {};
         });
     });

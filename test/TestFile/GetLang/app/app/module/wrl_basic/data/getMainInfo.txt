@@ -1,9 +1,0 @@
-{
-	"antennaNum":"1",
-	"country":	"CN",
-	"defaultIp":"19.168.2.1",
-	"power":"high",
-	"productName":"O1V1.0",
-	"userType":"user",
-	"workMode":	"wisp"
-}

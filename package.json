@@ -1,5 +1,5 @@
 {
-    "name": "translate",
+    "name": "translate-cli",
     "version": "1.0.0",
     "description": "语言提取和替换",
     "main": "index.js",
@@ -11,6 +11,10 @@
     },
     "author": "moshang",
     "license": "ISC",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/moshang-xc/translate-cli.git"
+    },
     "devDependencies": {
         "escodegen": "^1.11.0",
         "esprima": "^4.0.1",

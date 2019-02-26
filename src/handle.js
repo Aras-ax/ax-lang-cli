@@ -113,7 +113,7 @@ function jsonToExcel(cfg) {
 }
 
 function merge(cfg) {
-    return mergeJson(cfg.mainJsonPath, cfg.mergeJsonPath, cfg.outPath);
+    return mergeJson(cfg.mainJsonPath, cfg.mergeJsonPath, cfg.outMergeJsonPath);
 }
 
 module.exports = handle;

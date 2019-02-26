@@ -2,19 +2,19 @@ const excel2json = require('../src/excel2json');
 const ExtractFile = require('../src/ExtractFile');
 
 let extract = new ExtractFile({
-    baseReadPath: 'D:\\Git\\translate\\test\\TestFile\\simpleTest\\js',
-    baseWritePath: 'D:\\Git\\translate\\test\\TestFile\\output',
+    baseReadPath: 'D:/Git/translate/test/TestFile/test/js',
+    baseWritePath: 'D:/Git/translate/test/TestFile/output',
     onlyZH: false,
     isTranslate: true,
-    config_hong_path: 'D:\\Git\\translate\\test\\TestFile\\config\\macro_config.js',
+    config_hong_path: 'D:/Git/translate/test/TestFile/config/index.js',
     transWords: {}
 });
 
 it('验证翻译JS的正确性', () => {
     expect.assertions(1);
     return excel2json({
-        excelPath: 'D:\\Git\\translate\\test\\TestFile\\simpleTestData\\js\\translate.xlsx',
-        outPath: 'D:\\Git\\translate\\test\\TestFile\\output',
+        excelPath: 'D:/Git/translate/test/TestFile/testData/js/translate.xlsx',
+        outPath: 'D:/Git/translate/test/TestFile/output',
         sheetName: '',
         key: 'CN',
         value: 'EN'
@@ -29,7 +29,7 @@ it('验证翻译JS的正确性', () => {
 it('验证翻译HTML的正确性', () => {
     expect.assertions(1);
     return excel2json({
-        excelPath: 'D:\\Git\\translate\\test\\TestFile\\simpleTestData\\html\\translate.xlsx',
+        excelPath: 'D:/Git/translate/test/TestFile/testData/html/translate.xlsx',
         outPath: '',
         sheetName: '',
         key: 'EN',
@@ -37,7 +37,7 @@ it('验证翻译HTML的正确性', () => {
     }).then(data => {
         extract.setAttr({
             transWords: data.CN,
-            baseReadPath: 'D:\\Git\\translate\\test\\TestFile\\simpleTest\\html'
+            baseReadPath: 'D:/Git/translate/test/TestFile/test/html'
         });
         return extract.scanFile();
     }).then(data => {

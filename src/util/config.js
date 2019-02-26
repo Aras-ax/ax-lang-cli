@@ -51,13 +51,12 @@ const valid = {
         return valid.existFile(val);
     },
     folder(val) {
-        if (val === '') {
+        if (val === '' || val === undefined) {
             return '必填';
         }
         if (!path.isAbsolute(val)) {
             val = path.resolve(process.cwd(), val);
         }
-
         if (!fs.existsSync(val)) {
             return '请输入有效的地址'
         }
@@ -65,6 +64,9 @@ const valid = {
     },
     // 存在的文件非文件夹
     existFile(val) {
+        if (val === '' || val === undefined) {
+            return '必填';
+        }
         if (!path.isAbsolute(val)) {
             val = path.resolve(process.cwd(), val);
         }
@@ -92,49 +94,49 @@ const baseQuestions = [{
         }, {
             type: 'input',
             name: 'baseReadPath',
-            message: '待提取文件地址',
+            message: '待提取文件地址：',
             validate: valid.folder // 必填，可以是文件也可以是文件夹
         }, {
             type: 'input',
             name: 'baseOutPath',
-            message: '提取的Excel文件输出地址',
+            message: '提取的Excel文件输出地址：',
             default (answers) {
                 return getDirname(answers.baseReadPath);
             }
         }, {
             type: 'input',
             name: 'hongPath',
-            message: '宏文件地址',
+            message: '宏文件地址：',
             default: '',
             validate: valid.specialfile
         }],
         [{
             type: 'input',
             name: 'baseTranslatePath',
-            message: '待翻译文件根目录',
+            message: '待翻译文件根目录：',
             validate: valid.folder // 必填，可以是文件也可以是文件夹
         }, {
             type: 'input',
             name: 'baseTransOutPath',
-            message: '翻译后文件输出根目录',
+            message: '翻译后文件输出根目录：',
             default (answers) {
-                return getDirname(answers.baseTransOutPath);
+                return getDirname(answers.baseTranslatePath);
             }
         }, {
             type: 'input',
             name: 'languagePath',
-            message: '语言包文件地址',
+            message: '语言包文件地址：',
             validate: valid.existFile
         }, {
             type: 'input',
             name: 'hongPath',
-            message: '宏文件地址',
+            message: '宏文件地址：',
             default: '',
             validate: valid.specialfile
         }, {
             type: 'input',
             name: 'sheetName',
-            message: 'Excel中对应的sheet',
+            message: 'Excel中对应的sheet：',
             default: '',
             when(answers) {
                 return path.extname(answers.languagePath) !== '.json'
@@ -142,7 +144,7 @@ const baseQuestions = [{
         }, {
             type: 'input',
             name: 'keyName',
-            message: 'key对应列', //指代代码中的词条需要被那一列的数据替换
+            message: 'key对应列：', //指代代码中的词条需要被那一列的数据替换
             default: 'EN',
             when(answers) {
                 return path.extname(answers.languagePath) !== '.json'
@@ -150,7 +152,7 @@ const baseQuestions = [{
         }, {
             type: 'input',
             name: 'valueName',
-            message: 'value对应列', //指代代码中目前需要被替换的语言
+            message: 'value对应列：', //指代代码中目前需要被替换的语言
             default: 'CN', // ALL代表所有
             when(answers) {
                 return path.extname(answers.languagePath) !== '.json'
@@ -159,22 +161,22 @@ const baseQuestions = [{
         [{
             type: 'input',
             name: 'baseCheckPath',
-            message: '待检查文件根目录',
+            message: '待检查文件根目录：',
             validate: valid.folder
         }, {
             type: 'input',
             name: 'langJsonPath',
-            message: '语言包json文件地址',
+            message: '语言包json文件地址：',
             validate: valid.existFile
         }, {
             type: 'input',
             name: 'hongPath',
-            message: '宏文件地址',
+            message: '宏文件地址：',
             validate: valid.specialfile
         }, {
             type: 'input',
             name: 'logPath',
-            message: '检查信息输出路径',
+            message: '检查信息输出路径：',
             default (answers) {
                 return getDirname(answers.baseCheckPath);
             }
@@ -182,27 +184,27 @@ const baseQuestions = [{
         [{
             type: 'input',
             name: 'keyName',
-            message: 'key对应列',
+            message: 'key对应列：',
             default: 'EN'
         }, {
             type: 'input',
             name: 'valueName',
-            message: 'value对应列',
+            message: 'value对应列：',
             default: '' // ALL代表所有
         }, {
             type: 'input',
             name: 'sheetName',
-            message: 'Excel中对应的sheet',
+            message: 'Excel中对应的sheet：',
             default: ''
         }, {
             type: 'input',
             name: 'excelPath',
-            message: 'Excel文件地址',
+            message: 'Excel文件地址：',
             validate: valid.existFile
         }, {
             type: 'input',
             name: 'outJsonPath',
-            message: '输出json文件目录',
+            message: '输出json文件目录：',
             default (answers) {
                 return getDirname(answers.excelPath);
             }
@@ -210,12 +212,12 @@ const baseQuestions = [{
         [{
             type: 'input',
             name: 'jsonPath',
-            message: 'json文件地址',
+            message: 'json文件地址：',
             validate: valid.existFile
         }, {
             type: 'input',
             name: 'outExcelPath',
-            message: '输出Excel文件目录',
+            message: '输出Excel文件目录：',
             default (answers) {
                 return getDirname(answers.jsonPath);
             }
@@ -223,17 +225,17 @@ const baseQuestions = [{
         [{
             type: 'input',
             name: 'mainJsonPath',
-            message: '主json文件地址',
+            message: '主json文件地址：',
             validate: valid.existFile
         }, {
             type: 'input',
             name: 'mergeJsonPath',
-            message: '次json文件地址',
+            message: '次json文件地址：',
             validate: valid.existFile
         }, {
             type: 'input',
             name: 'outMergeJsonPath',
-            message: '合并后输出的地址',
+            message: '合并后输出的地址：',
             default (answers) {
                 return getDirname(answers.mainJsonPath);
             }

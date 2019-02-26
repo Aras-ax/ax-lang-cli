@@ -142,6 +142,8 @@ class ExtractFile {
             //重置
             this.reset();
             return this.outData;
+        }).catch(err => {
+            console.error(err);
         });
     }
 

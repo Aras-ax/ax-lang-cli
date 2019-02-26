@@ -1,0 +1,8 @@
+node_modules/
+dist/
+test/
+.vscode/
+mess.md
+t.js
+src/check.js
+src/b28.config.js

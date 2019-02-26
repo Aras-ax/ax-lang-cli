@@ -40,3 +40,14 @@ const hongPath = './test/TestFile/config/macro_config.js';
 //     jsonPath: './test/TestFile/simpleTestData/onlyZH.json',
 //     outExcelPath: './test/TestFile/output/test1.xlsx'
 // })
+
+// start({
+//     commandType: COMMAD.MERGE_JSON,
+//     mainJsonPath: 'D:/Git/translate/test/TestFile/simpleTestData/lang/CN.json',
+//     mergeJsonPath: 'D:/Git/translate/test/TestFile/simpleTestData/lang/ZH.json',
+//     outMergeJsonPath: ''
+// }).then(data => {
+//     // return expect(data).toEqual(words);
+// });
+
+start();
