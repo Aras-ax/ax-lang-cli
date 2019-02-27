@@ -16,18 +16,54 @@ npm install b28-cli -g
 使用方式：
 1. 通过[WinForm](B28.exe)界面程序直接操作（只支持windows环境）
 
-   ![b28](/img/b28.jpg)
+   ![b28](https://raw.githubusercontent.com/moshang-xc/b28-cli/master/img/b28.jpg)
 
 2. 通过[b28.config.js](#b28.config.js)进行配置，见[参数配置说明](#配置参数说明)
 > 如果有读取到配置参数，则直接按配置参数运行工具。若读取的配置错误则会通过下面的使用方式重新输入配置项修正数据。
 3. 直接通过命令行交互的形式,如下图
 
-    ![交互](/img/cmd.jpg)
+    ![交互](https://raw.githubusercontent.com/moshang-xc/b28-cli/master/img/cmd.jpg)
 
     参数配置见见[参数配置说明](#配置参数说明)
 
 
 ## 配置参数说明
+示例`b28.config.js`
+
+```js
+// 翻译文件配置
+module.exports = {
+    commandType: 1,
+    /**
+     * 待翻译文件根目录
+     */
+    baseTranslatePath: './test/TestFile/test/allTest',
+    /**
+     * 翻译后文件输出根目录
+     */
+    baseTransOutPath: './test/TestFile/output/allTest',
+    /**
+     * 语言包文件地址
+     */
+    languagePath: './test/TestFile/testData/allTest/translate.xlsx',
+    /**
+     * 宏文件地址
+     */
+    hongPath: './test/TestFile/config/index.js',
+    /**
+     * key对应列
+     */
+    keyName: 'EN',
+    /**
+     * value对应列
+     */
+    valueName: 'CN',
+    /**
+     * Excel对应的sheet名称
+     */
+    sheetName: '',
+}
+```
 
 ### 公共参数
 `commandType`: 操作类型，枚举值
