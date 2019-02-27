@@ -2,9 +2,9 @@
     "name": "b28-cli",
     "version": "1.0.0",
     "description": "语言提取和替换",
-    "main": "./index.js",
+    "main": "./src/index.js",
     "bin": {
-        "b28-cli": "index.js"
+        "b28-cli": "./index.js"
     },
     "author": "moshang",
     "keywords": [

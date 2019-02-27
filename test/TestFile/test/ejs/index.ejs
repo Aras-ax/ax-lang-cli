@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title></title>
+    <link rel="stylesheet" href="./common/font/style.css?v=<%= htmlWebpackPlugin.options.version %>" />
+    <link href="./css/common.css?v=<%= htmlWebpackPlugin.options.version %>" rel="stylesheet" />
+    <script src="./b28n/b28n.js?v=<%= htmlWebpackPlugin.options.version %>"></script>
+    <!--[if lt IE 10]> 
+        <style>
+            .feature-group .url-list .url-item .url-a:hover .url-text{
+                opacity: 1;
+            }
+            .feature-group .url-list .url-item .url-a:hover .url-icon{
+                font-size: 50px;
+            }
+        </style>
+    <![endif]-->
+</head>
+
+<body>
+    <div class="head">
+        <div id="header" class="container">
+            <div class="header-drop">
+                <a href="/goform/logout" class="login-out underline">Logout</a>
+                <div id="device-wrapper" class="router-mode">
+                    <div data-key="FormDropDownList" id="device-mode"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="table-row">
+            <div id="nav-wrapper" class="nav-wrapper table-cell">
+                <ul id="nav-list" class="nav">
+                    <% for(var i = 0; i < htmlWebpackPlugin.options.navList.length; i++) { %>
+                    <% var listItem = htmlWebpackPlugin.options.navList[i], css = listItem.list.length > 1 ? "" : "singel", hash = listItem.list[0].item.toLowerCase(); %>
+                    <li class="nav-group <%= css %> <%= listItem.css %>" data-hash="#<%= hash %>">
+                        <h3 class="nav-group-title">
+                            <a class="group-text <%= listItem.item %>">
+                                <i class="nav-icon <%= listItem.icon %>"></i>
+                                <label>
+                                    <%= listItem.name %></label>
+                            </a>
+                        </h3>
+                        <ul class="item-wrapper" id="<%= listItem.item %>">
+                            <% for(var j = 0; j < listItem.list.length; j++){ %>
+                            <li class="nav-item <%= listItem.list[j].item %>">
+                                <a href="#<%= listItem.list[j].item.toLowerCase() %>" class="item-text">
+                                    <%= listItem.list[j].name %></a>
+                            </li>
+                            <% } %>
+                        </ul>
+                        像我这样优秀的人，怎么和你过一生
+                    </li>
+                    <% } %>
+                </ul>
+                <div class="index-footer">
+                    <div class="copyright">Copyright ©2019</div>
+                    <div id="copyright" class="copyright"></div>
+                </div>
+            </div>
+            <div class="table-cell color-cell"></div>
+            <div class="table-cell">
+                <div id="content" class="content"></div>
+                <div id="content-slide" class="content content-slide"></div>
+            </div>
+            <button id="helpBtn" type="button" class="btn-help icon-help none"></button>
+        </div>
+    </div>
+    <div id="toolbar" class="toolbar none">
+        <button class="btn btn-ok" type="button" id="module-save">Save</button>
+        <button class="btn btn-default" type="button" id="module-cancel" data-dismiss="modal">Cancel</button>
+    </div>
+    <script src="./common/jquery.js"></script>
+    <script src="./common/macro_config.js?v=<%= htmlWebpackPlugin.options.version %>"></script>
+    <!--[if lte IE 8]><script type="text/javascript" src="./common/excanvas.js"></script><![endif]-->
+    <script src="./common/Chart.min.js"></script>
+    <script src="./common/common.js?v=<%= htmlWebpackPlugin.options.version %>"></script>
+
+    <script>
+        // 阻止按下回退键返回
+        $(document).on('keydown', function(e) {
+            if (e.keyCode === 8 && e.target.tagName.toLowerCase() !== 'input' && e.target.tagName.toLowerCase() !== 'textarea') {
+                return false;
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -21,6 +21,7 @@ function json2excel(jsonPath, outPath) {
         return writeExcel(data, outPath, 'EN-CN');
     }).then(data => {
         log(`Json to Excel 文件已写入地址-${outPath}`);
+        return data;
     }).catch((error) => {
         log(`Json to Excel 失败，${error}`, LOG_TYPE.ERROR);
         return {};

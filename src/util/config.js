@@ -5,6 +5,8 @@ const { getDirname } = require('./index');
 
 const CONFIG_FILE_NAME = 'b28.config.js';
 
+const TRANS_NAME_REGEX = /^_$/;
+
 const COMMAD = {
     /**
      * 提取词条
@@ -70,7 +72,7 @@ const valid = {
         if (!path.isAbsolute(val)) {
             val = path.resolve(process.cwd(), val);
         }
-        if (path.extname(val) !== '' && !fs.existsSync(val)) {
+        if (path.extname(val) === '' || !fs.existsSync(val)) {
             return '请输入有效的文件地址'
         }
         return true;
@@ -254,6 +256,7 @@ module.exports = {
     EXCLUDE_FILE,
     EXCLUDE_FILE_END,
     CONFIG_FILE_NAME,
+    TRANS_NAME_REGEX,
     COMMAD,
     COMMAD_TEXT,
     questions,

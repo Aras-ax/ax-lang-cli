@@ -29,6 +29,10 @@ function excel2json(option) {
     }
     data = transferData(data, option);
 
+    if (data === -1) {
+        return Promise.resolve({});
+    }
+
     if (option.outPath) {
         if (Array.isArray(data)) {
             let outPath = path.join(option.outPath, option.fileName || 'lang.json');
@@ -76,6 +80,11 @@ function transferData(data, option) {
 
     let keyIndex = keyValueRow.indexOf(key);
 
+    if (keyIndex === -1) {
+        log(`Excel中不存在keyName列`, LOG_TYPE.ERROR);
+        return -1;
+    }
+
     if (data.length === 0) {
         return outData;
     }
@@ -109,58 +118,60 @@ function transferData(data, option) {
         let valIndex = valueIndex[valItem],
             decodeKeys = {},
             transData = {};
+        if (valIndex === -1) {
+            log(`Excel中不存在${valItem}列`, LOG_TYPE.ERROR);
+        } else {
+            data.forEach(dataItem => {
+                let keyWorld = trim(dataItem[keyIndex]),
+                    valueWorld = trim(dataItem[valIndex]),
+                    repeatKey = '';
 
-        data.forEach(dataItem => {
-            let keyWorld = trim(dataItem[keyIndex]),
-                valueWorld = trim(dataItem[valIndex]),
-                repeatKey = '';
+                if (!keyWorld) {
+                    keyWorld = valueWorld;
+                    dataItem[keyIndex] = valueWorld;
+                }
 
-            if (!keyWorld) {
-                keyWorld = valueWorld;
-                dataItem[keyIndex] = valueWorld;
-            }
+                if (!valueWorld) {
+                    valueWorld = decodeKey(keyWorld);
+                    dataItem[valIndex] = decodeKey(keyWorld);
+                }
 
-            if (!valueWorld) {
-                valueWorld = decodeKey(keyWorld);
-                dataItem[valIndex] = decodeKey(keyWorld);
-            }
+                // 重复判断
+                if (transData[keyWorld] && transData[keyWorld] !== valueWorld) {
+                    let repeatKeys = decodeKeys[keyWorld] || [],
+                        oldKey = keyWorld;
 
-            // 重复判断
-            if (transData[keyWorld] && transData[keyWorld] !== valueWorld) {
-                let repeatKeys = decodeKeys[keyWorld] || [],
-                    oldKey = keyWorld;
+                    repeatKeys.some(key => {
+                        if (transData[key] === valueWorld) {
+                            repeatKey = key;
+                            // 更新原数，以便下次直接用新的key值进行转换
+                            dataItem[keyIndex] = key;
+                            return true;
+                        }
+                    });
 
-                repeatKeys.some(key => {
-                    if (transData[key] === valueWorld) {
-                        repeatKey = key;
-                        // 更新原数，以便下次直接用新的key值进行转换
-                        dataItem[keyIndex] = key;
+                    if (repeatKey) {
                         return true;
                     }
-                });
 
-                if (repeatKey) {
-                    return true;
-                }
-
-                keyWorld = formatKey(keyWorld);
-
-                // 对重复的key进行重新编码
-                while (outData[keyWorld]) {
                     keyWorld = formatKey(keyWorld);
+
+                    // 对重复的key进行重新编码
+                    while (outData[keyWorld]) {
+                        keyWorld = formatKey(keyWorld);
+                    }
+                    repeatKeys.push(keyWorld);
+                    // 更新原数，以便下次直接用新的key值进行转换
+                    dataItem[keyIndex] = keyWorld;
+                    // 记录当前重新编码的词条
+                    decodeKeys[oldKey] = repeatKeys;
+                    // 同步修改已经转换好的语言
+                    syncKey(outData, oldKey, keyWorld);
                 }
-                repeatKeys.push(keyWorld);
-                // 更新原数，以便下次直接用新的key值进行转换
-                dataItem[keyIndex] = keyWorld;
-                // 记录当前重新编码的词条
-                decodeKeys[oldKey] = repeatKeys;
-                // 同步修改已经转换好的语言
-                syncKey(outData, oldKey, keyWorld);
-            }
 
-            transData[keyWorld] = valueWorld;
-        });
-
+                transData[keyWorld] = valueWorld;
+            });
+        }
         outData[valItem] = transData;
     });
 

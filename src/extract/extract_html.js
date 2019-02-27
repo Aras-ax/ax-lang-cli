@@ -91,8 +91,7 @@ class ExtractHTML extends Extract {
                 // 标志为一个整体的html，将全部提取，不进行子元素的拆分提取操作
                 if (element.getAttribute("data-nowrap") == 1) {
                     // 将换行符，多个空格合并成一个空格进行提取
-                    curValue = this.getWord(element.innerHTML.replace(/(\s+)/g, " "));
-                    // this.getWord(element.innerHTML.replace(/(\s+)|(\t\n)|(\t)|(\n)/g, " "));
+                    curValue = this.getWord(element.innerHTML);
                     this.transWord(element, Edit_TYPE.html, curValue);
 
                     if (nextSibling) {
@@ -158,7 +157,7 @@ class ExtractHTML extends Extract {
                 break;
             case 3: //处理文本节点
                 if (/\S/.test(element.nodeValue)) {
-                    curValue = this.getWord(element.nodeValue.replace(/(\s+)/g, " "));
+                    curValue = this.getWord(element.nodeValue);
                     this.transWord(element, Edit_TYPE.nodeValue, curValue);
                 }
                 break;

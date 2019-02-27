@@ -115,7 +115,7 @@ class Extract {
         });
     }
 
-    getWord(val) {
+    getWord(val, isJs) {
         // url不进行提取
         if (/^((ht|f)tps?):\/\/([\w\-]+(\.[\w\-]+)*\/)*[\w\-]+(\.[\w\-]+)*\/?(\?([\w\-\.,@?^=%&:\/~\+#]*)+)?/i.test(val)) {
             return '';
@@ -123,7 +123,15 @@ class Extract {
 
         if (val && /\S/.test(val)) {
             val = trim(val);
+            // 移除首尾空格
+            val = val.replace(/(^\s+)|(\s+$)/g, '');
+            // 同时合并词条内部的多个空格等为一个空格，保留js文件中词条内的\n
+            val = isJs ? val.replace(/([^\S\n]+)/g, " ") : val.replace(/(\s+)/g, " ");
             let addValue = '';
+            if (/^<%=((.|\n)*)%>$/.test(val)) {
+                return '';
+            }
+
             // 只提取中文
             if (this.option.onlyZH) {
                 if (/[\u4e00-\u9fa5]/.test(val)) {

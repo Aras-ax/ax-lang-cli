@@ -70,6 +70,7 @@ function gerArgs() {
                 mergeJsonPath: args.src2,
                 outMergeJsonPath: args.dest
             };
+            console.log(config);
             break;
     }
     return config;

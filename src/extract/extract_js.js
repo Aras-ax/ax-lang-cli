@@ -2,6 +2,7 @@ const esprima = require('esprima');
 const escodegen = require('escodegen');
 
 const Extract = require('./extract');
+const { TRANS_NAME_REGEX } = require('../util/config');
 
 /**
  * JS文件解析类
@@ -72,12 +73,11 @@ class ExtractJs extends Extract {
             oldVal = '';
         switch (node.type) {
             case 'CallExpression':
-                if (node.callee && node.callee.name === '_') {
+                if (node.callee && TRANS_NAME_REGEX.test(node.callee.name)) {
                     oldVal = this.getValue(node.arguments[0]);
-                    curValue = this.getWord(oldVal);
+                    curValue = this.getWord(oldVal, true);
                     if (curValue && node.arguments[0]['value']) {
                         node.arguments[0]['value'] = curValue;
-                        // node.arguments[0]['raw'] = node.arguments[0]['raw'].replace(oldVal, curValue);
                     }
                     return;
                 }
