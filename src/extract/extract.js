@@ -3,6 +3,7 @@ const {
     loadFile,
     trim,
     LOG_TYPE,
+    copyFile,
     writeTextFile
 } = require('../util/index');
 
@@ -66,8 +67,16 @@ class Extract {
                 return this.startTrans();
             })
             .catch(error => {
+                // todo by xc文件处理出错也需要复制文件
+                this.copyFile(filePath);
                 log(`文件处理出错- ${error}`, LOG_TYPE.ERROR);
+                return this.startTrans();
             });
+    }
+
+    copyFile(filePath) {
+        //如果是翻译模式需要将未匹配的文件原样拷贝
+        copyFile(filePath, path.join(this.option.baseWritePath, path.relative(this.option.baseReadPath, filePath)));
     }
 
     transNode(data) {

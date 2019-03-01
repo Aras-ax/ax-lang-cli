@@ -1,12 +1,16 @@
 (function(window, $) {
+    let t = {
+        a: 1, // 这是第一个注释
+        b: 2 // 这是第二个注释
+    }
     // true
     /*    CONFIG_NEW_NETCTRL        */
-    const tt = _("我们不\"一样");
+    const tt = _("我们不\"一样"); // 这里还有一个注释
     /*    CONFIG_NEW_NETCTRL        */
 
     // false
     //  CONFIG_NET_WAN_STATIC 
-    const tt = _("这条肯定不能被提取");
+    const tt = _("这条肯定不能被提取"); // 这里也有喔
     /*CONFIG_NET_WAN_STATIC*/
     // true
     /*  CONFIG_PPPoE_SERVER     */

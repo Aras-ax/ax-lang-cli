@@ -24,7 +24,7 @@ npm install b28-cli -g
     ```
         # 切换到目标路径
         cd xxx
-        
+
         # 运行指令
         b28-cli
     ```

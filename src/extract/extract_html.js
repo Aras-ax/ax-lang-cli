@@ -54,10 +54,11 @@ class ExtractHTML extends Extract {
 
     // 扫描节点，提取字段
     scanNode(document) {
-        // todo by xc 验证title是否为空
-        this.listNode(document.documentElement);
-        // todo by xc 验证docType有和无得情况
-        return Promise.resolve((document.doctype ? '<!doctype html>\t\n' : '') + document.documentElement.innerHTML);
+        return new Promise((resolve, reject) => {
+            this.listNode(document.documentElement);
+
+            resolve((document.doctype ? '<!doctype html>\t\n' : '') + document.documentElement.innerHTML);
+        });
     }
 
     listNode(element) {

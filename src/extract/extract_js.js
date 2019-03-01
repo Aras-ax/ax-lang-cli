@@ -16,36 +16,49 @@ class ExtractJs extends Extract {
         return new Promise((resolve, reject) => {
             try {
                 let AST = esprima.parseModule(jsDoc, {
-                    attachComment: true
+                    attachComment: true,
+                    // comment: true,
+                    loc: true
+                    // range: true,
+                    // tokens: true
                 });
-                resolve(AST);
+                resolve(AST, jsDoc);
             } catch (err) {
                 let AST = esprima.parseScript(jsDoc, {
-                    attachComment: true
+                    attachComment: true,
+                    // comment: true,
+                    range: true,
+                    // tokens: true
                 });
-                resolve(AST);
+                resolve(AST, jsDoc);
             }
         });
     }
 
     // 扫描节点，提取字段
-    scanNode(AST) {
-        let body = AST.body;
-        body.forEach(node => {
-            this.listAst(node);
-        });
+    scanNode(AST, jsDoc) {
+        return new Promise((resolve, reject) => {
+            let body = AST.body;
+            this.nearComment = '';
+            body.forEach(node => {
+                this.listAst(node);
+            });
+            // AST = escodegen.attachComments(AST, AST.comments, AST.tokens);
 
-        let data = escodegen.generate(AST, {
-            comment: true,
-            format: {
-                indent: {
-                    adjustMultilineComment: false
-                }
-            },
+            let data = escodegen.generate(AST, {
+                comment: true,
+                format: {
+                    indent: {
+                        adjustMultilineComment: false
+                    },
+                    quotes: 'auto',
+                    hexadecimal: true
+                },
+                sourceContent: jsDoc
+            });
+            data = unescape(data.replace(/\\u/g, '%u'));
+            resolve(data);
         });
-        data = unescape(data.replace(/\\u/g, '%u'));
-        //返回数据
-        return Promise.resolve(data);
     }
 
     getValue(nodeArgs) {
@@ -57,12 +70,12 @@ class ExtractJs extends Extract {
             let value = '',
                 left = nodeArgs.left;
 
-            while (left.right) {
+            while (left && left.right) {
                 value += left.right.value;
                 left = left.left;
             }
 
-            value = left.value + value + (nodeArgs.right ? nodeArgs.right.value : '');
+            value = (left ? left.value : '') + value + (nodeArgs.right ? nodeArgs.right.value : '');
             return value;
         }
         return '';
@@ -104,13 +117,27 @@ class ExtractJs extends Extract {
                     endComments = astNode.trailingComments[0]['value'];
                 startComment = startComment.replace(/^\s*|\s*$/g, '');
                 endComments = endComments.replace(/^\s*|\s*$/g, '');
-                // 移除底部的注释，以免重复
-                delete astNode.trailingComments;
                 // 若设置了宏且对应的值为false，则不进行该功能块的提取
                 if (startComment === endComments && this.CONFIG_HONG[startComment] === false) {
                     return;
                 }
             }
+            // 移除底部的注释，以免重复
+            if (astNode.leadingComments && this.nearComment === astNode.leadingComments[0]) {
+                astNode.leadingComments.shift();
+            }
+
+            try {
+                if (astNode.trailingComments && astNode.loc.start.line === astNode.trailingComments[0].loc.start.line) {
+                    astNode.trailingComments.length = 1;
+                    this.nearComment = astNode.trailingComments[0];
+                } else {
+                    delete astNode.trailingComments;
+                }
+            } catch (e) {
+                delete astNode.trailingComments;
+            }
+
 
             if (astNode.type === 'CallExpression') {
                 this.listNode(astNode);

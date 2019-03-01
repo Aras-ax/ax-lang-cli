@@ -215,7 +215,6 @@ let validate = {
 
 function start(config) {
     config = config || gerArgs();
-
     return main(config).then(data => {
         return handle(data);
     });

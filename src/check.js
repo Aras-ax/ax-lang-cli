@@ -3,14 +3,14 @@ const { COMMAD } = require('../src/util/config');
 
 const hongPath = './test/TestFile/config/index.js';
 
-start({
-    commandType: COMMAD.GET_WORDS,
-    baseReadPath: './test/TestFile/test/ejs',
-    baseOutPath: './test/TestFile/output/ejs',
-    hongPath
-}).then(data => {
-    let t = data;
-});
+// start({
+//     commandType: COMMAD.GET_WORDS,
+//     baseReadPath: './test/TestFile/test/ejs',
+//     baseOutPath: './test/TestFile/output/ejs',
+//     hongPath
+// }).then(data => {
+//     let t = data;
+// });
 
 // start({
 //     commandType: COMMAD.GET_WORDS,
@@ -20,19 +20,26 @@ start({
 // }).then(data => {
 //     let t = data;
 // });
-
 // start({
-//     commandType: COMMAD.TRANSLATE,
-//     baseTranslatePath: './test/TestFile/test/allTest',
-//     baseTransOutPath: './test/TestFile/output/allTest',
-//     languagePath: './test/TestFile/testData/allTest/translate.xlsx',
-//     hongPath,
-//     sheetName: '',
-//     keyName: 'CN',
-//     valueName: 'EN'
+//     commandType: COMMAD.GET_WORDS,
+//     baseReadPath: './test/TestFile/test/js',
+//     baseOutPath: './test/TestFile/output/js',
+//     hongPath
 // }).then(data => {
-//     let t = '';
+//     let t = data;
 // });
+start({
+    commandType: COMMAD.TRANSLATE,
+    baseTranslatePath: './test/TestFile/test/allTest',
+    baseTransOutPath: './test/TestFile/output/allTest',
+    languagePath: './test/TestFile/testData/allTest/translate.xlsx',
+    hongPath,
+    sheetName: '',
+    keyName: 'EN',
+    valueName: 'CN'
+}).then(data => {
+    let t = '';
+});
 
 // start({
 //     commandType: COMMAD.CHECK_TRANSLATE,

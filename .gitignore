@@ -3,6 +3,7 @@ dist/
 .vscode/
 **/*_copy.xlsx
 **/output
+test/Pro
 mess.md
 src/check.js
 b28.config.js
