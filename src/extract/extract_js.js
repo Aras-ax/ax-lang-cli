@@ -111,6 +111,7 @@ class ExtractJs extends Extract {
         let type = Object.prototype.toString.call(astNode);
         if (type === '[object Object]') {
             // 根据宏判断是否需要进行提取
+            // 对于逗号后面的注释，解析为trailingComments
             if (astNode.leadingComments && astNode.trailingComments) {
                 // 代码开头注释的最后一项和代码结束的第一项注释必须一样才表明是宏控制的功能
                 let startComment = astNode.leadingComments[astNode.leadingComments.length - 1]['value'],
