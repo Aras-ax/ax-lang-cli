@@ -1,6 +1,7 @@
 # 翻译工具，Excel/Json处理工具
 
-该工具同时包含以下几个功能：
+**该工具同时包含以下几个功能：**
+
 1. [提取代码中的中英文词条](#词条提取)
 2. [通过Excel将代码中的词条替换成目标语言的词条](#翻译文件)
 3. [检查代码中词条翻译替换的正确性](#翻译检查)
@@ -8,12 +9,21 @@
 5. [将JSON文件转成Excel文件](#JSON转EXCEL文件)
 6. [深度合并JSON文件](#合并JSON文件)
 
-安装
+**JS提取替换方法：**
+
+通过[`babylon`](https://www.npmjs.com/package/babylon)将`js`代码转成`AST`(抽象语法树)，通过遍历`AST`得到需要提取的内容，并对`AST`进行修改，最后通过[`babel-generator`](https://www.npmjs.com/package/babel-generator)将`AST`转成代码文件输出。
+一开始选择[`Esprima`](https://www.npmjs.com/package/esprima)进行代码转`AST`，但[`Esprima`](https://www.npmjs.com/package/esprima)对注释的处理有点问题，通过[`Escodegen`](https://www.npmjs.com/package/escodegen)将`AST`转代码时，注释丢失或者位置不对，没找到解决方案，故换成[`babylon`](https://www.npmjs.com/package/babylon).
+
+**HTML提取替换方法：**
+
+通过[`jsdom`](jsdom)将`html`代码转成`DOM`树，然后对`DOM`进行遍历。
+
+**安装**
 ```
 npm install b28-cli -g
 ```
 
-使用方式：
+**使用方式：**
 1. 通过[WinForm](B28.exe)界面程序直接操作（只支持windows环境）
 
    ![b28](https://raw.githubusercontent.com/moshang-xc/b28-cli/master/img/b28.jpg)

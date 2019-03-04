@@ -12,6 +12,15 @@ const hongPath = './test/TestFile/config/index.js';
 //     let t = data;
 // });
 
+start({
+    commandType: COMMAD.GET_WORDS,
+    baseReadPath: './test/Pro/app/test',
+    baseOutPath: './test/TestFile/output/allTest',
+    hongPath
+}).then(data => {
+    let t = data;
+});
+
 // start({
 //     commandType: COMMAD.GET_WORDS,
 //     baseReadPath: './test/TestFile/test/allTest',
@@ -28,18 +37,18 @@ const hongPath = './test/TestFile/config/index.js';
 // }).then(data => {
 //     let t = data;
 // });
-start({
-    commandType: COMMAD.TRANSLATE,
-    baseTranslatePath: './test/TestFile/test/allTest',
-    baseTransOutPath: './test/TestFile/output/allTest',
-    languagePath: './test/TestFile/testData/allTest/translate.xlsx',
-    hongPath,
-    sheetName: '',
-    keyName: 'EN',
-    valueName: 'CN'
-}).then(data => {
-    let t = '';
-});
+// start({
+//     commandType: COMMAD.TRANSLATE,
+//     baseTranslatePath: './test/TestFile/test/allTest',
+//     baseTransOutPath: './test/TestFile/output/allTest',
+//     languagePath: './test/TestFile/testData/allTest/translate.xlsx',
+//     hongPath,
+//     sheetName: '',
+//     keyName: 'EN',
+//     valueName: 'CN'
+// }).then(data => {
+//     let t = '';
+// });
 
 // start({
 //     commandType: COMMAD.CHECK_TRANSLATE,

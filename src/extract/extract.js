@@ -43,7 +43,7 @@ class Extract {
         this.isWorking = false;
         // 待处理文件列表
         this.handleList = [];
-        this.CONFIG_HONG = this.option.CONFIG_HONG;
+        this.CONFIG_HONG = this.option.CONFIG_HONG || {};
     }
 
     handleFile(filePath) {
@@ -67,9 +67,8 @@ class Extract {
                 return this.startTrans();
             })
             .catch(error => {
-                // todo by xc文件处理出错也需要复制文件
                 this.copyFile(filePath);
-                log(`文件处理出错- ${error}`, LOG_TYPE.ERROR);
+                log(`文件[${filePath}]处理出错- ${error}`, LOG_TYPE.ERROR);
                 return this.startTrans();
             });
     }

@@ -8,6 +8,20 @@
     //  CONFIG_NET_WAN_STATIC 
     const tt = _("这条肯定不能被提取");
     /*CONFIG_NET_WAN_STATIC*/
+
+    //  CONFIG_NET_WAN_STATIC 
+    const tt = _("这条肯定不能被提取 + 1");
+
+    const tt = _("这条肯定不能被提取 + 2");
+    /*CONFIG_NET_WAN_STATIC*/
+
+    //  CONFIG_NET_WAN_STATIC 
+    const tt = _("这条可以被提取 + 1");
+
+    // this is hahahh
+    const tt = _("这条可以被提取 + 2");
+    /*CONFIG_NET_WAN_STATIC*/
+
     // true
     /*  CONFIG_PPPoE_SERVER     */
     const tt = _("宏控制词条");

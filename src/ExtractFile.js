@@ -8,6 +8,10 @@ const {
     EXTNAME_HTML
 } = require('../src/util/config');
 
+require('babel-register')({
+    presets: ['env']
+});
+
 const ExtractHTML = require('./extract/extract_html');
 const ExtractJS = require('./extract/extract_js');
 

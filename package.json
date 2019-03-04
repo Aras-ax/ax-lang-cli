@@ -1,6 +1,6 @@
 {
     "name": "b28-cli",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "translate, ExcelToJson, JsonToExcel, getText",
     "main": "./src/index.js",
     "bin": {
@@ -27,10 +27,10 @@
         "test": "cd test & jest"
     },
     "devDependencies": {
-        "escodegen": "^1.11.0",
-        "esprima": "^4.0.1",
-        "estraverse": "^4.2.0",
-        "iconv-lite": "^0.4.24",
+        "babel-generator": "^6.26.1",
+        "babel-preset-env": "^1.7.0",
+        "babel-register": "^6.26.0",
+        "babylon": "^6.18.0",
         "inquirer": "^6.2.2",
         "jsdom": "^10.0.0",
         "minimatch": "^3.0.4",

@@ -3,15 +3,31 @@
         a: 1, // 这是第一个注释
         b: 2 // 这是第二个注释
     }
+
+    let a = /*this is what you got*/ 1, //这是第一个注释
+        b = 2, //这是第二个注释
+        c = 3; //这是第三个注释
+
+    var s = {
+        a: 1, //这是第四个注释
+        b: 2, //这是第五个注释
+        c: 3 //这是第六个注释
+    };
+
+    let s = function( /* inner comment */ ) {
+        // this is comment
+    }
+
     // true
     /*    CONFIG_NEW_NETCTRL        */
-    const tt = _("我们不\"一样"); // 这里还有一个注释
+    const tt = _("我们不\"一样");
     /*    CONFIG_NEW_NETCTRL        */
 
     // false
     //  CONFIG_NET_WAN_STATIC 
-    const tt = _("这条肯定不能被提取"); // 这里也有喔
+    const tt = _("这条肯定不能被提取");
     /*CONFIG_NET_WAN_STATIC*/
+
     // true
     /*  CONFIG_PPPoE_SERVER     */
     const tt = _("宏控制词条");
@@ -29,8 +45,8 @@
     var s = _("注释内容不进行提取");
     let k = _('不要提取我哦，小哥哥');
     */
-    const tt = _("符号提(')取验(\")证项");
-    const tt = _("换行和tab验证：\n  \t");
+    const tt = _("符号提(')取验(\")证项"); // 这里也有喔
+    const tt = _("换行和tab验证：\n  \t"); // 这里还有一个注释
 
     function initTable(data) {
         var tableData = filterData($("#logType").val());

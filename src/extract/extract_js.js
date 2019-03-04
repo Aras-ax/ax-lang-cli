@@ -1,5 +1,5 @@
-const esprima = require('esprima');
-const escodegen = require('escodegen');
+import { parse } from 'babylon';
+import generate from 'babel-generator';
 
 const Extract = require('./extract');
 const { TRANS_NAME_REGEX } = require('../util/config');
@@ -10,27 +10,20 @@ const { TRANS_NAME_REGEX } = require('../util/config');
 class ExtractJs extends Extract {
     constructor(option) {
         super(option);
+        this.leadingComment = '';
+        this.tempNodes = [];
     }
 
     transNode(jsDoc) {
         return new Promise((resolve, reject) => {
             try {
-                let AST = esprima.parseModule(jsDoc, {
-                    attachComment: true,
-                    // comment: true,
-                    loc: true
-                    // range: true,
-                    // tokens: true
+                let AST = parse(jsDoc, {
+                    sourceType: 'module'
                 });
-                resolve(AST, jsDoc);
+                resolve(AST);
             } catch (err) {
-                let AST = esprima.parseScript(jsDoc, {
-                    attachComment: true,
-                    // comment: true,
-                    range: true,
-                    // tokens: true
-                });
-                resolve(AST, jsDoc);
+                let AST = parse(jsDoc, {});
+                resolve(AST);
             }
         });
     }
@@ -38,24 +31,13 @@ class ExtractJs extends Extract {
     // 扫描节点，提取字段
     scanNode(AST, jsDoc) {
         return new Promise((resolve, reject) => {
-            let body = AST.body;
-            this.nearComment = '';
+            let body = AST.program.body;
             body.forEach(node => {
                 this.listAst(node);
             });
-            // AST = escodegen.attachComments(AST, AST.comments, AST.tokens);
 
-            let data = escodegen.generate(AST, {
-                comment: true,
-                format: {
-                    indent: {
-                        adjustMultilineComment: false
-                    },
-                    quotes: 'auto',
-                    hexadecimal: true
-                },
-                sourceContent: jsDoc
-            });
+            let data = generate(AST, { /* options */ }, jsDoc).code;
+
             data = unescape(data.replace(/\\u/g, '%u'));
             resolve(data);
         });
@@ -87,7 +69,7 @@ class ExtractJs extends Extract {
         switch (node.type) {
             case 'CallExpression':
                 if (node.callee && TRANS_NAME_REGEX.test(node.callee.name)) {
-                    oldVal = this.getValue(node.arguments[0]);
+                    oldVal = this.getValue(node.arguments && node.arguments[0]);
                     curValue = this.getWord(oldVal, true);
                     if (curValue && node.arguments[0]['value']) {
                         node.arguments[0]['value'] = curValue;
@@ -111,33 +93,34 @@ class ExtractJs extends Extract {
         let type = Object.prototype.toString.call(astNode);
         if (type === '[object Object]') {
             // 根据宏判断是否需要进行提取
-            if (astNode.leadingComments && astNode.trailingComments) {
-                // 代码开头注释的最后一项和代码结束的第一项注释必须一样才表明是宏控制的功能
-                let startComment = astNode.leadingComments[astNode.leadingComments.length - 1]['value'],
-                    endComments = astNode.trailingComments[0]['value'];
-                startComment = startComment.replace(/^\s*|\s*$/g, '');
-                endComments = endComments.replace(/^\s*|\s*$/g, '');
-                // 若设置了宏且对应的值为false，则不进行该功能块的提取
-                if (startComment === endComments && this.CONFIG_HONG[startComment] === false) {
+            let leadingComment = this.leadingComment;
+            if (astNode.leadingComments) {
+                leadingComment = astNode.leadingComments[astNode.leadingComments.length - 1]['value'].replace(/^\s*|\s*$/g, '');
+                // 当且仅当宏为false时，才记录数据
+                leadingComment = this.CONFIG_HONG[leadingComment] === false ? leadingComment : '';
+                this.leadingComment = leadingComment;
+
+                this.listTenpAst();
+            }
+
+            if (leadingComment) {
+                // 若包含结束注释
+                if (astNode.trailingComments) {
+                    // 代码开头注释的最后一项和代码结束的第一项注释必须一样才表明是宏控制的功能
+                    this.leadingComment = '';
+                    let trailingComment = astNode.trailingComments[0]['value'].replace(/^\s*|\s*$/g, '');
+                    //与开始注释一样，则表示需要过滤掉
+                    if (leadingComment === trailingComment) {
+                        this.tempNodes = [];
+                        return;
+                    } else {
+                        this.listTenpAst();
+                    }
+                } else {
+                    this.tempNodes.push(astNode);
                     return;
                 }
             }
-            // 移除底部的注释，以免重复
-            if (astNode.leadingComments && this.nearComment === astNode.leadingComments[0]) {
-                astNode.leadingComments.shift();
-            }
-
-            try {
-                if (astNode.trailingComments && astNode.loc.start.line === astNode.trailingComments[0].loc.start.line) {
-                    astNode.trailingComments.length = 1;
-                    this.nearComment = astNode.trailingComments[0];
-                } else {
-                    delete astNode.trailingComments;
-                }
-            } catch (e) {
-                delete astNode.trailingComments;
-            }
-
 
             if (astNode.type === 'CallExpression') {
                 this.listNode(astNode);
@@ -156,6 +139,13 @@ class ExtractJs extends Extract {
                 this.listAst(node);
             })
         }
+    }
+
+    listTenpAst() {
+        this.tempNodes.forEach(item => {
+            this.listAst(item);
+        });
+        this.tempNodes = [];
     }
 }
 
