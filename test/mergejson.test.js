@@ -1,4 +1,4 @@
-const { mergeObject } = require('../src/util/index');
+import { mergeObject } from '../src/util/index';
 
 let obj = {
         a: 1,

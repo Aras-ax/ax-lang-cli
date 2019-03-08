@@ -1,4 +1,4 @@
-const {
+import {
     loadExcel,
     writeJson,
     formatKey,
@@ -6,9 +6,9 @@ const {
     writeExcel,
     log,
     LOG_TYPE
-} = require('./util/index');
+} from './util/index';
 
-const path = require('path');
+import path from 'path';
 
 /**
  * excelPath, outPath, sheetName, key, value
@@ -200,4 +200,4 @@ function trim(str) {
     return str.replace(/^(\s+)|(\s+)$/, '').replace(/ +/g, ' ').replace(/\r\n/g, '\n');
 }
 
-module.exports = excel2json;
+export default excel2json;

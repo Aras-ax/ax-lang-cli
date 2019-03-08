@@ -1,7 +1,7 @@
-const path = require('path');
-const fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 
-const { getDirname } = require('./index');
+import { getDirname } from './index';
 
 const CONFIG_FILE_NAME = 'b28.config.js';
 
@@ -252,7 +252,7 @@ const EXCLUDE_FILE_END = '**/{img,lang,b28,goform,cgi-bin,*.min.js,*shiv.js,*res
 const EXTNAME_JS = '**/*.js';
 const EXTNAME_HTML = '**/{*.aspx,*.asp,*.ejs,*.html,*.htm}';
 
-module.exports = {
+export {
     EXCLUDE_FILE,
     EXCLUDE_FILE_END,
     CONFIG_FILE_NAME,

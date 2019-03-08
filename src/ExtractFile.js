@@ -1,21 +1,9 @@
-const path = require('path');
-const fs = require('fs');
-const minimatch = require("minimatch");
-const {
-    EXCLUDE_FILE,
-    EXCLUDE_FILE_END,
-    EXTNAME_JS,
-    EXTNAME_HTML
-} = require('../src/util/config');
+import path from 'path';
+import fs from 'fs';
+import ExtractHTML from './extract/extract_html';
+import ExtractJS from './extract/extract_js';
 
-require('babel-register')({
-    presets: ['env']
-});
-
-const ExtractHTML = require('./extract/extract_html');
-const ExtractJS = require('./extract/extract_js');
-
-const {
+import {
     scanFolder,
     createFolder,
     copyFile,
@@ -23,7 +11,15 @@ const {
     correctPath,
     LOG_TYPE,
     log
-} = require('./util/index');
+} from './util/index';
+
+import {
+    EXCLUDE_FILE,
+    EXCLUDE_FILE_END,
+    EXTNAME_JS,
+    EXTNAME_HTML
+} from './util/config';
+const minimatch = require("minimatch");
 
 class ExtractFile {
     constructor(option) {
@@ -135,6 +131,7 @@ class ExtractFile {
             let outPath = path.join(this.option.baseWritePath, (this.option.isTranslate ? '未匹配的词条' : '提取词条') + `${sheetName}.xlsx`);
 
             if (this.outData.length > 0) {
+                this.outData = [...new Set(this.outData)];
                 this.writeWordToExcel(outPath, sheetName);
 
                 if (this.option.isTranslate || this.option.isCheckTrans) {
@@ -225,4 +222,4 @@ class ExtractFile {
     }
 }
 
-module.exports = ExtractFile;
+export default ExtractFile;

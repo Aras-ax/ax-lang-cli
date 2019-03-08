@@ -1,7 +1,8 @@
-const start = require('../src/index');
-const { COMMAD } = require('../src/util/config');
+import start from './index';
+import { COMMAD } from './util/config';
 
 const hongPath = './test/TestFile/config/index.js';
+import arrayToJson from './arrayToJson';
 
 // start({
 //     commandType: COMMAD.GET_WORDS,
@@ -12,13 +13,30 @@ const hongPath = './test/TestFile/config/index.js';
 //     let t = data;
 // });
 
+// start({
+//     commandType: COMMAD.GET_WORDS,
+//     baseReadPath: './test/Pro/app/test',
+//     baseOutPath: './test/TestFile/output/allTest',
+//     hongPath
+// }).then(data => {
+//     let t = data;
+// });
+
+// start({
+//     commandType: COMMAD.GET_WORDS,
+//     baseReadPath: 'C:/Users/moshang/Desktop/src',
+//     baseOutPath: 'C:/Users/moshang/Desktop/srcOut',
+//     hongPath: ''
+// }).then(data => {
+//     let t = data;
+// });
+
+arrayToJson('C:/Users/moshang/Desktop/srcOut/lang1.json', 'C:/Users/moshang/Desktop/srcOut/lang.json', 'C:/Users/moshang/Desktop/srcOut/t.json');
+
 start({
-    commandType: COMMAD.GET_WORDS,
-    baseReadPath: './test/Pro/app/test',
-    baseOutPath: './test/TestFile/output/allTest',
-    hongPath
-}).then(data => {
-    let t = data;
+    commandType: COMMAD.JSON_TO_EXCEL,
+    jsonPath: 'C:/Users/moshang/Desktop/srcOut/t.json',
+    outExcelPath: ''
 });
 
 // start({

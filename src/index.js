@@ -1,10 +1,11 @@
-const handle = require('./handle');
-const { COMMAD, valid, questions, baseQuestions, COMMAD_TEXT, CONFIG_FILE_NAME } = require('./util/config');
-const { getDirname, LOG_TYPE, log } = require('./util/index');
+import handle from './handle';
+import { COMMAD, valid, questions, baseQuestions, COMMAD_TEXT, CONFIG_FILE_NAME } from './util/config';
+import { getDirname, LOG_TYPE, log } from './util/index';
 
-const path = require('path');
-const fs = require('fs');
-const inquirer = require('inquirer');
+import path from 'path';
+import fs from 'fs';
+import inquirer from 'inquirer';
+import handleRequest from './cmd';
 
 let cwd = process.cwd();
 let configFilepath = path.join(cwd, CONFIG_FILE_NAME);
@@ -214,10 +215,15 @@ let validate = {
 }
 
 function start(config) {
+    if (process.argv.length === 3) {
+        handleRequest(process.argv[2]);
+        return;
+    }
+
     config = config || gerArgs();
     return main(config).then(data => {
         return handle(data);
     });
 }
 
-module.exports = start;
+export default start;

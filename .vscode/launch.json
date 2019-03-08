@@ -7,7 +7,7 @@
         "type": "node",
         "request": "launch",
         "name": "翻译工具",
-        "program": "${workspaceFolder}/src/check.js"
+        "program": "${workspaceFolder}/dist/check.js"
         // "program": "${workspaceFolder}\\t.js"
     }]
 }

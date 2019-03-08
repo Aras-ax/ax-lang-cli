@@ -1,3 +1,5 @@
 #!/usr/bin/env node
 
-require('./src/index')();
+const start = require('./dist/index');
+
+start.default();

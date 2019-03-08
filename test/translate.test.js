@@ -1,5 +1,5 @@
-const excel2json = require('../src/excel2json');
-const ExtractFile = require('../src/ExtractFile');
+import excel2json from '../src/excel2json';
+import ExtractFile from '../src/ExtractFile';
 
 let extract = new ExtractFile({
     baseReadPath: 'D:/Git/translate/test/TestFile/test/js',

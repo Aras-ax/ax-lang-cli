@@ -1,4 +1,4 @@
-const ExtractFile = require('../src/ExtractFile');
+import ExtractFile from '../src/ExtractFile';
 const htmlData = require('./TestFile/testData/html/index');
 const jsData = require('./TestFile/testData/js/index');
 

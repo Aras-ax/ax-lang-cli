@@ -1,13 +1,13 @@
-const {
+import {
     log,
     loadFile,
     trim,
     LOG_TYPE,
     copyFile,
     writeTextFile
-} = require('../util/index');
+} from '../util/index';
 
-const path = require('path');
+import path from 'path';
 
 /**
  * 词条提取、翻译基类
@@ -172,4 +172,4 @@ class Extract {
     }
 }
 
-module.exports = Extract;
+export default Extract;

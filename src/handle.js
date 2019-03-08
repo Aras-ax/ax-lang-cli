@@ -1,11 +1,11 @@
-const path = require('path');
+import path from 'path';
 
-const ExtractFile = require('./ExtractFile.js');
-const excel2json = require('./excel2json');
-const json2excel = require('./json2excel');
-const mergeJson = require('./mergeJson');
-const { COMMAD } = require('./util/config');
-const { loadJsonSync } = require('./util/index');
+import ExtractFile from './ExtractFile.js';
+import excel2json from './excel2json';
+import json2excel from './json2excel';
+import mergeJson from './mergeJson';
+import { COMMAD } from './util/config';
+import { loadJsonSync } from './util/index';
 
 function handle(cfg) {
     switch (cfg.commandType) {
@@ -116,4 +116,4 @@ function merge(cfg) {
     return mergeJson(cfg.mainJsonPath, cfg.mergeJsonPath, cfg.outMergeJsonPath);
 }
 
-module.exports = handle;
+export default handle;

@@ -6,4 +6,5 @@ dist/
 test/Pro
 mess.md
 src/check.js
+src/arrayToJson.js
 b28.config.js

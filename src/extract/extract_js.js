@@ -1,8 +1,7 @@
 import { parse } from 'babylon';
 import generate from 'babel-generator';
-
-const Extract = require('./extract');
-const { TRANS_NAME_REGEX } = require('../util/config');
+import Extract from './extract';
+import { TRANS_NAME_REGEX } from '../util/config';
 
 /**
  * JS文件解析类
@@ -149,4 +148,4 @@ class ExtractJs extends Extract {
     }
 }
 
-module.exports = ExtractJs;
+export default ExtractJs;

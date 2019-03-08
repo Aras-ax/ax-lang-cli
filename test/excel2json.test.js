@@ -1,4 +1,4 @@
-const excel2json = require('../src/excel2json');
+import excel2json from '../src/excel2json';
 let data1 = [
         '我们不"一样',
         '这条肯定不能被提取',

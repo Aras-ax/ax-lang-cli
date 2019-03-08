@@ -1,5 +1,5 @@
-const { mergeObject, loadJson, writeJson, LOG_TYPE, log } = require('./util/index');
-const path = require('path');
+import { mergeObject, loadJson, writeJson, LOG_TYPE, log } from './util/index';
+import pathfrom from 'path';
 
 function merge(obj, ...others) {
     let outData = Object.assign(Object.prototype.toString.call(obj) === '[object Object]' ? {} : [], obj);
@@ -35,4 +35,4 @@ function mergeJson(main, file, outPath) {
     });
 }
 
-module.exports = mergeJson;
+export default mergeJson;

@@ -1,6 +1,6 @@
-const fs = require('fs');
-const path = require('path');
-const xlsx = require('node-xlsx').default;
+import fs from 'fs';
+import path from 'path';
+import xlsx from 'node-xlsx';
 
 const LOG_TYPE = {
     WARNING: 1,
@@ -337,7 +337,7 @@ function trim(text) {
     return text.trim();
 }
 
-module.exports = {
+export {
     formatKey,
     decodeKey,
     deepMerge,

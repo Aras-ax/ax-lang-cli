@@ -1,6 +1,6 @@
-const fs = require('fs');
-const start = require('../src/index');
-const { COMMAD } = require('../src/util/config');
+import fs from 'fs';
+import start from '../src/index';
+import { COMMAD } from '../src/util/config';
 
 let words = ['EN',
     "D:/Git/translate/test/TestFile/test/allTest/html/hello.html",

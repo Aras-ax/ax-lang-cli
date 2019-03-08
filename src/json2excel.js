@@ -1,5 +1,5 @@
-const { loadJson, writeExcel, LOG_TYPE, log } = require('./util/index');
-const path = require('path');
+import { loadJson, writeExcel, LOG_TYPE, log } from './util/index';
+import path from 'path';
 
 function json2excel(jsonPath, outPath) {
     let exceldata = [
@@ -18,7 +18,7 @@ function json2excel(jsonPath, outPath) {
             outPath = path.join(outPath, 'json2Excel.xlsx');
         }
 
-        return writeExcel(data, outPath, 'EN-CN');
+        return writeExcel(exceldata, outPath, 'EN-CN');
     }).then(data => {
         log(`Json to Excel 文件已写入地址-${outPath}`);
         return data;
@@ -28,4 +28,4 @@ function json2excel(jsonPath, outPath) {
     });
 }
 
-module.exports = json2excel;
+export default json2excel;

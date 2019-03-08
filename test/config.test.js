@@ -1,5 +1,5 @@
 const minimatch = require("minimatch");
-const { EXCLUDE_FILE, EXCLUDE_FILE_END } = require('../src/util/config');
+import { EXCLUDE_FILE, EXCLUDE_FILE_END } from '../src/util/config';
 
 describe('测试排除文件夹正则正确性', () => {
     test('用例：a/lang', () => {

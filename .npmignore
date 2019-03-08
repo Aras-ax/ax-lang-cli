@@ -1,6 +1,9 @@
 node_modules/
 test/
+src/
 img/
+dist/check.js
+dist/arrayToJson.js
 .vscode/
 .eslintrc.js
 .gitignore

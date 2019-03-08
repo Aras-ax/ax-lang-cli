@@ -1,11 +1,13 @@
 const {
     JSDOM
 } = require("jsdom");
-const {
+import {
     log,
     LOG_TYPE,
     trim
-} = require('../util/index');
+} from '../util/index';
+import ExtractJS from './extract_js';
+import Extract from './extract';
 
 const HANDLE_ATTRIBUTE = ['alt', 'placeholder', 'title', 'data-title'];
 const Edit_TYPE = {
@@ -16,8 +18,6 @@ const Edit_TYPE = {
     title: 5
 };
 
-const ExtractJS = require('./extract_js');
-const Extract = require('./extract');
 
 /**
  * HTML文件解析类
@@ -200,4 +200,4 @@ class ExtractHTML extends Extract {
     }
 }
 
-module.exports = ExtractHTML;
+export default ExtractHTML;
