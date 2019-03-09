@@ -23,6 +23,22 @@
 npm install b28-cli -g
 ```
 
+**指令**
+```
+# 运行工具
+cd xxx
+b28-cli
+
+# 初始化配置文件b28.config.js
+b28-cli init
+
+# 查看版本号
+b28-cli -v
+
+# 查看帮助
+b28-cli -h
+```
+
 **使用方式：**
 1. 通过[WinForm](B28.exe)界面程序直接操作（只支持windows环境）
 
