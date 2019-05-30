@@ -9,6 +9,6 @@
         "name": "翻译工具",
         "sourceMaps": true,
         // "program": "${workspaceFolder}/dist/check.js"
-        "program": "${workspaceFolder}/src/check.js"
+        "program": "${workspaceFolder}/src/enter.js"
     }]
 }

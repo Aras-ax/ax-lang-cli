@@ -1,8 +1,8 @@
 import start from './index';
 import { COMMAD } from './util/config';
 
-const hongPath = './test/TestFile/config/index.js';
-import arrayToJson from './arrayToJson';
+// const hongPath = './test/TestFile/config/index.js';
+// import arrayToJson from './arrayToJson';
 
 // start({
 //     commandType: COMMAD.GET_WORDS,
@@ -108,10 +108,14 @@ import arrayToJson from './arrayToJson';
 
 // start();
 
-start({
-    commandType: COMMAD.ORIGINAL_CODE,
-    baseReadPath: './test/TestFile/test/TestFile/origin',
-    baseOutPath: './test/TestFile/output/origin'
-}).then(data => {
-    // return expect(data).toEqual(words);
-});
+
+
+module.exports = function() {
+    start({
+        commandType: COMMAD.ORIGINAL_CODE,
+        baseReadPath: './test/TestFile/origin',
+        baseOutPath: './test/TestFile/output/origin'
+    }).then(data => {
+        // return expect(data).toEqual(words);
+    });
+}
