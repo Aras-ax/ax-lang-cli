@@ -110,9 +110,8 @@ import arrayToJson from './arrayToJson';
 
 start({
     commandType: COMMAD.ORIGINAL_CODE,
-    mainJsonPath: 'D:/Git/translate/test/TestFile/testData/lang/CN.json',
-    mergeJsonPath: 'D:/Git/translate/test/TestFile/testData/lang/ZH.json',
-    outMergeJsonPath: ''
+    baseReadPath: './test/TestFile/test/TestFile/origin',
+    baseOutPath: './test/TestFile/output/origin'
 }).then(data => {
     // return expect(data).toEqual(words);
 });
