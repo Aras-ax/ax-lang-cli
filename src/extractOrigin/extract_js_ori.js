@@ -89,7 +89,7 @@ class ExtractJs extends Extract {
                     if (/^(alert|document\.write)$/i.test(name)) {
                         //    解析表达式的值，并且重写函数
                         if (node.arguments.length === 1) {
-                            this.addCallTrans(node.arguments);
+                            this.addCallTrans(node.arguments[0]);
                         }
                     } else {
                         for (let key in node) {
@@ -106,7 +106,11 @@ class ExtractJs extends Extract {
 
     // 给源码中的文本添加翻译函数
     addStringTrans(node) {
-        let htmlAst = htmlparser.parseDOM(node.value);
+        let res = this.getWord(node.value);
+        if (!res) {
+            return;
+        }
+        let htmlAst = htmlparser.parseDOM(res);
         if (htmlAst.length > 1) {
             // 解析html
             res = this.analyseHtmlNode(htmlAst, arr);
@@ -119,7 +123,7 @@ class ExtractJs extends Extract {
     // 替换源码中的文本
     addTrans(val, loc) {
         this.newCode = this.newCode.splice(loc.start + this.offSet, loc.end + this.offSet, val);
-        this.offSet = val.length - (loc.end - loc.start);
+        this.offSet += val.length - (loc.end - loc.start);
     }
 
     // 给源码中的表达式添加翻译函数
@@ -127,16 +131,20 @@ class ExtractJs extends Extract {
         switch (node.type) {
             case 'BinaryExpression':
                 // 遍历参数
-                let res, arr = [];
-                res = this.analyseBinarry(arr);
+                let res, arr = [],
+                    args = '';
+                res = this.analyseBinarry(node, arr);
                 let htmlAst = htmlparser.parseDOM(res);
                 if (htmlAst.length > 1) {
                     // 解析html
                     res = this.analyseHtmlNode(htmlAst, arr);
                 } else {
-                    // todo by xc 添加到文件中去
-                    arr = arr.length > 0 ? `, [${arr.join(',')}]` : '';
-                    res = `_("${val.replace(/"/g, '\\"')}"${arr})`;
+                    // 将标记还原
+                    if (arr.length > 0) {
+                        args = `, [${arr.join(',')}]`;
+                        res = res.replace(/\{%s\}/g, () => '%s');
+                    }
+                    res = `_("${res.replace(/"/g, '\\"')}"${args})`;
                 }
                 this.addTrans(res, { start: node.start, end: node.end });
                 break;
@@ -151,7 +159,7 @@ class ExtractJs extends Extract {
             right, left = node.left;
         if (right = node.right) {
 
-            if (right.type === StringLiteral) {
+            if (right.type === 'StringLiteral') {
                 res = right.value + res;
             } else {
                 args.unshift(this.oldCode.substring(right.start, right.end));
@@ -161,7 +169,7 @@ class ExtractJs extends Extract {
 
         switch (left.type) {
             case 'BinaryExpression':
-                res += this.analyseBinarry(left, args);
+                res = this.analyseBinarry(left, args) + res;
                 break;
             case 'StringLiteral':
                 res = left.value + res;

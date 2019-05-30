@@ -8,7 +8,7 @@
         "request": "launch",
         "name": "翻译工具",
         "sourceMaps": true,
-        // "program": "${workspaceFolder}/dist/check.js"
+        // "program": "${workspaceFolder}/dist/enter.js"
         "program": "${workspaceFolder}/src/enter.js"
     }]
 }

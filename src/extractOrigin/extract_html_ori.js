@@ -29,6 +29,7 @@ class ExtractHTML extends Extract {
         super(option);
 
         this.extractJS = new ExtractJS({});
+        this.jsHandleList = [];
     }
 
     transNode(html) {
@@ -53,10 +54,10 @@ class ExtractHTML extends Extract {
 
     // 扫描节点，提取字段
     scanNode(document) {
-        return new Promise((resolve, reject) => {
-            // 遍历各节点
-            this.listNode(document.documentElement);
+        // 遍历各节点
+        this.listNode(document.documentElement);
 
+        return this.nextJsTask().then(() => {
             let outHtml = document.documentElement.innerHTML;
 
             if (!this.hasHeader) {
@@ -68,8 +69,36 @@ class ExtractHTML extends Extract {
             outHtml = outHtml.replace(/^\s*|\s*$/g, '');
             outHtml = document.doctype ? '<!doctype html>\t\n<html>\t\n' + outHtml + '\t\n</html>' : outHtml;
 
-            resolve(outHtml);
+            return outHtml;
         });
+    }
+
+    handleJsTask(child) {
+        return this.extractJS.transNode(child.nodeValue)
+            .then(AST => {
+                return this.extractJS.scanNode(AST);
+            })
+            .then((fileData) => {
+                // 写入文件
+                child.nodeValue = fileData;
+                return this.nextJsTask();
+            })
+            .catch(error => {
+                log(`内联JS处理出错- ${error}`, LOG_TYPE.error);
+                return this.nextJsTask();
+            });
+    }
+
+    nextJsTask() {
+        // 当一个文件执行完成，立即执行下一个指令
+        if (this.jsHandleList.length > 0) {
+            return this.handleJsTask(this.jsHandleList.shift());
+        }
+        return Promise.resolve('done');
+    }
+
+    addJsTask(handle) {
+        this.jsHandleList.push(handle);
     }
 
     listNode(element) {
@@ -95,30 +124,33 @@ class ExtractHTML extends Extract {
                     if (nodeName == 'script') {
                         if (firstChild && firstChild.nodeValue && trim(firstChild.nodeValue)) {
                             // todo by xc 添加对内嵌JS代码的处理
-                            this.extractJS.transNode(firstChild.nodeValue)
-                                .then(AST => {
-                                    return this.extractJS.scanNode(AST);
-                                })
-                                .then((fileData) => {
-                                    // 写入文件
-                                    firstChild.nodeValue = fileData;
-                                    nextSibling && this.listNode(nextSibling);
-                                })
-                                .catch(error => {
-                                    log(`内联JS处理出错- ${error}`, LOG_TYPE.error);
-                                    nextSibling && this.listNode(nextSibling);
-                                });
-                        } else {
-                            nextSibling && this.listNode(nextSibling);
+                            // return this.extractJS.transNode(firstChild.nodeValue)
+                            //     .then(AST => {
+                            //         return this.extractJS.scanNode(AST);
+                            //     })
+                            //     .then((fileData) => {
+                            //         // 写入文件
+                            //         firstChild.nodeValue = fileData;
+                            //         return nextSibling && this.listNode(nextSibling);
+                            //     })
+                            //     .catch(error => {
+                            //         log(`内联JS处理出错- ${error}`, LOG_TYPE.error);
+                            //         return nextSibling && this.listNode(nextSibling);
+                            //     });
+                            this.addJsTask(firstChild);
                         }
+                        // return Promise.resolve(nextSibling && this.listNode(nextSibling));
                     }
-                    return;
+                    // return Promise.resolve(nextSibling && this.listNode(nextSibling));
                 }
 
                 // 对特殊需要翻译的属性进行处理
                 HANDLE_ATTRIBUTE.forEach(attr => {
-                    curValue = this.getWord(element.getAttribute(attr));
-                    this.transWord(element, Edit_TYPE.attribute, curValue, attr);
+                    let attrVal = element.getAttribute(attr);
+                    if (attrVal) {
+                        curValue = this.getWord(attrVal);
+                        this.transWord(element, Edit_TYPE.attribute, curValue, attr);
+                    }
                 });
 
                 if (isInputButton) {

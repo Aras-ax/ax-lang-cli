@@ -109,7 +109,7 @@ class Extract {
     }
 
     getWord(val, isJs) {
-        if (val && /\S/.test(val)) {
+        if (!val || /^\s*$/.test(val)) {
             return '';
         }
 
