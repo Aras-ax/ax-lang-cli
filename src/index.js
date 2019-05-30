@@ -73,6 +73,14 @@ function gerArgs() {
             };
             console.log(config);
             break;
+        case COMMAD.ORIGINAL_CODE:
+            config = {
+                commandType: 6,
+                baseReadPath: args.from,
+                baseOutPath: args.to
+            };
+            console.log(config);
+            break;
     }
     return config;
 }
@@ -211,6 +219,14 @@ let validate = {
             return true;
         }
         cfg.outMergeJsonPath = cfg.outMergeJsonPath || getDirname(cfg.mainJsonPath);
+    },
+    6: function(cfg) {
+        if (valid.folder(cfg.baseReadPath) !== true) {
+            return true;
+        }
+
+        // 为空的处理
+        cfg.baseOutPath = cfg.baseOutPath || getDirname(cfg.baseReadPath);
     }
 }
 

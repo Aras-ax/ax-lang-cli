@@ -1,0 +1,79 @@
+<html>
+
+<head>
+    <meta HTTP-EQUIV='Pragma' CONTENT='no-cache'>
+    <link rel="stylesheet" href='stylemain.css' type='text/css'>
+    <link rel="stylesheet" href='colors.css' type='text/css'>
+    <script language="javascript">
+        <!-- hide 
+        var buildSiproxd = '<%ejGetOther(sysInfo, buildSiproxd)%>';
+        var enblSiproxd = '<%ejGet(enblSiproxd)%>';
+
+        alert('VLAN ID "' + vid + '" is out of range [0-4095].');
+        alert(esprima.tf + 3);
+        alert((2 + 3) + '3');
+        alert("No Vlan Id is specified when Vlan mode is enable");
+        document.write("<td class='hd'>DSL PHY and Driver Version:</td>");
+        document.write("<td class='hd'>DSL PHY and" + name + " Driver Version:</td>");
+
+        docW = this.blockStartHTML("folder");
+        if (this.level > 0) {
+            docW = docW + "<tr>"
+            docW = docW + "<td class='menuCell' valign=middle nowrap width=100%>"
+            docW = docW + "<a class='menuLink' href='" + this.hreference + "' TARGET=\"basefrm\""
+            if (browserVersion > 0)
+                docW = docW + "onClick='javascript:clickOnFolder(" + this.id + ")'"
+            docW = docW + ">" + leftSide + this.desc + "&nbsp;&nbsp;" + "</a>"
+            docW = docW + "</td>"
+        }
+
+        function frmLoad() {
+            var adslFlag = '<%ejGet(adslFlag)%>';
+
+            function applyClick() {
+                var loc = 'adslcfgc.cgi?adslFlag=';
+                var adslFlag = 0;
+
+                if (vlanRule != '') {
+                    var vlan = vlanRule[i].split('/');
+                    document.write("<tr align='center'>");
+                    document.write("<td><input type='text' id='vid" + i + "' value='" + vlan[0] + "'></td>");
+                    document.write("<td><input type='text' id='pbits" + i + "' value='" + vlan[1] + "'></td>");
+                    document.write("<td><input type='checkbox' id='rml" + i + "'></td>");
+                    document.write("</tr>");
+                }
+            }
+        }
+        // done hiding 
+        -->
+    </script>
+</head>
+
+<body onLoad='frmLoad()'>
+    <blockquote>
+        <form>
+            <b>DSL Settings</b><br>
+            <br>
+            Select the modulation below.<br>
+            <br>
+            Select the phone line pair below.<br>
+            <table border="0" cellpadding="4" cellspacing="0">
+                <tr>
+                    <td width='20'>&nbsp;</td>
+                    <td><input type="radio" name="adslPair">Inner pair</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td><input type="radio" name="adslPair">Outer pair</td>
+                </tr>
+            </table>
+            <br>
+            <center>
+                <%ejGet(enblSiproxd)%>
+                <input type='button' onClick='applyClick()' value='Save/Apply'> <input type='button' onClick='location.href="adslcfgadv.html"' value='Advanced Settings'>
+            </center>
+        </form>
+    </blockquote>
+</body>
+
+</html>

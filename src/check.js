@@ -78,18 +78,18 @@ import arrayToJson from './arrayToJson';
 //     let t = '';
 // });
 
-start({
-    commandType: COMMAD.TRANSLATE,
-    baseTranslatePath: './test/TestFile/test/html',
-    baseTransOutPath: './test/TestFile/output/html',
-    languagePath: './test/TestFile/testData/allTest/translate.xlsx',
-    hongPath,
-    sheetName: '',
-    keyName: 'EN',
-    valueName: 'CN'
-}).then(data => {
-    let t = '';
-});
+// start({
+//     commandType: COMMAD.TRANSLATE,
+//     baseTranslatePath: './test/TestFile/test/html',
+//     baseTransOutPath: './test/TestFile/output/html',
+//     languagePath: './test/TestFile/testData/allTest/translate.xlsx',
+//     hongPath,
+//     sheetName: '',
+//     keyName: 'EN',
+//     valueName: 'CN'
+// }).then(data => {
+//     let t = '';
+// });
 
 // start({
 //     commandType: COMMAD.JSON_TO_EXCEL,
@@ -107,3 +107,12 @@ start({
 // });
 
 // start();
+
+start({
+    commandType: COMMAD.ORIGINAL_CODE,
+    mainJsonPath: 'D:/Git/translate/test/TestFile/testData/lang/CN.json',
+    mergeJsonPath: 'D:/Git/translate/test/TestFile/testData/lang/ZH.json',
+    outMergeJsonPath: ''
+}).then(data => {
+    // return expect(data).toEqual(words);
+});

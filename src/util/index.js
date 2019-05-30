@@ -334,7 +334,11 @@ function correctPath(filePath) {
  * 移除空格
  */
 function trim(text) {
-    return text.trim();
+    return text.replace(/(^\s+)|(\s+$)/g, '');
+}
+
+function getType(obj) {
+    return Object.prototype.toString.call(obj).slice(8, -1);
 }
 
 export {
@@ -355,6 +359,7 @@ export {
     mergeObject,
     getDirname,
     LOG_TYPE,
+    getType,
     trim,
     log
 };

@@ -31,10 +31,14 @@ const COMMAD = {
     /**
      * JSON文件合并
      */
-    MERGE_JSON: 5
+    MERGE_JSON: 5,
+    /**
+     * 原厂代码处理添加翻译
+     */
+    ORIGINAL_CODE: 6
 };
 
-const COMMAD_TEXT = ['提取词条', '翻译文件', '翻译检查', 'Excel转JSON', 'JSON转Excel', 'JSON合并'];
+const COMMAD_TEXT = ['提取词条', '翻译文件', '翻译检查', 'Excel转JSON', 'JSON转Excel', 'JSON合并', '添加翻译'];
 
 const valid = {
     // 空或者存在的地址
@@ -251,6 +255,25 @@ const EXCLUDE_FILE = '**/{img,lang,b28,goform,cgi-bin,css}/**';
 const EXCLUDE_FILE_END = '**/{img,lang,b28,goform,cgi-bin,*.min.js,*shiv.js,*respond.js,*shim.js}';
 const EXTNAME_JS = '**/*.js';
 const EXTNAME_HTML = '**/{*.aspx,*.asp,*.ejs,*.html,*.htm}';
+/**
+ * 不进行匹配词条的正则
+ */
+const IGNORE_REGEXP = [
+    /^[\s0-9]*$/,
+    // 单个字母，全数字，数组+标点符号，数字/标点+字母格式不提取
+    /^(([a-z])|(([a-z]+[0-9\.\_\:\-\\\/]+)|([0-9\.\_\:\-\\\/]+[a-z]+)[a-z0-9\.\_\:\-\\\/]*)|([0-9\.\_\:\-\\\/]+))$/i,
+    // <% xxxx %>格式的字符串不提取
+    /<%([\s\S]*)%>/i,
+    // /^<%=((.|\n)*)%>$/i,
+    // url不提取
+    /^((ht|f)tps?):\/\/([\w\-]+(\.[\w\-]+)*\/)*[\w\-]+(\.[\w\-]+)*\/?(\?([\w\-\.,@?^=%&:\/~\+#]*)+)?/i
+];
+
+const ACTION_TYPE = {
+    ADDTRANS: 1, // 添加翻译函数和提取语言
+    GETLANG: 2, // 提取词条，只提取有翻译函数的词条
+    TRANSLATE: 3, // 翻译文件中的词条
+};
 
 export {
     EXCLUDE_FILE,
@@ -263,5 +286,7 @@ export {
     valid,
     EXTNAME_HTML,
     EXTNAME_JS,
-    baseQuestions
+    baseQuestions,
+    IGNORE_REGEXP,
+    ACTION_TYPE
 };
