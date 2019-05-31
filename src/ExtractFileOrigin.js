@@ -8,7 +8,6 @@ import {
     scanFolder,
     createFolder,
     copyFile,
-    writeExcel,
     correctPath,
     LOG_TYPE,
     log
@@ -18,8 +17,7 @@ import {
     EXCLUDE_FILE,
     EXCLUDE_FILE_END,
     EXTNAME_JS,
-    EXTNAME_HTML,
-    ACTION_TYPE
+    EXTNAME_HTML
 } from './util/config';
 
 const minimatch = require("minimatch");

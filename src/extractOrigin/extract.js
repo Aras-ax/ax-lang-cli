@@ -50,7 +50,6 @@ class Extract {
                 // 写入文件
                 log(`添加翻译函数-${filePath}`);
                 writeTextFile(path.resolve(this.option.baseWritePath, path.relative(this.option.baseReadPath, this.curFilePath)), fileData);
-
                 this.complete();
                 return this.startTrans();
             })

@@ -76,6 +76,32 @@ class ExtractJs extends Extract {
         return '';
     }
 
+    listAst(astNode) {
+        let type = getType(astNode);
+        if (type === 'Object') {
+            if (/^(BinaryExpression|BinaryExpression)$/i.test(astNode.type)) {
+                return;
+            }
+
+            if (/^(CallExpression|StringLiteral)$/i.test(astNode.type)) {
+                this.listNode(astNode);
+                return;
+            }
+            // 对于注释的项不进行遍历
+            let ignoreKeys = ['leadingComments', 'trailingComments', 'sourceElements', 'loc', 'test', 'id'];
+            for (let key in astNode) {
+                if (ignoreKeys.includes(key)) {
+                    continue;
+                }
+                this.listAst(astNode[key]);
+            }
+        } else if (type === 'Array') {
+            astNode.forEach(node => {
+                this.listAst(node);
+            })
+        }
+    }
+
     listNode(node) {
         switch (node.type) {
             case 'CallExpression':
@@ -92,9 +118,10 @@ class ExtractJs extends Extract {
                             this.addCallTrans(node.arguments[0]);
                         }
                     } else {
-                        for (let key in node) {
-                            this.listAst(node[key]);
-                        }
+                        // 对于字符串相关的表达式不进行提取
+                        // for (let key in node) {
+                        //     this.listAst(node[key]);
+                        // }
                     }
                 }
                 break;
@@ -111,13 +138,16 @@ class ExtractJs extends Extract {
             return;
         }
         let htmlAst = htmlparser.parseDOM(res);
-        if (htmlAst.length > 1) {
-            // 解析html
-            res = this.analyseHtmlNode(htmlAst, arr);
-        } else {
-            res = `_("${res.replace(/"/g, '\\"')}")`;
+
+        if (htmlAst.length > 0) {
+            if (htmlAst.length > 1 || htmlAst[0].type !== 'text') {
+                // 解析html
+                res = this.analyseDom(htmlAst, [], res);
+            } else {
+                res = `_("${res.replace(/"/g, '\\"')}")`;
+            }
+            this.addTrans(res, { start: node.start, end: node.end });
         }
-        this.addTrans(res, { start: node.start, end: node.end });
     }
 
     // 替换源码中的文本
@@ -134,10 +164,17 @@ class ExtractJs extends Extract {
                 let res, arr = [],
                     args = '';
                 res = this.analyseBinarry(node, arr);
+
+                // 对于无string参与的表达式不进行翻译函数的添加
+                if (!res.hasStr || !res.text) {
+                    break;
+                }
+
+                res = res.text;
                 let htmlAst = htmlparser.parseDOM(res);
-                if (htmlAst.length > 1) {
+                if (htmlAst.length > 1 || htmlAst[0].type !== 'text') {
                     // 解析html
-                    res = this.analyseHtmlNode(htmlAst, arr);
+                    res = this.analyseDom(htmlAst, arr, res);
                 } else {
                     // 将标记还原
                     if (arr.length > 0) {
@@ -156,10 +193,14 @@ class ExtractJs extends Extract {
 
     analyseBinarry(node, args) {
         let res = '',
-            right, left = node.left;
+            right,
+            left = node.left,
+            hasStr = false;
+
         if (right = node.right) {
 
             if (right.type === 'StringLiteral') {
+                hasStr = true;
                 res = right.value + res;
             } else {
                 args.unshift(this.oldCode.substring(right.start, right.end));
@@ -169,46 +210,94 @@ class ExtractJs extends Extract {
 
         switch (left.type) {
             case 'BinaryExpression':
-                res = this.analyseBinarry(left, args) + res;
+                let innerRes = this.analyseBinarry(left, args);
+                hasStr = hasStr || innerRes.hasStr;
+                res = innerRes.text + res;
                 break;
             case 'StringLiteral':
+                hasStr = true;
                 res = left.value + res;
                 break;
             default:
                 // 默认当做参数进行处理
-                args.push(this.oldCode.substring(left.start, left.end));
+                args.unshift(this.oldCode.substring(left.start, left.end));
                 res = '{%s}' + res;
                 break;
         }
-        return res;
+        return {
+            text: res,
+            hasStr
+        }
+    }
+
+    analyseDom(ast, args, nodeHtml) {
+        let res = this.analyseHtmlNode(ast, args, nodeHtml.match(/<\/[0-9a-z]+?>/g) || []),
+            text = res.text,
+            isTranStart = res.isTranStart;
+
+        if (!isTranStart) {
+            text = '\'' + text;
+        }
+
+        if (res.isStrEnd) {
+            text = text + '\'';
+        }
+
+        return text;
     }
 
     // 解析html节点元素，生成对应的代码，此处解析的字符串htmlAst为将参数替换为{%s}后的ast
-    analyseHtmlNode(ast, args) {
-        let res = '';
+    // <td><input type='text' id='vid{%s}' value='{%s}'></td>
+    analyseHtmlNode(ast, args, endTags) {
+        let res = '',
+            isStrEnd = true;
         ast.forEach(item => {
             if (item.children) {
-                let nodeHtml = `${item.type}`;
+                let nodeHtml = `<${item.name}`;
                 for (let key in item.attribs) {
-                    let attr = item.attribs.replace(/\{%\}/g, function() {
-                        return `"+ ${args.shift()} +"`;
+                    let attr = item.attribs[key].replace(/\{%s\}/g, function() {
+                        return `'+ ${args.shift()} + '`;
                     });
 
                     nodeHtml += ` ${key}="${attr}"`
                 }
-                if (item.type === 'input') {
+                if (item.name === 'input') {
                     nodeHtml += '/>';
+                    isStrEnd = true;
                 } else {
                     nodeHtml += '>';
-                    nodeHtml += this.analyseHtmlNode(item.children, args);
-                    nodeHtml += `</${item.type}>`;
+                    let data = this.analyseHtmlNode(item.children, args, endTags);
+                    let endTag = `</${item.name}>`;
+                    data.isTranStart && (nodeHtml += '\' + ');
+                    nodeHtml += data.text;
+                    data.isStrEnd || (nodeHtml += ' + \'');
+                    // nodeHtml += ;
+                    if (endTags.length > 0) {
+                        if (endTags[0] === endTag) {
+                            endTags.shift();
+                        }
+                        nodeHtml += endTag;
+                    }
                 }
                 res += nodeHtml;
+                isStrEnd = true;
             } else {
-                res += this.analyseHtmlText(item);
+                let data = this.analyseHtmlText(item, args);
+                if (/^_/.test(data)) {
+                    res += isStrEnd ? `' + ${data}` : ` + ${data}`;
+                    isStrEnd = false;
+                } else {
+                    res += data;
+                    isStrEnd = true;
+                }
             }
         });
-        return res;
+
+        return {
+            isStrEnd,
+            text: res,
+            isTranStart: /^_/.test(res)
+        };
     }
 
     // 解析html文本元素，生成对应的代码
@@ -216,40 +305,18 @@ class ExtractJs extends Extract {
         let val = this.getWord(node.data);
         if (val) {
             let match = 0;
-            val = val.replace(/\{%\}/g, function() {
+            val = val.replace(/\{%s\}/g, function() {
                 match++;
                 return '%s';
             });
 
             if (match) {
-                return `+ _("${val.replace(/"/g, '\\"')}",[${args.splice(0, match)}])`;
+                return `_("${val.replace(/"/g, '\\"')}", [${args.splice(0, match)}])`;
             } else {
-                return `+ _("${val.replace(/"/g, '\\"')}")`;
+                return `_("${val.replace(/"/g, '\\"')}")`;
             }
         } else {
             return node.data;
-        }
-    }
-
-    listAst(astNode) {
-        let type = getType(astNode);
-        if (type === 'Object') {
-            if (/^(CallExpression|StringLiteral)$/i.test(astNode.type)) {
-                this.listNode(astNode);
-                return;
-            }
-            // 对于注释的项不进行遍历
-            let ignoreKeys = ['leadingComments', 'trailingComments', 'sourceElements', 'loc', 'test', 'id'];
-            for (let key in astNode) {
-                if (ignoreKeys.includes(key)) {
-                    continue;
-                }
-                this.listAst(astNode[key]);
-            }
-        } else if (type === 'Array') {
-            astNode.forEach(node => {
-                this.listAst(node);
-            })
         }
     }
 
