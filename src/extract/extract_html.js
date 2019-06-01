@@ -1,11 +1,6 @@
-const {
-    JSDOM
-} = require("jsdom");
-import {
-    log,
-    LOG_TYPE,
-    trim
-} from '../util/index';
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+import { log, LOG_TYPE, trim } from '../util/index';
 import ExtractJS from './extract_js';
 import Extract from './extract';
 
@@ -17,7 +12,6 @@ const Edit_TYPE = {
     nodeValue: 4,
     title: 5
 };
-
 
 /**
  * HTML文件解析类
@@ -38,6 +32,8 @@ class ExtractHTML extends Extract {
                 }
             }
         });
+
+        this.jsHandleList = [];
     }
 
     transNode(html) {
@@ -45,7 +41,11 @@ class ExtractHTML extends Extract {
 
         return new Promise((resolve, reject) => {
             try {
-                let dom = new JSDOM(html);
+                // 将jsdom的控制台信息进行拦截，不在node的控制台进行输出
+                const virtualConsole = new jsdom.VirtualConsole();
+                let dom = new JSDOM(html, {
+                    virtualConsole
+                });
                 let document = dom.window.document;
                 resolve(document);
             } catch (err) {
@@ -54,29 +54,28 @@ class ExtractHTML extends Extract {
         });
     }
 
-    getHeaderTag(html){
+    getHeaderTag(html) {
         this.hasHeader = !!html.match(/\<head\>/g);
         this.hasBody = !!html.match(/\<body([^>]*)\>/g);
-        this.footerTag = '\t\n<\html>';
     }
 
     // 扫描节点，提取字段
     scanNode(document) {
-        return new Promise((resolve, reject) => {
-            this.listNode(document.documentElement);
+        this.listNode(document.documentElement);
 
+        return this.nextJsTask().then(() => {
             let outHtml = document.documentElement.innerHTML;
-            
-            if(!this.hasHeader){
+
+            if (!this.hasHeader) {
                 outHtml = outHtml.replace(/\<head\>[\s\S]*\<\/head\>/g, '');
             }
-            if(!this.hasBody){
+            if (!this.hasBody) {
                 outHtml = outHtml.replace(/(\<body([^>]*)\>)|(\<\/body\>)/g, '');
             }
             outHtml = outHtml.replace(/^\s*|\s*$/g, '');
-            outHtml =  document.doctype ? '<!doctype html>\t\n<html>\t\n' + outHtml + '\t\n</html>' : outHtml;
-            
-            resolve(outHtml);
+            outHtml = document.doctype ? '<!doctype html>\t\n<html>\t\n' + outHtml + '\t\n</html>' : outHtml;
+
+            return outHtml;
         });
     }
 
@@ -123,27 +122,10 @@ class ExtractHTML extends Extract {
                 if (nodeName == 'script' || nodeName == 'style') {
                     if (nodeName == 'script') {
                         if (firstChild && firstChild.nodeValue && trim(firstChild.nodeValue)) {
-                            // nodeValueArray = nodeValueArray.concat(GetResData(firstChild.nodeValue, onlyZH, page).reverse());
-                            // todo by xc 添加对内嵌JS代码的处理
-                            this.extractJS.transNode(firstChild.nodeValue)
-                                .then(AST => {
-                                    return this.extractJS.scanNode(AST);
-                                })
-                                .then((fileData) => {
-                                    if (this.option.isTranslate) {
-                                        // 写入文件
-                                        firstChild.nodeValue = fileData;
-                                    }
-                                    nextSibling && this.listNode(nextSibling);
-                                })
-                                .catch(error => {
-                                    log(`内联JS处理出错- ${error}`, LOG_TYPE.error);
-                                    nextSibling && this.listNode(nextSibling);
-                                });
-                        } else {
-                            nextSibling && this.listNode(nextSibling);
+                            this.addJsTask(firstChild);
                         }
                     }
+                    nextSibling && this.listNode(nextSibling);
                     return;
                 }
 
@@ -185,15 +167,41 @@ class ExtractHTML extends Extract {
 
         //stop handle elem.child if elem has attr data-lang
         // 处理子节点
-        if (firstChild) {
-            this.listNode(firstChild);
-        }
+        firstChild && this.listNode(firstChild);
 
         // 处理兄弟节点
-        if (nextSibling) {
-            this.listNode(nextSibling);
-        }
+        nextSibling && this.listNode(nextSibling);
     }
+
+    handleJsTask(child) {
+        return this.extractJS.transNode(child.nodeValue)
+            .then(AST => {
+                return this.extractJS.scanNode(AST);
+            })
+            .then((fileData) => {
+                // 写入文件
+                child.nodeValue = fileData;
+                return this.nextJsTask();
+            })
+            .catch(error => {
+                console.log(error);
+                log(`内联JS处理出错- ${error}`, LOG_TYPE.error);
+                return this.nextJsTask();
+            });
+    }
+
+    nextJsTask() {
+        // 当一个文件执行完成，立即执行下一个指令
+        if (this.jsHandleList.length > 0) {
+            return this.handleJsTask(this.jsHandleList.shift());
+        }
+        return Promise.resolve('done');
+    }
+
+    addJsTask(handle) {
+        this.jsHandleList.push(handle);
+    }
+
 
     // 翻译节点
     transWord(element, type, value, field) {

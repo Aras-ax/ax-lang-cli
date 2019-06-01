@@ -1,17 +1,7 @@
 const jsdom = require("jsdom");
-
-const {
-    JSDOM
-} = jsdom;
-
-import {
-    log,
-    LOG_TYPE,
-    trim
-}
-from '../util/index';
-
-import ExtractJS from './extract_js_ori';
+const { JSDOM } = jsdom;
+import { log, LOG_TYPE, trim } from '../util/index';
+import ExtractJS from './extract_js';
 import Extract from './extract';
 
 /**
@@ -45,7 +35,6 @@ class ExtractHTML extends Extract {
     getHeaderTag(html) {
         this.hasHeader = !!html.match(/\<head\>/g);
         this.hasBody = !!html.match(/\<body([^>]*)\>/g);
-        this.footerTag = '\t\n<\html>';
     }
 
     // 扫描节点，提取字段
@@ -63,7 +52,12 @@ class ExtractHTML extends Extract {
                 outHtml = outHtml.replace(/(\<body([^>]*)\>)|(\<\/body\>)/g, '');
             }
             outHtml = outHtml.replace(/^\s*|\s*$/g, '');
-            outHtml = document.doctype ? '<!doctype html>\t\n<html>\t\n' + outHtml + '\t\n</html>' : outHtml;
+
+            if (document.doctype) {
+                outHtml = '<!doctype html>\t\n<html>\t\n' + outHtml + '\t\n</html>';
+            } else if (document.firstElementChild && document.firstElementChild.nodeName === 'HTML') {
+                outHtml = '<html>\t\n' + outHtml + '\t\n</html>';
+            }
 
             return outHtml;
         });
