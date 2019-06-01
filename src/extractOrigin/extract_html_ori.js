@@ -1,6 +1,9 @@
+const jsdom = require("jsdom");
+
 const {
     JSDOM
-} = require("jsdom");
+} = jsdom;
+
 import {
     log,
     LOG_TYPE,
@@ -24,10 +27,13 @@ class ExtractHTML extends Extract {
 
     transNode(html) {
         this.getHeaderTag(html);;
-        // todo by xc 修改为正则匹配script标签
         return new Promise((resolve, reject) => {
             try {
-                let dom = new JSDOM(html);
+                // 将jsdom的控制台信息进行拦截，不在node的控制台进行输出
+                const virtualConsole = new jsdom.VirtualConsole();
+                let dom = new JSDOM(html, {
+                    virtualConsole
+                });
                 let document = dom.window.document;
                 resolve(document);
             } catch (err) {
