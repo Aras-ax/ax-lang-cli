@@ -19,6 +19,7 @@ class Extract {
             // 词条提取完成后的操作
             onComplete: null,
             ignoreCode: /<!--\s*hide|-->/g,
+            // 将对应的词条全部修改为'/**<%%>**/window.MS'
             ignoreExp: /(\=|\+|\-|\*|\/|\s|\(|\[|\{)\s*<%.*?%>/g
         }, option);
         this.init();
