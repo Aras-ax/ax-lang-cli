@@ -8,5 +8,5 @@ dist/arrayToJson.js
 .eslintrc.js
 .gitignore
 b28.config.js
-src/check.js
-mess.md
+t.js
+todo.md

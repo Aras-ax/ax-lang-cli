@@ -43,7 +43,7 @@ class ExtractJs extends Extract {
     }
 
     // 扫描节点，提取字段
-    scanNode(AST, jsDoc) {
+    scanNode(AST) {
         return new Promise((resolve, reject) => {
             let body = AST.program.body;
             body.forEach(node => {
@@ -201,7 +201,7 @@ class ExtractJs extends Extract {
 
             if (right.type === 'StringLiteral') {
                 hasStr = true;
-                res = right.value + res;
+                res = right.value.replace(/\n/, '\\n') + res;
             } else {
                 args.unshift(this.oldCode.substring(right.start, right.end));
                 res = '{%s}' + res;
@@ -216,7 +216,7 @@ class ExtractJs extends Extract {
                 break;
             case 'StringLiteral':
                 hasStr = true;
-                res = left.value + res;
+                res = left.value.replace(/\n/, '\\n') + res;
                 break;
             default:
                 // 默认当做参数进行处理

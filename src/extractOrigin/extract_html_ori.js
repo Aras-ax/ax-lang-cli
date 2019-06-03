@@ -1,7 +1,7 @@
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 import { log, LOG_TYPE, trim } from '../util/index';
-import ExtractJS from './extract_js';
+import ExtractJS from './extract_js_ori';
 import Extract from './extract';
 
 /**
@@ -16,7 +16,9 @@ class ExtractHTML extends Extract {
     }
 
     transNode(html) {
-        this.getHeaderTag(html);;
+        this.oldHtml = html;
+        this.scripts = [];
+        this.getHeaderTag(html);
         return new Promise((resolve, reject) => {
             try {
                 // 将jsdom的控制台信息进行拦截，不在node的控制台进行输出
@@ -43,21 +45,10 @@ class ExtractHTML extends Extract {
         this.listNode(document.documentElement);
 
         return this.nextJsTask().then(() => {
+            // 通过正则替换，为了规避jsdom对html中的特殊字符串进行编码
             let outHtml = document.documentElement.innerHTML;
-
-            if (!this.hasHeader) {
-                outHtml = outHtml.replace(/\<head\>[\s\S]*\<\/head\>/g, '');
-            }
-            if (!this.hasBody) {
-                outHtml = outHtml.replace(/(\<body([^>]*)\>)|(\<\/body\>)/g, '');
-            }
-            outHtml = outHtml.replace(/^\s*|\s*$/g, '');
-
-            if (document.doctype) {
-                outHtml = '<!doctype html>\t\n<html>\t\n' + outHtml + '\t\n</html>';
-            } else if (document.firstElementChild && document.firstElementChild.nodeName === 'HTML') {
-                outHtml = '<html>\t\n' + outHtml + '\t\n</html>';
-            }
+            let match = outHtml.match(/<script\b[^>]*>[\s\S]*?<\/script>/g);
+            outHtml = this.oldHtml.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, () => match.shift());
 
             return outHtml;
         });

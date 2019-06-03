@@ -98,6 +98,7 @@ class ExtractFile {
             .then((data) => {
                 //重置
                 this.reset();
+                log(`处理完成`, LOG_TYPE.LOG);
                 return this.outData;
             }).catch(err => {
                 log(`文件处理出错，${err}`, LOG_TYPE.ERROR);

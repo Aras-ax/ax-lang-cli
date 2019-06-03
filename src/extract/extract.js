@@ -5,7 +5,9 @@ import {
     LOG_TYPE,
     copyFile,
     writeTextFile
-} from '../util/index';
+}
+from '../util/index';
+import { IGNORE_REGEXP } from '../util/config';
 
 import path from 'path';
 
@@ -124,42 +126,45 @@ class Extract {
     }
 
     getWord(val, isJs) {
-        // url不进行提取
-        if (/^((ht|f)tps?):\/\/([\w\-]+(\.[\w\-]+)*\/)*[\w\-]+(\.[\w\-]+)*\/?(\?([\w\-\.,@?^=%&:\/~\+#]*)+)?/i.test(val)) {
+        if (!val || /^\s*$/.test(val)) {
+            return '';
+        }
+        if (!isJs) {
+            let skip = IGNORE_REGEXP.some(item => item.test(val));
+            if (skip) {
+                return '';
+            }
+        }
+
+        val = trim(val);
+        // 移除首尾空格
+        val = val.replace(/(^\s+)|(\s+$)/g, '');
+        // 同时合并词条内部的多个空格等为一个空格，保留js文件中词条内的\n
+        val = isJs ? val.replace(/([^\S\n]+)/g, " ") : val.replace(/(\s+)/g, " ");
+        let addValue = '';
+        if (/^<%=((.|\n)*)%>$/.test(val)) {
             return '';
         }
 
-        if (val && /\S/.test(val)) {
-            val = trim(val);
-            // 移除首尾空格
-            val = val.replace(/(^\s+)|(\s+$)/g, '');
-            // 同时合并词条内部的多个空格等为一个空格，保留js文件中词条内的\n
-            val = isJs ? val.replace(/([^\S\n]+)/g, " ") : val.replace(/(\s+)/g, " ");
-            let addValue = '';
-            if (/^<%=((.|\n)*)%>$/.test(val)) {
-                return '';
-            }
-
-            // 只提取中文
-            if (this.option.onlyZH) {
-                if (/[\u4e00-\u9fa5]/.test(val)) {
-                    addValue = val;
-                }
-            } else if (/[a-z]/i.test(val) || /[\u4e00-\u9fa5]/.test(val)) {
-                //中英文都提取
+        // 只提取中文
+        if (this.option.onlyZH) {
+            if (/[\u4e00-\u9fa5]/.test(val)) {
                 addValue = val;
             }
+        } else if (/[a-z]/i.test(val) || /[\u4e00-\u9fa5]/.test(val)) {
+            //中英文都提取
+            addValue = val;
+        }
 
 
-            if (addValue) {
-                if (this.option.isTranslate || this.option.isCheckTrans) {
-                    let transVal = this.option.transWords[addValue];
-                    if (transVal) {
-                        return this.option.isCheckTrans ? "" : transVal;
-                    }
+        if (addValue) {
+            if (this.option.isTranslate || this.option.isCheckTrans) {
+                let transVal = this.option.transWords[addValue];
+                if (transVal) {
+                    return this.option.isCheckTrans ? "" : transVal;
                 }
-                this.addWord(addValue);
             }
+            this.addWord(addValue);
         }
         return '';
     }

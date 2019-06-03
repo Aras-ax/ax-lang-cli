@@ -7,7 +7,7 @@ import {
     writeTextFile
 } from '../util/index';
 
-import { ACTION_TYPE, IGNORE_REGEXP } from '../util/config';
+import { IGNORE_REGEXP } from '../util/config';
 import path from 'path';
 
 /**

@@ -318,7 +318,9 @@ function copyFile(src, dst) {
             return;
         }
 
-        fs.writeFile(dst, data);
+        fs.writeFile(dst, data, (err) => {
+            if (err) throw err;
+        });
     });
 }
 
