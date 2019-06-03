@@ -67,6 +67,8 @@ class ExtractFile {
                 }
             }
         });
+
+        createFolder(this.option.baseWritePath);
     }
 
     scanFile() {
@@ -90,6 +92,8 @@ class ExtractFile {
         if (this.option.needCopy) {
             this.copyFile();
         }
+
+        // return;
 
         // 将未翻译的文件以错误的形式输出
 

@@ -19,7 +19,7 @@ class Extract {
             // 词条提取完成后的操作
             onComplete: null,
             ignoreCode: /<!--\s*hide|-->/g,
-            ignoreExp: /<%.*?%>/g
+            ignoreExp: /(\=|\+|\-|\*|\/|\s|\(|\[|\{)\s*<%.*?%>/g
         }, option);
         this.init();
     }
@@ -36,7 +36,7 @@ class Extract {
     }
 
     handleFile(filePath) {
-        log(`开始提取文件-${filePath}`);
+        // log(`开始提取文件-${filePath}`);
         this.isWorking = true;
         this.curFilePath = filePath;
         return loadFile(filePath)
@@ -117,9 +117,9 @@ class Extract {
             return '';
         }
 
-        val = trim(val);
+        // val = trim(val);
         // 同时合并词条内部的多个空格等为一个空格，保留js文件中词条内的\n
-        val = isJs ? val.replace(/([^\S\n]+)/g, " ") : val.replace(/(\s+)/g, " ");
+        // val = isJs ? val.replace(/([^\S\n]+)/g, " ") : val.replace(/(\s+)/g, " ");
         let addValue = '';
 
         //中英文都提取

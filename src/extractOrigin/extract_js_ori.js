@@ -30,20 +30,24 @@ class ExtractJs extends Extract {
         return new Promise((resolve, reject) => {
             try {
                 let AST = parse(jsDoc, {
-                    sourceType: 'module'
+                    sourceType: 'script'
                 });
                 resolve(AST);
             } catch (err) {
-                this.isAST = false;
-                let AST = jsDoc;
-                // todo by xc 输出有语法错误的文件，则不对该文件进行提取
+                let AST = parse(jsDoc, {
+                    sourceType: 'module'
+                });
+
                 resolve(AST);
             }
+        }).catch(() => {
+            console.log('js代码包含语法错误，故无法添加翻译函数！');
         });
     }
 
     // 扫描节点，提取字段
     scanNode(AST) {
+        this.offSet = 0;
         return new Promise((resolve, reject) => {
             let body = AST.program.body;
             body.forEach(node => {
@@ -88,7 +92,7 @@ class ExtractJs extends Extract {
                 return;
             }
             // 对于注释的项不进行遍历
-            let ignoreKeys = ['leadingComments', 'trailingComments', 'sourceElements', 'loc', 'test', 'id'];
+            let ignoreKeys = ['leadingComments', 'trailingComments', 'sourceElements', 'loc', 'id'];
             for (let key in astNode) {
                 if (ignoreKeys.includes(key)) {
                     continue;
@@ -112,7 +116,7 @@ class ExtractJs extends Extract {
                     } else {
                         name = this.oldCode.substring(node.callee.start, node.callee.end);
                     }
-                    if (/^(alert|document\.write)$/i.test(name)) {
+                    if (/^(confirm|alert|document\.write(ln)?)$/i.test(name)) {
                         //    解析表达式的值，并且重写函数
                         if (node.arguments.length === 1) {
                             this.addCallTrans(node.arguments[0]);
@@ -152,6 +156,9 @@ class ExtractJs extends Extract {
 
     // 替换源码中的文本
     addTrans(val, loc) {
+        //去除无效的表达式
+        val = val.replace(/'[\s]*' \+ /g, '').replace(/\+ '[\s]*'/g, '').replace(/^\s+|\s+$/g, '');
+
         this.newCode = this.newCode.splice(loc.start + this.offSet, loc.end + this.offSet, val);
         this.offSet += val.length - (loc.end - loc.start);
     }
@@ -231,7 +238,7 @@ class ExtractJs extends Extract {
     }
 
     analyseDom(ast, args, nodeHtml) {
-        let res = this.analyseHtmlNode(ast, args, nodeHtml.match(/<\/[0-9a-z]+?>/g) || []),
+        let res = this.analyseHtmlNode(ast, args, nodeHtml.toLowerCase().match(/<\/[a-z0-9]+?>/ig) || []),
             text = res.text,
             isTranStart = res.isTranStart;
 
@@ -253,7 +260,7 @@ class ExtractJs extends Extract {
             isStrEnd = true;
         ast.forEach(item => {
             if (item.children) {
-                let nodeHtml = `<${item.name}`;
+                let nodeHtml = (isStrEnd ? '' : '+ \'') + `<${item.name}`;
                 for (let key in item.attribs) {
                     let attr = item.attribs[key].replace(/\{%s\}/g, function() {
                         return `'+ ${args.shift()} + '`;
@@ -261,7 +268,7 @@ class ExtractJs extends Extract {
 
                     nodeHtml += ` ${key}="${attr}"`
                 }
-                if (item.name === 'input') {
+                if (/^(input|br)$/i.test(item.name)) {
                     nodeHtml += '/>';
                     isStrEnd = true;
                 } else {
@@ -279,17 +286,29 @@ class ExtractJs extends Extract {
                         nodeHtml += endTag;
                     }
                 }
+                // 对于还有结余的标签全部补上
+                while (endTags.length > 0) {
+                    nodeHtml += `${endTags.shift()}`;
+                }
                 res += nodeHtml;
                 isStrEnd = true;
             } else {
+                // 用于类似_(member[1])的词条不添加翻译，先注释以添加翻译
+                // if (/^\s*\{%s\}\s*$/.test(item.data)) {
+                //     res += `'+ ${args.shift()}`;
+                //     isStrEnd = false;
+                // } else {
                 let data = this.analyseHtmlText(item, args);
-                if (/^_/.test(data)) {
-                    res += isStrEnd ? `' + ${data}` : ` + ${data}`;
-                    isStrEnd = false;
-                } else {
-                    res += data;
-                    isStrEnd = true;
+                if (data) {
+                    if (/^_/.test(data)) {
+                        res += isStrEnd ? `' + ${data}` : ` + ${data}`;
+                        isStrEnd = false;
+                    } else {
+                        res += data;
+                        isStrEnd = true;
+                    }
                 }
+                // }
             }
         });
 
@@ -302,7 +321,7 @@ class ExtractJs extends Extract {
 
     // 解析html文本元素，生成对应的代码
     analyseHtmlText(node, args) {
-        let val = this.getWord(node.data);
+        let val = this.getWord(node.data).replace(/^\s+|\s+$/g, '');
         if (val) {
             let match = 0;
             val = val.replace(/\{%s\}/g, function() {
@@ -315,9 +334,8 @@ class ExtractJs extends Extract {
             } else {
                 return `_("${val.replace(/"/g, '\\"')}")`;
             }
-        } else {
-            return node.data;
         }
+        return '';
     }
 
     listTenpAst() {
@@ -334,8 +352,8 @@ class ExtractJs extends Extract {
             } else {
                 return Math.pow(10, match.length - 1) + '';
             }
-        }).replace(this.option.ignoreExp, function(match) {
-            return new Array(match.length).join(' ') + 1;
+        }).replace(this.option.ignoreExp, function(match, tag) {
+            return tag + ' ' + new Array(match.length - 1).join('1');
         });
     }
 }

@@ -312,16 +312,8 @@ function createFolder(folder, callback) {
     }
 }
 
-function copyFile(src, dst) {
-    fs.readFile(src, (err, data) => {
-        if (err) {
-            return;
-        }
-
-        fs.writeFile(dst, data, (err) => {
-            if (err) throw err;
-        });
-    });
+function copyFile(src, dist) {
+    fs.createReadStream(src).pipe(fs.createWriteStream(dist));
 }
 
 /**

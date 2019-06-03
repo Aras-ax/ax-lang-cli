@@ -6,9 +6,29 @@
     <link rel="stylesheet" href='colors.css' type='text/css'>
     <script language="javascript">
         <!-- hide 
+        // 缺失项
+        if (confirm("Are you sure you want to restore factory default settings?"))
+            eval(code);
+        if ('<%ejGet(enblUsb)%>' == '1') {
+            document.writeln("<TR><TD class='hd'>Test your USB Connection: </TD>");
+            document.writeln("<TD><B><%ejGetOther(diagnostic, 13)%></B>&nbsp;</TD>");
+            document.writeln("<TD><A href='hlpusbconn.html'>Help</A></TD></TR>");
+        }
+        if (diagType == 'f4') {
+            document.writeln("<TR><TD class='hd'>Test ATM OAM F4 segment ping: </TD>");
+            document.writeln("<TD><B><%ejGetOther(diagnostic, 15)%></B>&nbsp;</TD>");
+            document.writeln("<TD><A href='hlpatmseg.html'>Help</A></TD></TR>");
+        }
+        // 去除多余的空格
+        document.write("     <b>Port Mirroring Setup</b><br><br>"); //engdebug.html
+        // 缺少 + 号
+        document.write("     1. When enable port mirror, hardware path be disabled.<br>");
+        document.write(" <br/>2. hardware path be disabled.");
         var text = 'this is a string that need to be selected!';
         var buildSiproxd = '<%ejGetOther(sysInfo, buildSiproxd)%>';
         var enblSiproxd = '<%ejGet(enblSiproxd)%>';
+        document.write("</select></td> ");
+        document.write("</select> ");
 
         alert('VLAN ID "' + vid + '" is out of range [0-4095].');
         alert(esprima.tf + 3);
