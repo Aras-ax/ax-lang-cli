@@ -11,7 +11,10 @@ class ExtractHTML extends Extract {
     constructor(option) {
         super(option);
 
-        this.extractJS = new ExtractJS({});
+        this.extractJS = new ExtractJS({
+            ignoreCode: this.option.ignoreCode,
+            ignoreExp: this.option.ignoreExp
+        });
         this.jsHandleList = [];
     }
 
@@ -55,7 +58,7 @@ class ExtractHTML extends Extract {
     }
 
     handleJsTask(child) {
-        return this.extractJS.transNode(child.nodeValue)
+        return this.extractJS.transNode(child.nodeValue, true)
             .then(AST => {
                 return this.extractJS.scanNode(AST);
             })

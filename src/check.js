@@ -113,7 +113,7 @@ import { COMMAD } from './util/config';
 module.exports = function() {
     start({
         commandType: COMMAD.ORIGINAL_CODE,
-        // baseReadPath: './test/TestFile/origin/test',
+        // baseReadPath: './test/TestFile/origin',
         // baseOutPath: './test/TestFile/output/origin'
         baseReadPath: 'C:/Users/lenovo/Desktop/添加翻译函数/webs',
         baseOutPath: 'C:/Users/lenovo/Desktop/添加翻译函数/websAfter'

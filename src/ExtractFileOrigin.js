@@ -46,27 +46,16 @@ class ExtractFile {
     }
 
     init() {
-        this.extractHTML = new ExtractHTML({
-            baseWritePath: this.option.baseWritePath,
+        let obj = {
             baseReadPath: this.option.baseReadPath,
-            onComplete: (filePath, words) => {
-                if (words.length > 0) {
-                    this.outData.push(correctPath(filePath));
-                    this.outData = this.outData.concat(words);
-                }
-            }
-        });
+            baseWritePath: this.option.baseWritePath
+        }
+        this.option.ignoreCode && (obj.ignoreCode = this.option.ignoreCode);
+        this.option.ignoreExp && (obj.ignoreExp = this.option.ignoreExp);
 
-        this.extractJS = new ExtractJS({
-            baseWritePath: this.option.baseWritePath,
-            baseReadPath: this.option.baseReadPath,
-            onComplete: (filePath, words) => {
-                if (words.length > 0) {
-                    this.outData.push(correctPath(filePath));
-                    this.outData = this.outData.concat(words);
-                }
-            }
-        });
+        this.extractHTML = new ExtractHTML(obj);
+
+        this.extractJS = new ExtractJS(obj);
 
         createFolder(this.option.baseWritePath);
     }

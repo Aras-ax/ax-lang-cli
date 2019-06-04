@@ -245,6 +245,27 @@ const baseQuestions = [{
             default (answers) {
                 return getDirname(answers.mainJsonPath);
             }
+        }],
+        [{
+            type: 'input',
+            name: 'baseProPath',
+            message: '原厂代码地址：',
+            validate: valid.folder // 必填，可以是文件也可以是文件夹
+        }, {
+            type: 'input',
+            name: 'baseProOutPath',
+            message: '添加翻译函数后文件输出地址：',
+            default (answers) {
+                return getDirname(answers.baseProPath);
+            }
+        }, {
+            type: 'input',
+            name: 'ignoreCode',
+            message: '需要注释的代码正则：'
+        }, {
+            type: 'input',
+            name: 'ignoreExp',
+            message: '后台插入表达式正则：'
         }]
     ];
 
@@ -261,10 +282,13 @@ const EXTNAME_HTML = '**/{*.aspx,*.asp,*.ejs,*.html,*.htm}';
 const IGNORE_REGEXP = [
     /^[\s0-9]*$/,
     // 单个字母，全数字，数组+标点符号，数字/标点+字母格式不提取
-    /^(([a-z]+[0-9\.\?\\_\:\-/&\=<>]+)|([0-9\.\?\\_\:\-/&\=<>]+[a-z]+))[a-z0-9\.\?\\_\:\-/&\=<>]*$/i,
-    /^[a-z]$/i,
+    /^(([a-z]+[0-9\.,\?\\_\:\-/&\=<>\[\]\(\)\|]+)|([0-9\.,\?\\_\:\-/&\=<>\[\]\(\)\|]+[a-z]+))[a-z0-9\.,\?\\_\:\-/&\=<>\[\]\(\)\|]*$/i,
+    // 单个字母或者单词不添加翻译函数，手动添加
+    /^[a-z]+$/i,
     // <% xxxx %>格式的字符串不提取
     /<%([\s\S]*)%>/i,
+    /\(\[([\s\S]*)\]\)/i,
+    /^(&nbsp;)+$/i,
     /[a-z0-9]*&[a-z]*=/i,
     // 只包含html结束标签
     /^(\s*<\s*\/([a-z0-9]+)?>\s*)*$/i,

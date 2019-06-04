@@ -33,7 +33,11 @@ const comments = {
     'outExcelPath': '输出Excel文件目录',
     'mainJsonPath': '主json文件地址',
     'mergeJsonPath': '次json文件地址',
-    'outMergeJsonPath': '合并后输出的地址'
+    'outMergeJsonPath': '合并后输出的地址',
+    'baseProPath': '原厂代码地址',
+    'baseProOutPath': '添加翻译函数后文件输出地址',
+    'ignoreCode': '需要注释的代码正则',
+    'ignoreExp': '后台插入表达式正则'
 };
 let questions = [
     [{
@@ -145,6 +149,25 @@ let questions = [
         type: 'input',
         name: 'outMergeJsonPath',
         message: '合并后输出的地址：'
+    }],
+    [{
+        type: 'input',
+        name: 'baseProPath',
+        message: '原厂代码地址：'
+    }, {
+        type: 'input',
+        name: 'baseProOutPath',
+        message: '添加翻译函数后文件输出地址：'
+    }, {
+        type: 'input',
+        name: 'ignoreCode',
+        message: '需要注释的代码正则：',
+        default: '/<!--\s*hide|-->/g'
+    }, {
+        type: 'input',
+        name: 'ignoreExp',
+        message: '后台插入表达式正则：',
+        default: '/<%([^\n]*?)%>/g'
     }]
 ];
 /**

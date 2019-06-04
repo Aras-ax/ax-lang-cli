@@ -335,6 +335,25 @@ function getType(obj) {
     return Object.prototype.toString.call(obj).slice(8, -1);
 }
 
+function string2Regexp(str) {
+    if (getType(str) === 'RegExp') {
+        return str;
+    }
+
+    if (/^\//.test(str)) {
+        let index = str.lastIndexOf('/');
+        if (index === 0) {
+            return new RegExp(str);
+        }
+
+        let t = str.substring(1, index),
+            k = str.substring(index + 1);
+        return new RegExp(t, k);
+    }
+
+    return new RegExp(str);
+}
+
 export {
     formatKey,
     decodeKey,
@@ -347,6 +366,7 @@ export {
     createFolder,
     copyFile,
     writeTextFile,
+    string2Regexp,
     writeExcel,
     correctPath,
     writeJson,

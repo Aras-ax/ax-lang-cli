@@ -6,7 +6,7 @@ import excel2json from './excel2json';
 import json2excel from './json2excel';
 import mergeJson from './mergeJson';
 import { COMMAD } from './util/config';
-import { loadJsonSync } from './util/index';
+import { loadJsonSync, string2Regexp } from './util/index';
 
 function handle(cfg) {
     switch (cfg.commandType) {
@@ -23,6 +23,16 @@ function handle(cfg) {
         case COMMAD.MERGE_JSON:
             return merge(cfg);
         case COMMAD.ORIGINAL_CODE:
+            let ignoreCode = cfg.ignoreCode,
+                ignoreExp = cfg.ignoreExp;
+
+            if (ignoreCode) {
+                cfg.ignoreCode = string2Regexp(ignoreCode);
+            }
+
+            if (ignoreExp) {
+                cfg.ignoreExp = string2Regexp(ignoreExp);
+            }
             return addTrans(cfg);
     }
 
@@ -31,8 +41,10 @@ function handle(cfg) {
 
 function addTrans(cfg) {
     let extractOri = new ExtractOri({
-        baseReadPath: cfg.baseReadPath,
-        baseWritePath: cfg.baseOutPath,
+        baseReadPath: cfg.baseProPath,
+        baseWritePath: cfg.baseProOutPath,
+        ignoreCode: cfg.ignoreCode,
+        ignoreExp: cfg.ignoreExp
     });
     return extractOri.scanFile();
 }

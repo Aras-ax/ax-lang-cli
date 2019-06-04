@@ -20,7 +20,8 @@ class Extract {
             onComplete: null,
             ignoreCode: /<!--\s*hide|-->/g,
             // 将对应的词条全部修改为'/**<%%>**/window.MS'
-            ignoreExp: /(\=|\+|\-|\*|\/|\s|\(|\[|\{)\s*<%.*?%>/g
+            // ignoreExp: /(\=|\+|\-|\*|\/|\s|\(|\[|\{)\s*<%.*?%>/g
+            ignoreExp: /<%([^\n]*?)%>/g
         }, option);
         this.init();
     }
@@ -108,9 +109,14 @@ class Extract {
         });
     }
 
-    getWord(val, isJs) {
+    getWord(val) {
         if (!val || /^\s*$/.test(val)) {
             return '';
+        }
+
+        // 经过处理的字符串
+        if (/\{%s\}/i.test(val)) {
+            return val;
         }
 
         let skip = IGNORE_REGEXP.some(item => item.test(val));
@@ -118,9 +124,6 @@ class Extract {
             return '';
         }
 
-        // val = trim(val);
-        // 同时合并词条内部的多个空格等为一个空格，保留js文件中词条内的\n
-        // val = isJs ? val.replace(/([^\S\n]+)/g, " ") : val.replace(/(\s+)/g, " ");
         let addValue = '';
 
         //中英文都提取
@@ -128,9 +131,6 @@ class Extract {
             addValue = val;
         }
 
-        // if (addValue) {
-        //     this.addWord(addValue);
-        // }
         return addValue;
     }
 

@@ -4,6 +4,7 @@ import Extract from './extract';
 import { TRANS_NAME_REGEX } from '../util/config';
 import { getType } from '../util/index';
 var htmlparser = require("htmlparser2");
+const HANDLE_ATTRIBUTE = ['alt', 'placeholder', 'title'];
 
 /**
  * JS文件解析类
@@ -18,7 +19,8 @@ class ExtractJs extends Extract {
         this.offSet = 0;
     }
 
-    transNode(jsDoc) {
+    transNode(jsDoc, fromHtml) {
+        this.fromHtml = !!fromHtml;
         this.newCode = jsDoc;
         // 修正原厂代码中的语法错误项，默认语法错误项是不需要进行提取的项
         this.oldCode = jsDoc = this.correctCode(jsDoc);
@@ -56,6 +58,12 @@ class ExtractJs extends Extract {
 
             // let data = this.newCode;
             // data = unescape(data.replace(/\\u/g, '%u'));
+
+            if (this.fromHtml) {
+                this.newCode = this.newCode.replace(/\(\[([^\n]*?)\]\)/g, function(match, val) {
+                    return `<%${val}%>`;
+                })
+            }
             resolve(this.newCode);
         });
     }
@@ -148,7 +156,7 @@ class ExtractJs extends Extract {
                 // 解析html
                 res = this.analyseDom(htmlAst, [], res);
             } else {
-                res = `_("${res.replace(/"/g, '\\"')}")`;
+                res = `_('${res.replace(/'/g, '\\')}')`;
             }
             this.addTrans(res, { start: node.start, end: node.end });
         }
@@ -185,10 +193,10 @@ class ExtractJs extends Extract {
                 } else {
                     // 将标记还原
                     if (arr.length > 0) {
-                        args = `, [${arr.join(',')}]`;
+                        args = `, [${arr.join(', ')}]`;
                         res = res.replace(/\{%s\}/g, () => '%s');
                     }
-                    res = `_("${res.replace(/"/g, '\\"')}"${args})`;
+                    res = `_('${res.replace(/'/g, '\\')}'${args})`;
                 }
                 this.addTrans(res, { start: node.start, end: node.end });
                 break;
@@ -262,11 +270,19 @@ class ExtractJs extends Extract {
             if (item.children) {
                 let nodeHtml = (isStrEnd ? '' : '+ \'') + `<${item.name}`;
                 for (let key in item.attribs) {
-                    let attr = item.attribs[key].replace(/\{%s\}/g, function() {
-                        return `'+ ${args.shift()} + '`;
-                    });
+                    let attr = item.attribs[key];
+                    if (/\{%s\}/g.test(attr)) {
+                        attr = attr.replace(/\{%s\}/g, function() {
+                            return `'+ ${args.shift()} + '`;
+                        });
+                    } else if (HANDLE_ATTRIBUTE.includes(key)) {
+                        // 处理input的value等属性
+                        attr = `'+ _('${attr.replace(/'/g, '\'')}') + '`;
+                    } else if (key === 'value' && item.name === 'input' && /button|submit|reset/ig.test(item.attribs['type'])) {
+                        attr = `'+ _('${attr.replace(/'/g, '\'')}') + '`;
+                    }
 
-                    nodeHtml += ` ${key}="${attr}"`
+                    nodeHtml += attr ? ` ${key}="${attr}"` : ` ${key}`;
                 }
                 if (/^(input|br)$/i.test(item.name)) {
                     nodeHtml += '/>';
@@ -293,22 +309,22 @@ class ExtractJs extends Extract {
                 res += nodeHtml;
                 isStrEnd = true;
             } else {
-                // 用于类似_(member[1])的词条不添加翻译，先注释以添加翻译
-                // if (/^\s*\{%s\}\s*$/.test(item.data)) {
-                //     res += `'+ ${args.shift()}`;
-                //     isStrEnd = false;
-                // } else {
-                let data = this.analyseHtmlText(item, args);
-                if (data) {
-                    if (/^_/.test(data)) {
-                        res += isStrEnd ? `' + ${data}` : ` + ${data}`;
-                        isStrEnd = false;
-                    } else {
-                        res += data;
-                        isStrEnd = true;
+                // 用于类似_(member[1])的词条不添加翻译
+                if (/^\s*\{%s\}\s*$/.test(item.data)) {
+                    res += `'+ _(${args.shift()})`;
+                    isStrEnd = false;
+                } else {
+                    let data = this.analyseHtmlText(item, args);
+                    if (data) {
+                        if (/^_/.test(data)) {
+                            res += isStrEnd ? `' + ${data}` : ` + ${data}`;
+                            isStrEnd = false;
+                        } else {
+                            res += data;
+                            isStrEnd = true;
+                        }
                     }
                 }
-                // }
             }
         });
 
@@ -324,18 +340,24 @@ class ExtractJs extends Extract {
         let val = this.getWord(node.data).replace(/^\s+|\s+$/g, '');
         if (val) {
             let match = 0;
-            val = val.replace(/\{%s\}/g, function() {
+            val = val.replace(/\{%s\}/ig, function() {
                 match++;
                 return '%s';
             });
 
             if (match) {
-                return `_("${val.replace(/"/g, '\\"')}", [${args.splice(0, match)}])`;
+                return `_('${val.replace(/'/g, '\\')}', [${args.splice(0, match)}])`;
             } else {
-                return `_("${val.replace(/"/g, '\\"')}")`;
+                return `_('${val.replace(/'/g, '\\')}')`;
+            }
+        } else {
+            // html中ignore文本同样需要翻译
+            val = node.data.replace(/^\s+|\s+$/g, '');
+            if (val && !/^(&nbsp;)+$/ig.test(val)) {
+                return `_('${val.replace(/'/g, '\\')}')`;
             }
         }
-        return '';
+        return node.data.replace(/^\s+|\s+$/g, '');
     }
 
     listTenpAst() {
@@ -352,8 +374,8 @@ class ExtractJs extends Extract {
             } else {
                 return Math.pow(10, match.length - 1) + '';
             }
-        }).replace(this.option.ignoreExp, function(match, tag) {
-            return tag + ' ' + new Array(match.length - 1).join('1');
+        }).replace(this.option.ignoreExp, function(match, val) {
+            return `([${val}])`;
         });
     }
 }
