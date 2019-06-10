@@ -1,4 +1,4 @@
-import { mergeObject } from '../src/util/index';
+import { mergeObject, partMerge } from '../src/util/index';
 
 let obj = {
         a: 1,
@@ -69,5 +69,11 @@ describe('验证[mergeObject]的正确性', () => {
     });
     test('对象深度合并', () => {
         expect(mergeObject(obj2, obj3)).toEqual(obj4);
+    });
+    test('部分合并', () => {
+        expect(partMerge({ a: 1, b: 2 }, { b: 3, c: 4 })).toEqual({
+            b: 2,
+            c: 4
+        });
     });
 });

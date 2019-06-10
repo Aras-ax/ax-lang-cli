@@ -54,9 +54,8 @@ function getWords(cfg) {
         baseReadPath: cfg.baseReadPath,
         baseWritePath: cfg.baseOutPath,
         onlyZH: cfg.onlyZH,
-        config_hong_path: cfg.hongPath
+        hongPath: cfg.hongPath
     });
-
     return extract.scanFile();
 }
 
@@ -69,7 +68,7 @@ function translate(cfg) {
         baseReadPath: cfg.baseTranslatePath,
         baseWritePath: cfg.baseTransOutPath,
         isTranslate: true,
-        config_hong_path: cfg.hongPath,
+        hongPath: cfg.hongPath,
         transWords: {}
     });
 
@@ -107,7 +106,7 @@ function check(cfg) {
     let extract = new ExtractFile({
         baseReadPath: cfg.baseCheckPath,
         baseWritePath: cfg.logPath,
-        config_hong_path: cfg.hongPath,
+        hongPath: cfg.hongPath,
         isCheckTrans: true,
         transWords: langData
     });
@@ -130,7 +129,7 @@ function jsonToExcel(cfg) {
 }
 
 function merge(cfg) {
-    return mergeJson(cfg.mainJsonPath, cfg.mergeJsonPath, cfg.outMergeJsonPath);
+    return mergeJson(cfg.mainJsonPath, cfg.mergeJsonPath, cfg.outMergeJsonPath, cfg.action);
 }
 
 export default handle;

@@ -29,11 +29,15 @@ class ExtractFile {
             onlyZH: false,
             isTranslate: false,
             isCheckTrans: false,
-            config_hong_path: '',
+            hongPath: '',
             transWords: {}
-        }, option)
+        }, option);
+
         this.option.baseReadPath = correctPath(this.option.baseReadPath);
         this.option.baseWritePath = correctPath(this.option.baseWritePath);
+        this.option.hongPath = correctPath(this.option.hongPath);
+
+        console.log('hongpath', this.option.hongPath)
 
         this.fileList = {
             // 需要进行提取和翻译的文件
@@ -44,13 +48,13 @@ class ExtractFile {
         };
         this.outData = [];
 
-        if (this.option.config_hong_path) {
+        if (this.option.hongPath) {
             try {
-                require(this.option.config_hong_path);
+                require(this.option.hongPath);
                 this.CONFIG_HONG = (global.R && global.R.CONST) || {};
             } catch (e) {
                 this.CONFIG_HONG = {};
-                log(`宏文件解析错误，宏文件地址-${this.option.config_hong_path}`, LOG_TYPE.WARNING);
+                log(`宏文件解析错误，宏文件地址-${this.option.hongPath}`, LOG_TYPE.WARNING);
             }
         }
 

@@ -1,5 +1,5 @@
 import handle from './handle';
-import { COMMAD, valid, questions, baseQuestions, COMMAD_TEXT, CONFIG_FILE_NAME } from './util/config';
+import { COMMAD, valid, questions, baseQuestions, COMMAD_TEXT, CONFIG_FILE_NAME, IGNORE_REGEXP } from './util/config';
 import { getDirname, LOG_TYPE, log, string2Regexp } from './util/index';
 
 import path from 'path';
@@ -69,7 +69,8 @@ function gerArgs() {
                 commandType: 5,
                 mainJsonPath: args.src1,
                 mergeJsonPath: args.src2,
-                outMergeJsonPath: args.dest
+                outMergeJsonPath: args.dest,
+                action: args.action || 1
             };
             console.log(config);
             break;
@@ -77,7 +78,9 @@ function gerArgs() {
             config = {
                 commandType: 6,
                 baseProPath: args.from,
-                baseProOutPath: args.to
+                baseProOutPath: args.to,
+                ignoreCode: args.code,
+                ignoreExp: args.exp
             };
             console.log(config);
             break;
@@ -231,7 +234,7 @@ let validate = {
 }
 
 function start(config) {
-    if (process.argv.length === 3) {
+    if (process.argv.length === 3 && !(config && config.debug)) {
         handleRequest(process.argv[2]);
         return;
     }

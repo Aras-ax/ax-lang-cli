@@ -260,6 +260,20 @@ function mergeObject(main, other) {
 
     return main;
 }
+// 部分合并
+function partMerge(obj, main) {
+    let outData = {};
+    if (getType(main) === 'Array') {
+        main.map(item => {
+            outData[item] = obj[item] || '';
+        });
+    } else {
+        for (let key in main) {
+            outData[key] = obj[key] || main[key];
+        }
+    }
+    return outData;
+}
 
 /**
  * 扫描文件夹内的文件
@@ -321,6 +335,12 @@ function copyFile(src, dist) {
  */
 function correctPath(filePath) {
     filePath += '';
+
+    if (!path.isAbsolute(filePath)) {
+        filePath = path.join(process.cwd(), filePath);
+        console.log(filePath);
+    }
+
     // windows平台支持\和/，POSIX上是/
     return filePath.replace(/\\/g, '/');
 }
@@ -371,6 +391,7 @@ export {
     correctPath,
     writeJson,
     mergeObject,
+    partMerge,
     getDirname,
     LOG_TYPE,
     getType,

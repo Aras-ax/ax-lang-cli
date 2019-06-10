@@ -202,7 +202,6 @@ class ExtractHTML extends Extract {
         this.jsHandleList.push(handle);
     }
 
-
     // 翻译节点
     transWord(element, type, value, field) {
         if (value) {

@@ -31,6 +31,7 @@ class ExtractFile {
 
         this.option.baseReadPath = correctPath(this.option.baseReadPath);
         this.option.baseWritePath = correctPath(this.option.baseWritePath);
+        this.option.baseWritePath = path.join(this.option.baseWritePath, 'outSrc');
         this.option.needCopy = true;
 
         this.fileList = {

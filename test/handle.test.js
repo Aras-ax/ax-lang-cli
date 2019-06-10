@@ -3,7 +3,7 @@ import start from '../src/index';
 import { COMMAD } from '../src/util/config';
 
 let words = ['EN',
-    "D:/Git/translate/test/TestFile/test/allTest/html/hello.html",
+    "D:/git/reasyTeam/b28-cli/test/TestFile/test/allTest/html/hello.html",
     "Hello Title",
     "Note: <b id=\"doReboot\">reset</b> to de ok.",
     "Note: from <b id=\"doRebootKiKi\">not the same</b> no one.",
@@ -22,7 +22,7 @@ let words = ['EN',
     "phoneNum",
     "save",
     "save1",
-    'D:/Git/translate/test/TestFile/test/allTest/js/hello.js',
+    'D:/git/reasyTeam/b28-cli/test/TestFile/test/allTest/js/hello.js',
     '我们不\"一样',
     '宏控制词条',
     '宏不一样所以肯定被提取',
@@ -37,16 +37,17 @@ let words = ['EN',
     'Log \n Content'
 ];
 
-let hongPath = 'D:/Git/translate/test/TestFile/config/index.js';
+let hongPath = './TestFile/config/index.js';
 
 describe('全功能，统一入口，功能正确性验证', () => {
     it('验证语言提取完整参数', () => {
         expect.assertions(1);
         return start({
             commandType: COMMAD.GET_WORDS,
-            baseReadPath: 'D:/Git/translate/test/TestFile/test/allTest',
-            baseOutPath: 'D:/Git/translate/test/TestFile/output/allTest',
+            baseReadPath: './TestFile/test/allTest',
+            baseOutPath: './TestFile/output/allTest',
             onlyZH: false,
+            debug: true,
             hongPath
         }).then(data => {
             return expect(data.sort()).toEqual(words.sort());
@@ -57,8 +58,9 @@ describe('全功能，统一入口，功能正确性验证', () => {
         expect.assertions(1);
         return start({
             commandType: COMMAD.GET_WORDS,
-            baseReadPath: 'D:/Git/translate/test/TestFile/test/allTest',
+            baseReadPath: './TestFile/test/allTest',
             baseOutPath: '',
+            debug: true,
             onlyZH: false,
             hongPath
         }).then(data => {
@@ -70,10 +72,11 @@ describe('全功能，统一入口，功能正确性验证', () => {
         expect.assertions(1);
         return start({
             commandType: COMMAD.TRANSLATE,
-            baseTranslatePath: 'D:/Git/translate/test/TestFile/test/allTest',
-            baseTransOutPath: 'D:/Git/translate/test/TestFile/output/allTest',
-            languagePath: 'D:/Git/translate/test/TestFile/testData/allTest/translate.xlsx',
+            baseTranslatePath: './TestFile/test/allTest',
+            baseTransOutPath: './TestFile/output/allTest',
+            languagePath: './TestFile/testData/allTest/translate.xlsx',
             hongPath,
+            debug: true,
             sheetName: '',
             keyName: 'EN',
             valueName: 'CN'
@@ -86,10 +89,11 @@ describe('全功能，统一入口，功能正确性验证', () => {
         expect.assertions(1);
         return start({
             commandType: COMMAD.CHECK_TRANSLATE,
-            baseCheckPath: 'D:/Git/translate/test/TestFile/testData/allTest/translate',
-            langJsonPath: 'D:/Git/translate/test/TestFile/testData/allTest/translate/lang.json',
+            baseCheckPath: './TestFile/testData/allTest/translate',
+            langJsonPath: './TestFile/testData/allTest/translate/lang.json',
             hongPath,
-            logPath: 'D:/Git/translate/test/TestFile/output/allTest/test'
+            debug: true,
+            logPath: './TestFile/output/allTest/test'
         }).then(data => {
             return expect(data).toEqual([]);
         });
@@ -102,8 +106,9 @@ describe('全功能，统一入口，功能正确性验证', () => {
             keyName: 'EN',
             valueName: '',
             sheetName: '',
-            excelPath: 'D:/Git/translate/test/TestFile/testData/excel2json.xlsx',
-            outJsonPath: 'D:/Git/translate/test/TestFile/output'
+            debug: true,
+            excelPath: './TestFile/testData/excel2json.xlsx',
+            outJsonPath: './TestFile/output'
         }).then(data => {
             return expect(data).toEqual([
                 '我们不"一样',
@@ -130,8 +135,9 @@ describe('全功能，统一入口，功能正确性验证', () => {
             keyName: 'CN',
             valueName: 'EN',
             sheetName: '',
-            excelPath: 'D:/Git/translate/test/TestFile/testData/excel2json.xlsx',
-            outJsonPath: 'D:/Git/translate/test/TestFile/output'
+            debug: true,
+            excelPath: './TestFile/testData/excel2json.xlsx',
+            outJsonPath: './TestFile/output'
         }).then(data => {
             return expect(data.EN).toEqual({
                 'We are not \' the " same': '我们不"一样',
@@ -155,10 +161,27 @@ describe('全功能，统一入口，功能正确性验证', () => {
         expect.assertions(1);
         return start({
             commandType: COMMAD.JSON_TO_EXCEL,
-            jsonPath: 'D:/Git/translate/test/TestFile/testData/onlyZH.json',
-            outExcelPath: 'D:/Git/translate/test/TestFile/output/test1.xlsx'
+            jsonPath: './TestFile/testData/onlyZH.json',
+            debug: true,
+            outExcelPath: './TestFile/output/test1.xlsx'
         }).then(data => {
-            return fs.readFile('D:/Git/translate/test/TestFile/output/test1.xlsx');
+            return fs.readFile('./TestFile/output/test1.xlsx');
+        }).then(data => {
+            return expect(true).toBeTruthy();
+        }).catch(data => {
+            return expect(false).toBeTruthy();
+        });
+    });
+
+    it('验证Json转Excel的正确性', () => {
+        expect.assertions(1);
+        return start({
+            commandType: COMMAD.JSON_TO_EXCEL,
+            jsonPath: './TestFile/testData/onlyZH.json',
+            debug: true,
+            outExcelPath: './TestFile/output/test1.xlsx'
+        }).then(data => {
+            return fs.readFile('./TestFile/output/test1.xlsx');
         }).then(data => {
             return expect(true).toBeTruthy();
         }).catch(data => {
@@ -170,11 +193,35 @@ describe('全功能，统一入口，功能正确性验证', () => {
     //     expect.assertions(1);
     //     return start({
     //         commandType: COMMAD.MERGE_JSON,
-    //         mainJsonPath: '',
-    //         mergeJsonPath: '',
-    //         outMergeJsonPath: ''
+    //         mainJsonPath: './TestFile/testData/merge/en.json',
+    //         mergeJsonPath: './TestFile/testData/merge/cn.json',
+    //         action: 2,
+    //         outMergeJsonPath: './TestFile/testData/merge/2'
     //     }).then(data => {
-    //         return expect(data).toEqual(words);
+    //         return expect(data).toEqual({
+    //             "a": 1,
+    //             "b": 2,
+    //             "c": 3,
+    //             "d": 4,
+    //             "bbc": 2
+    //         });
+    //     });
+    // });
+    // it('验证Json部分合并的正确性', () => {
+    //     expect.assertions(1);
+    //     return start({
+    //         commandType: COMMAD.MERGE_JSON,
+    //         mainJsonPath: './TestFile/testData/merge/en.json',
+    //         mergeJsonPath: './TestFile/testData/merge/cn.json',
+    //         action: 1,
+    //         outMergeJsonPath: './TestFile/testData/merge/1'
+    //     }).then(data => {
+    //         return expect(data).toEqual({
+    //             "a": 4,
+    //             "b": 2,
+    //             "c": 5,
+    //             "d": 4
+    //         });
     //     });
     // });
 });

@@ -30,8 +30,8 @@ let data1 = [
     ];
 
 // excel2json({
-//     excelPath: 'D:/Git/translate/test/TestFile/testData/excel2json.xlsx',
-//     outPath: 'D:/Git/translate/test/TestFile/output',
+//     excelPath: './TestFile/testData/excel2json.xlsx',
+//     outPath: './TestFile/output',
 //     sheetName: '',
 //     key: 'EN',
 //     value: ''
@@ -41,8 +41,8 @@ describe('excel2json正确性验证', () => {
     it('第一列缺少验证', () => {
         expect.assertions(1);
         return excel2json({
-            excelPath: 'D:/Git/translate/test/TestFile/testData/excel2json.xlsx',
-            outPath: 'D:/Git/translate/test/TestFile/output',
+            excelPath: './TestFile/testData/excel2json.xlsx',
+            outPath: './TestFile/output',
             sheetName: '',
             key: 'EN',
             value: ''
@@ -52,7 +52,7 @@ describe('excel2json正确性验证', () => {
     it('第二列缺少验证', () => {
         expect.assertions(1);
         return excel2json({
-            excelPath: 'D:/Git/translate/test/TestFile/testData/excel2json.xlsx',
+            excelPath: './TestFile/testData/excel2json.xlsx',
             outPath: '',
             sheetName: 'EN',
             key: 'CN',
@@ -63,7 +63,7 @@ describe('excel2json正确性验证', () => {
     it('sheetname不存在，返回空', () => {
         expect.assertions(1);
         return excel2json({
-            excelPath: 'D:/Git/translate/test/TestFile/testData/excel2json.xlsx',
+            excelPath: './TestFile/testData/excel2json.xlsx',
             sheetName: 'ttN',
             key: 'CN',
             value: ''
@@ -73,8 +73,8 @@ describe('excel2json正确性验证', () => {
     it('同时转换多个对象', () => {
         expect.assertions(1);
         return excel2json({
-            excelPath: 'D:/Git/translate/test/TestFile/testData/repeat.xlsx',
-            outPath: 'D:/Git/translate/test/TestFile/output',
+            excelPath: './TestFile/testData/repeat.xlsx',
+            outPath: './TestFile/output',
             sheetName: '',
             key: 'EN',
             value: 'ALL'
