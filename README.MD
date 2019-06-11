@@ -47,22 +47,22 @@ b28-cli -h
 **使用方式：**
 1. 通过[WinForm](B28.exe)界面程序直接操作（只支持windows环境）
 
-   ![b28](https://raw.githubusercontent.com/moshang-xc/b28-cli/master/img/b28.jpg)
+   ![b28](https://raw.githubusercontent.com/moshang-xc/b28-cli/master/img/b28.jpg?1)
 
 2. 通过[b28.config.js](#b28.config.js)进行配置，在目标路径下面添加`b28.config.js`配置文件，见[参数配置说明](#配置参数说明)
 > 如果有读取到配置参数，则直接按配置参数运行工具。若读取的配置错误则会通过下面的使用方式重新输入配置项修正数据。
 直接通过命令行交互的形式,如下图
-    ```
-        # 切换到目标路径
-        cd xxx
+```
+    # 切换到目标路径
+    cd xxx
 
-        # 运行指令
-        b28-cli
-    ```
+    # 运行指令
+    b28-cli
+```
 
-    ![交互](https://raw.githubusercontent.com/moshang-xc/b28-cli/master/img/cmd.jpg)
+![交互](https://raw.githubusercontent.com/moshang-xc/b28-cli/master/img/cmd.jpg?1)
 
-    参数配置见见[参数配置说明](#配置参数说明)
+参数配置见见[参数配置说明](#配置参数说明)
 
 
 ## 配置参数说明
