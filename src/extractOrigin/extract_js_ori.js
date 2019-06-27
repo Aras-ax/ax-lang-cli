@@ -2,6 +2,7 @@ import { parse } from 'babylon';
 import generate from 'babel-generator';
 import Extract from './extract';
 import { TRANS_NAME_REGEX } from '../util/config';
+import { log, LOG_TYPE } from '../util/index';
 import { getType } from '../util/index';
 var htmlparser = require("htmlparser2");
 const HANDLE_ATTRIBUTE = ['alt', 'placeholder', 'title'];
@@ -42,8 +43,8 @@ class ExtractJs extends Extract {
 
                 resolve(AST);
             }
-        }).catch(() => {
-            console.log('js代码包含语法错误，故无法添加翻译函数！');
+        }).catch((err) => {
+            this.fromHtml ? log(`内联JS处理出错- ${err}`, LOG_TYPE.ERROR) : log('js代码包含语法错误，故无法添加翻译函数！' + err.message, LOG_TYPE.ERROR);
         });
     }
 
@@ -375,7 +376,8 @@ class ExtractJs extends Extract {
                 return Math.pow(10, match.length - 1) + '';
             }
         }).replace(this.option.ignoreExp, function(match, val) {
-            return `([${val}])`;
+            // return `([${val}])`;
+            return `([${val.replace(/;$/, ' ')}])`;
         });
     }
 }

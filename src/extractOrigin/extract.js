@@ -43,21 +43,21 @@ class Extract {
         this.curFilePath = filePath;
         return loadFile(filePath)
             .then(data => {
+                // 写入文件
+                log(`添加翻译函数-${filePath}`);
                 return this.transNode(data);
             })
             .then(AST => {
                 return this.scanNode(AST);
             })
             .then((fileData) => {
-                // 写入文件
-                log(`添加翻译函数-${filePath}`);
                 writeTextFile(path.resolve(this.option.baseWritePath, path.relative(this.option.baseReadPath, this.curFilePath)), fileData);
                 this.complete();
                 return this.startTrans();
             })
             .catch(error => {
                 this.copyFile(filePath);
-                log(`文件[${filePath}]处理出错- ${error}`, LOG_TYPE.ERROR);
+                log(`文件[${filePath}]处理出错- ${error.message}`, LOG_TYPE.ERROR);
                 return this.startTrans();
             });
     }

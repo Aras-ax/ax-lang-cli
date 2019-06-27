@@ -67,9 +67,7 @@ class ExtractHTML extends Extract {
                 child.nodeValue = fileData;
                 return this.nextJsTask();
             })
-            .catch(error => {
-                console.log(error);
-                log(`内联JS处理出错- ${error}`, LOG_TYPE.error);
+            .catch(() => {
                 return this.nextJsTask();
             });
     }

@@ -97,33 +97,33 @@ module.exports = function() {
     //     outExcelPath: './test/TestFile/output/test1.xlsx'
     // })
 
-    start({
-        commandType: COMMAD.MERGE_JSON,
-        mainJsonPath: './test/TestFile/testData/merge/cn.json',
-        mergeJsonPath: './test/TestFile/testData/merge/en.json',
-        action: 2,
-        outMergeJsonPath: './test/TestFile/testData/merge2'
-    });
+    // start({
+    //     commandType: COMMAD.MERGE_JSON,
+    //     mainJsonPath: './test/TestFile/testData/merge/cn.json',
+    //     mergeJsonPath: './test/TestFile/testData/merge/en.json',
+    //     action: 2,
+    //     outMergeJsonPath: './test/TestFile/testData/merge2'
+    // });
 
-    start({
-        commandType: COMMAD.MERGE_JSON,
-        mainJsonPath: './test/TestFile/testData/merge/cn.json',
-        mergeJsonPath: './test/TestFile/testData/merge/en.json',
-        action: 1,
-        outMergeJsonPath: './test/TestFile/testData/merge1'
-    });
+    // start({
+    //     commandType: COMMAD.MERGE_JSON,
+    //     mainJsonPath: './test/TestFile/testData/merge/cn.json',
+    //     mergeJsonPath: './test/TestFile/testData/merge/en.json',
+    //     action: 1,
+    //     outMergeJsonPath: './test/TestFile/testData/merge1'
+    // });
 
     // start();
 
 
 
-    //     start({
-    //         commandType: COMMAD.ORIGINAL_CODE,
-    //         // baseReadPath: './test/TestFile/origin',
-    //         // baseOutPath: './test/TestFile/output/origin'
-    //         baseReadPath: 'C:/Users/lenovo/Desktop/添加翻译函数/webs',
-    //         baseOutPath: 'C:/Users/lenovo/Desktop/添加翻译函数/websAfter'
-    //     }).then(data => {
-    //         // return expect(data).toEqual(words);
-    //     });
+    start({
+        commandType: COMMAD.ORIGINAL_CODE,
+        // baseProPath: './test/TestFile/origin',
+        // baseProOutPath: './test/TestFile/output/origin'
+        baseProPath: 'C:/Users/lenovo/Desktop/ttt',
+        baseProOutPath: 'C:/Users/lenovo/Desktop/ddd'
+    }).then(data => {
+        // return expect(data).toEqual(words);
+    });
 }
