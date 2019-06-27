@@ -73,7 +73,7 @@ class ExtractHTML extends Extract {
                 outHtml = outHtml.replace(/(\<body([^>]*)\>)|(\<\/body\>)/g, '');
             }
             outHtml = outHtml.replace(/^\s*|\s*$/g, '');
-            outHtml = document.doctype ? '<!doctype html>\t\n<html>\t\n' + outHtml + '\t\n</html>' : outHtml;
+            outHtml = document.doctype ? '<!Doctype html>\t\n<html>\t\n' + outHtml + '\t\n</html>' : outHtml;
 
             return outHtml;
         });

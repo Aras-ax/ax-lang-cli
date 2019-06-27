@@ -215,3 +215,10 @@ module.exports = {
 > `ignoreCode`: 原厂代码中需要注释的代码对应的`正则`，不注释对应的js代码会有语法错误，例如部分原厂代码中在代码开头会包含`<!--\s*hide `代码段等
 >
 > `ignoreExp`: 原厂中没有实现前后端分离，通过标记注入参数的代码段对应的`正则`，如`<%ejGetOther(sessionKey)%>`
+
+
+
+### 备注：
+
+![流程图](https://raw.githubusercontent.com/moshang-xc/b28-cli/master/img/flow.png?1)
+
