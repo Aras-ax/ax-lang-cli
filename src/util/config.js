@@ -281,10 +281,8 @@ const EXTNAME_HTML = '**/{*.aspx,*.asp,*.ejs,*.html,*.htm}';
  */
 const IGNORE_REGEXP = [
     /^[\s0-9]*$/,
-    // 单个字母，全数字，数组+标点符号，数字/标点+字母格式不提取
-    /^(([a-z]+[0-9\.,\?\\_\:\-/&\=<>\[\]\(\)\|]+)|([0-9\.,\?\\_\:\-/&\=<>\[\]\(\)\|]+[a-z]+))[a-z0-9\.,\?\\_\:\-/&\=<>\[\]\(\)\|]*$/i,
-    // 单个字母或者单词不添加翻译函数，手动添加
-    /^[a-z]+$/i,
+    // 单个字母
+    /^[a-z]$/i,
     // <% xxxx %>格式的字符串不提取
     /<%([\s\S]*)%>/i,
     /\(\[([\s\S]*)\]\)/i,
@@ -296,6 +294,45 @@ const IGNORE_REGEXP = [
     // url不提取
     /^((ht|f)tps?):\/\/([\w\-]+(\.[\w\-]+)*\/)*[\w\-]+(\.[\w\-]+)*\/?(\?([\w\-\.,@?^=%&:\/~\+#]*)+)?/i
 ];
+/**
+ * 不进行匹配词条的规则函数
+ */
+const IGNORE_WORDS = ['none', 'visible', 'display', 'block'];
+const IGNORE_FUNCTIONS = {
+    // 单个单词可添加翻译函数除了全大写，none，visible等css关键词
+    word(str) {
+        if (/[^a-z]/i.test(str)) {
+            return false;
+        }
+
+        if (IGNORE_WORDS.includes(str)) {
+            return true;
+        }
+
+        // str = str.slice(1);
+        // // 除第一个字母外大小写混合
+        // if (/[a-z]/.test(str) && /[A-Z]/.test(str)) {
+        //     return true;
+        // }
+
+        //全大写字符串
+        if (/^[A-Z]+$/.test(str)) {
+            return true;
+        }
+
+        return false;
+    },
+    // 单个字母，全数字，数组+标点符号，数字/标点+字母格式不添加(如果不包含数字=？则还是添加)
+    specialWord(str) {
+        if (/^(([a-z]+[0-9\.,\?\\_\:\-/&\=<>\[\]\(\)\|]+)|([0-9\.,\?\\_\:\-/&\=<>\[\]\(\)\|]+[a-z]+))[a-z0-9\.,\?\\_\:\-/&\=<>\[\]\(\)\|]*$/i.test(str)) {
+            if (!/[0-9\=\?]/.test(str)) {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+};
 
 const ACTION_TYPE = {
     ADDTRANS: 1, // 添加翻译函数和提取语言
@@ -316,5 +353,6 @@ export {
     EXTNAME_JS,
     baseQuestions,
     IGNORE_REGEXP,
+    IGNORE_FUNCTIONS,
     ACTION_TYPE
 };

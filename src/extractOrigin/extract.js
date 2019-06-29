@@ -7,7 +7,7 @@ import {
     writeTextFile
 } from '../util/index';
 
-import { IGNORE_REGEXP } from '../util/config';
+import { IGNORE_REGEXP, IGNORE_FUNCTIONS } from '../util/config';
 import path from 'path';
 
 /**
@@ -120,6 +120,20 @@ class Extract {
         }
 
         let skip = IGNORE_REGEXP.some(item => item.test(val));
+        if (skip) {
+            return '';
+        }
+
+        for (let key in IGNORE_FUNCTIONS) {
+            let fun = IGNORE_FUNCTIONS[key],
+                str = val.replace(/(^\s+)|(\s+$)/g, '');
+
+            if (typeof fun === 'function') {
+                if (skip = fun(str)) {
+                    break;
+                }
+            }
+        }
         if (skip) {
             return '';
         }
