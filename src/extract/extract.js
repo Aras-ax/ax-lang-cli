@@ -10,11 +10,11 @@ from '../util/index';
 let IGNORE_REGEXP = [
     /^[\s0-9]*$/,
     // 单个字母，全数字，数组+标点符号，数字/标点+字母格式不提取
-    /^(([a-z0-9]+[\.,\?\\_\:\-/&\=<>\[\]\(\)\|]+)|([\.,\?\\_\:\-/&\=<>\[\]\(\)\|]+[a-z0-9]+))[a-z0-9\.,\?\\_\:\-/&\=<>\[\]\(\)\|]*$/i,
+    /^(([a-z0-9]+[\.,;\?\\_\:\-/&\=<>\[\]\(\)\|]+)|([\.,;\?\\_\:\-/&\=<>\[\]\(\)\|]+[a-z0-9]+))[a-z0-9\.,;\?\\_\:\-/&\=<>\[\]\(\)\|]*$/i,
     // <% xxxx %>格式的字符串不提取
     /<%([\s\S]*)%>/i,
     /\(\[([\s\S]*)\]\)/i,
-    /^(&nbsp;)+$/i,
+    /^(&nbsp;|&gt;|&lt;)+$/i,
     // 只包含html结束标签
     /^(\s*<\s*\/([a-z0-9]+)?>\s*)*$/i,
     // /^<%=((.|\n)*)%>$/i,
@@ -82,7 +82,7 @@ class Extract {
                 return this.startTrans();
             })
             .catch(error => {
-                this.copyFile(filePath);
+                this.option.isTranslate && this.copyFile(filePath);
                 log(`文件[${filePath}]处理出错- ${error}`, LOG_TYPE.ERROR);
                 return this.startTrans();
             });
@@ -138,6 +138,9 @@ class Extract {
         });
     }
 
+    /**
+     * 如果只是提取词条，则直接返回空
+     */
     getWord(val, isJs) {
         if (!val || /^\s*$/.test(val)) {
             return '';

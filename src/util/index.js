@@ -5,7 +5,8 @@ import xlsx from 'node-xlsx';
 const LOG_TYPE = {
     WARNING: 1,
     ERROR: 2,
-    LOG: 3
+    LOG: 3,
+    DONE: 4
 };
 
 /**
@@ -130,7 +131,7 @@ var styles = {
  * @param {Number} type 日志类型
  */
 function log(message, type = LOG_TYPE.LOG) {
-    let logText = ['', 'Warning', 'Error', 'Log']
+    let logText = ['', 'Warning', 'Error', 'Log', 'Success']
     message = `[${logText[type]}][${message}]`;
 
     switch (type) {
@@ -327,6 +328,7 @@ function createFolder(folder, callback) {
 }
 
 function copyFile(src, dist) {
+    createFolder(path.dirname(dist));
     fs.createReadStream(src).pipe(fs.createWriteStream(dist));
 }
 

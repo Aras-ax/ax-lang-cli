@@ -1,7 +1,8 @@
 import path from 'path';
 import fs from 'fs';
-import ExtractHTML from './extract/extract_html';
-import ExtractJS from './extract/extract_js';
+import ExtractHTML from './extract/extract-html';
+import ExtractJS from './extract/extract-js';
+import ExtractVUE from './extract/extract-vue';
 
 import {
     scanFolder,
@@ -17,9 +18,11 @@ import {
     EXCLUDE_FILE,
     EXCLUDE_FILE_END,
     EXTNAME_JS,
+    EXTNAME_VUE,
     EXTNAME_HTML
 } from './util/config';
 const minimatch = require("minimatch");
+let transFiles = [EXTNAME_JS, EXTNAME_VUE, EXTNAME_HTML];
 
 class ExtractFile {
     constructor(option) {
@@ -96,6 +99,23 @@ class ExtractFile {
                 }
             }
         });
+
+        this.extractVUE = new ExtractVUE({
+            CONFIG_HONG: this.CONFIG_HONG,
+            onlyZH: this.option.onlyZH,
+            transWords: this.option.transWords,
+            isTranslate: this.option.isTranslate,
+            isCheckTrans: this.option.isCheckTrans,
+            baseWritePath: this.option.baseWritePath,
+            baseReadPath: this.option.baseReadPath,
+            // 词条提取完成后的操作
+            onComplete: (filePath, words) => {
+                if (words.length > 0) {
+                    this.outData.push(correctPath(filePath));
+                    this.outData = this.outData.concat(words);
+                }
+            }
+        });
     }
 
     scanFile() {
@@ -107,10 +127,12 @@ class ExtractFile {
         }
 
         this.fileList.transList.forEach((filePath) => {
-            if (minimatch(filePath, EXTNAME_JS)) {
+            if (minimatch(filePath, EXTNAME_JS)) { // js文件
                 this.extractJS.addTask(filePath);
-            } else if (minimatch(filePath, EXTNAME_HTML)) {
+            } else if (minimatch(filePath, EXTNAME_HTML)) { // html文件
                 this.extractHTML.addTask(filePath);
+            } else if (minimatch(filePath, EXTNAME_VUE)) { // vue文件
+                this.extractVUE.addTask(filePath);
             } else {
                 this.fileList.copyList.push(filePath);
             }
@@ -123,11 +145,13 @@ class ExtractFile {
         // 将未翻译的文件以错误的形式输出
 
         // 将提取的词条文件，输出为excel
-        return Promise.all([this.handleHtml(), this.handleJs()]).then((data) => {
+        // return Promise.all([this.handleHtml(), this.handleJs()]).then((data) => {
+
+        return Promise.all(this.startHandle()).then((data) => {
             let sheetName = this.extractJS.option.onlyZH ? 'CN' : 'EN';
 
             if (this.option.isTranslate) {
-                log(`翻译后的文件输出到路径-${this.option.baseWritePath}下.`);
+                log(`翻译后的文件输出到路径-${this.option.baseWritePath}下.`, LOG_TYPE.DONE);
             } else if (!this.option.isCheckTrans) {
                 this.outData.unshift(sheetName);
             }
@@ -142,7 +166,7 @@ class ExtractFile {
                     log(`还有部分词条未被翻译，见输出的Excel-${outPath}`, LOG_TYPE.WARNING);
                 }
             } else if (this.option.isTranslate || this.option.isCheckTrans) {
-                log(`success, 未发现未翻译的词条`);
+                log(`success, 未发现未翻译的词条`, LOG_TYPE.DONE);
             }
             //重置
             this.reset();
@@ -167,7 +191,7 @@ class ExtractFile {
         writeExcel(this.outData, outPath, sheetName)
             .then(() => {
                 if (!this.option.isTranslate && !this.option.isCheckTrans) {
-                    log(`语言文件输出为-${outPath}`);
+                    log(`语言文件输出为-${outPath}`, LOG_TYPE.DONE);
                 }
             })
             .catch(error => {
@@ -183,6 +207,10 @@ class ExtractFile {
 
     handleJs(filePath) {
         return this.extractJS.startTrans();
+    }
+
+    startHandle() {
+        return [this.extractHTML.startTrans(), this.extractJS.startTrans(), this.extractVUE.startTrans()];
     }
 
     reset() {
@@ -216,7 +244,7 @@ class ExtractFile {
     }
 
     addFile(filePath) {
-        if (minimatch(filePath, EXCLUDE_FILE) || minimatch(filePath, EXCLUDE_FILE_END) || (!minimatch(filePath, EXTNAME_HTML) && !minimatch(filePath, EXTNAME_JS))) {
+        if (minimatch(filePath, EXCLUDE_FILE) || minimatch(filePath, EXCLUDE_FILE_END) || (!transFiles.some(itemRE => minimatch(filePath, itemRE)))) {
             if (this.option.isTranslate) {
                 this.fileList.copyList.push(filePath);
             }

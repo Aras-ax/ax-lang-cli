@@ -382,9 +382,9 @@ class ExtractJs extends Extract {
     }
 }
 
-String.prototype.splice = function(start, end, newStr) {
-    return this.slice(0, start) + newStr + this.slice(end);
-};
+// String.prototype.splice = function(start, end, newStr) {
+//     return this.slice(0, start) + newStr + this.slice(end);
+// };
 
 
 export default ExtractJs;

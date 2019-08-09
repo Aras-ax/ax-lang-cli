@@ -17,12 +17,14 @@ class ExtractJs extends Extract {
         return new Promise((resolve, reject) => {
             try {
                 let AST = parse(jsDoc, {
-                    sourceType: 'module'
+                    sourceType: 'module',
+                    plugins: [
+                        "objectRestSpread"
+                    ]
                 });
                 resolve(AST);
             } catch (err) {
-                let AST = parse(jsDoc, {});
-                resolve(AST);
+                reject('文件转AST出错，无法转换！');
             }
         });
     }
@@ -30,6 +32,10 @@ class ExtractJs extends Extract {
     // 扫描节点，提取字段
     scanNode(AST, jsDoc) {
         return new Promise((resolve, reject) => {
+            if (AST === 'none') {
+                resolve(jsDoc);
+                return;
+            }
             let body = AST.program.body;
             body.forEach(node => {
                 this.listAst(node);

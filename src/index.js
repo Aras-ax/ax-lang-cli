@@ -10,6 +10,11 @@ import handleRequest from './cmd';
 let cwd = process.cwd();
 let configFilepath = path.join(cwd, CONFIG_FILE_NAME);
 
+// 扩展String
+String.prototype.splice = function(start, end, newStr) {
+    return this.slice(0, start) + newStr + this.slice(end);
+};
+
 //将命令和参数分离
 
 function gerArgs() {
@@ -157,10 +162,24 @@ function fullPath(cfg) {
     });
 }
 
+const ARG_TYPE = {
+    FOLDER: 1,
+    FILE: 2
+};
+
+function errorMess(key, type) {
+    if (type === ARG_TYPE.FOLDER) {
+        return `配置[${key}]错误，目标地址无效或者不存在`;
+    } else if (type === ARG_TYPE.FILE) {
+        return `配置[${key}]错误，目标文件不存在`;
+    }
+    return `配置[${key}]错误，请修正配置`;
+}
+
 let validate = {
     0: function(cfg) {
         if (valid.folder(cfg.baseReadPath) !== true) {
-            return true;
+            return errorMess('baseReadPath', ARG_TYPE.FOLDER);
         }
 
         // 为空的处理
@@ -168,17 +187,17 @@ let validate = {
     },
     1: function(cfg) {
         if (valid.folder(cfg.baseTranslatePath) !== true) {
-            return true;
+            return errorMess('baseTranslatePath', ARG_TYPE.FOLDER);
         }
 
         cfg.baseTransOutPath = cfg.baseTransOutPath || getDirname(cfg.baseTranslatePath);
 
         if (valid.specialfile(cfg.hongPath) !== true) {
-            return true;
+            return errorMess('hongPath', ARG_TYPE.FILE);
         }
 
         if (valid.existFile(cfg.languagePath) !== true) {
-            return true;
+            return errorMess('languagePath', ARG_TYPE.FILE);
         }
 
         if (path.extname(cfg.languagePath) !== '.json') {
@@ -188,44 +207,44 @@ let validate = {
     },
     2: function(cfg) {
         if (valid.folder(cfg.baseCheckPath) !== true) {
-            return true;
+            return errorMess('baseCheckPath', ARG_TYPE.FOLDER);
         }
 
         cfg.logPath = cfg.logPath || getDirname(cfg.baseCheckPath);
 
         if (valid.specialfile(cfg.hongPath) !== true) {
-            return true;
+            return errorMess('hongPath', ARG_TYPE.FILE);
         }
 
         if (valid.existFile(cfg.langJsonPath) !== true) {
-            return true;
+            return errorMess('langJsonPath', ARG_TYPE.FILE);
         }
     },
     3: function(cfg) {
         cfg.keyName = cfg.keyName || 'EN';
         if (valid.existFile(cfg.excelPath) !== true) {
-            return true;
+            return errorMess('excelPath', ARG_TYPE.FILE);
         }
         cfg.outJsonPath = cfg.outJsonPath || getDirname(cfg.excelPath);
     },
     4: function(cfg) {
         if (valid.existFile(cfg.jsonPath) !== true) {
-            return true;
+            return errorMess('jsonPath', ARG_TYPE.FILE);
         }
         cfg.outExcelPath = cfg.outExcelPath || getDirname(cfg.jsonPath);
     },
     5: function(cfg) {
         if (valid.existFile(cfg.mainJsonPath) !== true) {
-            return true;
+            return errorMess('mainJsonPath', ARG_TYPE.FILE);
         }
         if (valid.existFile(cfg.mergeJsonPath) !== true) {
-            return true;
+            return errorMess('mergeJsonPath', ARG_TYPE.FILE);
         }
         cfg.outMergeJsonPath = cfg.outMergeJsonPath || getDirname(cfg.mainJsonPath);
     },
     6: function(cfg) {
         if (valid.folder(cfg.baseProPath) !== true) {
-            return true;
+            return errorMess('baseProPath', ARG_TYPE.FOLDER);
         }
 
         // 为空的处理

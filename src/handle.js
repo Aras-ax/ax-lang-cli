@@ -64,19 +64,19 @@ function getWords(cfg) {
  * 翻译时的key列永远是CN，Value列永远是EN
  */
 function translate(cfg) {
-    let extract = new ExtractFile({
-        baseReadPath: cfg.baseTranslatePath,
-        baseWritePath: cfg.baseTransOutPath,
-        isTranslate: true,
-        hongPath: cfg.hongPath,
-        transWords: {}
-    });
+    let extract;
 
     // 通过JSON文件直接翻译
     if (path.extname(cfg.languagePath) === '.json') {
         let langData = loadJsonSync(cfg.languagePath);
-
-        extract.setAttr('transWords', langData);
+        extract = new ExtractFile({
+            baseReadPath: cfg.baseTranslatePath,
+            baseWritePath: cfg.baseTransOutPath,
+            isTranslate: true,
+            hongPath: cfg.hongPath,
+            transWords: langData
+        });
+        // extract.setAttr('transWords', langData);
         return extract.scanFile();
     } else {
         // 通过Excel文件翻译，并生成语言包JSON
@@ -92,7 +92,15 @@ function translate(cfg) {
             for (let key in data) {
                 langData[data[key]] = key;
             }
-            extract.setAttr('transWords', langData);
+
+            extract = new ExtractFile({
+                baseReadPath: cfg.baseTranslatePath,
+                baseWritePath: cfg.baseTransOutPath,
+                isTranslate: true,
+                hongPath: cfg.hongPath,
+                transWords: langData
+            });
+            // extract.setAttr('transWords', langData);
             return extract.scanFile();
         });
     }

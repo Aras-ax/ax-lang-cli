@@ -1,7 +1,7 @@
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 import { log, LOG_TYPE, trim } from '../util/index';
-import ExtractJS from './extract_js';
+import ExtractJS from './extract-js';
 import Extract from './extract';
 
 const HANDLE_ATTRIBUTE = ['alt', 'placeholder', 'title', 'data-title'];
@@ -24,13 +24,7 @@ class ExtractHTML extends Extract {
             CONFIG_HONG: this.option.CONFIG_HONG,
             onlyZH: this.option.onlyZH,
             transWords: this.option.transWords,
-            isTranslate: this.option.isTranslate,
-            // 词条提取完成后的操作
-            onComplete: (filePath, words) => {
-                if (words.length > 0) {
-                    this.addWords(words);
-                }
-            }
+            isTranslate: this.option.isTranslate
         });
 
         this.jsHandleList = [];
@@ -195,6 +189,9 @@ class ExtractHTML extends Extract {
         if (this.jsHandleList.length > 0) {
             return this.handleJsTask(this.jsHandleList.shift());
         }
+        // 当所有的js遍历完成后，添加抓取到的词条
+        this.addWords(this.extractJS.words);
+        this.extractJS.words = [];
         return Promise.resolve('done');
     }
 

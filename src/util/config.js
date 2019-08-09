@@ -275,6 +275,8 @@ const baseQuestions = [{
 const EXCLUDE_FILE = '**/{img,lang,b28,goform,cgi-bin,css}/**';
 const EXCLUDE_FILE_END = '**/{img,lang,b28,goform,cgi-bin,*.min.js,*shiv.js,*respond.js,*shim.js}';
 const EXTNAME_JS = '**/*.js';
+const EXTNAME_VUE = '**/*.vue';
+const EXTNAME_JSX = '**/*.jsx';
 const EXTNAME_HTML = '**/{*.aspx,*.asp,*.ejs,*.html,*.htm}';
 /**
  * 不进行匹配词条的正则
@@ -351,6 +353,7 @@ export {
     valid,
     EXTNAME_HTML,
     EXTNAME_JS,
+    EXTNAME_VUE,
     baseQuestions,
     IGNORE_REGEXP,
     IGNORE_FUNCTIONS,
