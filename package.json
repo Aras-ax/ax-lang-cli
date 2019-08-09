@@ -1,7 +1,7 @@
 {
     "name": "b28-cli",
-    "version": "1.2.5",
-    "description": "translate, ExcelToJson, JsonToExcel, getText",
+    "version": "1.3.0",
+    "description": "translate, ExcelToJson, JsonToExcel, getText, l18n",
     "main": "./src/index.js",
     "bin": {
         "b28-cli": "./index.js"
