@@ -119,10 +119,8 @@ function mergePart() {
 function origin() {
     start({
         commandType: COMMAD.ORIGINAL_CODE,
-        // baseProPath: './test/TestFile/origin',
-        // baseProOutPath: './test/TestFile/output/origin'
-        baseProPath: 'C:/Users/lenovo/Desktop/ttt',
-        baseProOutPath: 'C:/Users/lenovo/Desktop/ddd'
+        baseProPath: './test/TestFile/origin',
+        baseProOutPath: './test/TestFile/output/origin'
     }).then(data => {
         // return expect(data).toEqual(words);
     });
@@ -157,7 +155,6 @@ function vueTrans() {
     });
 }
 module.exports = function() {
-    vueTrans();
-
-    // arrayToJson('C:/Users/moshang/Desktop/srcOut/lang1.json', 'C:/Users/moshang/Desktop/srcOut/lang.json', 'C:/Users/moshang/Desktop/srcOut/t.json');
+    // vueTrans();
+    origin();
 }

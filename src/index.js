@@ -85,7 +85,7 @@ function gerArgs() {
                 baseProPath: args.from,
                 baseProOutPath: args.to,
                 ignoreCode: args.code,
-                ignoreExp: args.exp
+                templateExp: args.exp
             };
             console.log(config);
             break;

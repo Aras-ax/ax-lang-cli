@@ -13,7 +13,7 @@ class ExtractHTML extends Extract {
 
         this.extractJS = new ExtractJS({
             ignoreCode: this.option.ignoreCode,
-            ignoreExp: this.option.ignoreExp
+            templateExp: this.option.templateExp
         });
         this.jsHandleList = [];
     }

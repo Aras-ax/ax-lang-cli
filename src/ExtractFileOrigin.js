@@ -52,7 +52,7 @@ class ExtractFile {
             baseWritePath: this.option.baseWritePath
         }
         this.option.ignoreCode && (obj.ignoreCode = this.option.ignoreCode);
-        this.option.ignoreExp && (obj.ignoreExp = this.option.ignoreExp);
+        this.option.templateExp && (obj.templateExp = this.option.templateExp);
 
         this.extractHTML = new ExtractHTML(obj);
 
@@ -92,7 +92,7 @@ class ExtractFile {
             .then((data) => {
                 //重置
                 this.reset();
-                log(`处理完成`, LOG_TYPE.LOG);
+                log(`处理完成`, LOG_TYPE.DONE);
                 return this.outData;
             }).catch(err => {
                 log(`文件处理出错，${err}`, LOG_TYPE.ERROR);

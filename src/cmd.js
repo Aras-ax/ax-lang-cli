@@ -37,7 +37,7 @@ const comments = {
     'baseProPath': '原厂代码地址',
     'baseProOutPath': '添加翻译函数后文件输出地址',
     'ignoreCode': '需要注释的代码正则',
-    'ignoreExp': '后台插入表达式正则'
+    'templateExp': '后台插入表达式正则'
 };
 let questions = [
     [{
@@ -165,7 +165,7 @@ let questions = [
         default: '/<!--\s*hide|-->/g'
     }, {
         type: 'input',
-        name: 'ignoreExp',
+        name: 'templateExp',
         message: '后台插入表达式正则：',
         default: '/<%([^\n]*?)%>/g'
     }]

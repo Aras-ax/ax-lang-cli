@@ -375,7 +375,7 @@ class ExtractJs extends Extract {
             } else {
                 return Math.pow(10, match.length - 1) + '';
             }
-        }).replace(this.option.ignoreExp, function(match, val) {
+        }).replace(this.option.templateExp, function(match, val) {
             // return `([${val}])`;
             return `([${val.replace(/;$/, ' ')}])`;
         });

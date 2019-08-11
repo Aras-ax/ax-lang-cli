@@ -3,7 +3,8 @@
 **更新说明：**
 - 添加`.Vue`文件词条的提取和翻译替换，同时对`template`需要添加翻译函数的地方会自动的添加翻译函数
 - 修改参数配置错误信息，提供具体的参数错误说明
-
+- 添加JSON部分合并功能，满足删除多余词条的业务场景
+- 添加原厂代码添加翻译函数功能，支撑原厂代码多国语言的快速开发
 
 
 **该工具同时包含以下几个功能：**
@@ -253,11 +254,14 @@ module.exports = {
 | baseProPath | String | `必填` | 原厂代码地址 |
 | baseProOutPath | String | `baseProPath` | 添加翻译函数后文件输出地址 |
 | ignoreCode | `String`/`Regexp` | `/<!--\s*hide|-->/g` | 需要注释的代码正则 |
-| ignoreExp | `String`/`Regexp` | `/<%([^\n]*?)%>/g` | 后台插入表达式正则 |
+| templateExp | `String`/`Regexp` | `/<%([^\n]*?)%>/g` | JS文件中后台用于插入替换的模板表达式对应的正则 |
+| customRules | `Array`/`Function`/`Regexp` | `[]` | 自定义不提词条规则列表，可以是正则也可以是function |
 
 > `ignoreCode`: 原厂代码中需要注释的代码对应的`正则`，不注释对应的js代码会有语法错误，例如部分原厂代码中在代码开头会包含`<!--\s*hide `代码段等
 >
-> `ignoreExp`: 原厂中没有实现前后端分离，通过标记注入参数的代码段对应的`正则`，如`<%ejGetOther(sessionKey)%>`
+> `templateExp`: 原厂中没有实现前后端分离，通过特定的模板语法注入参数的代码段对应的`正则`，如`<%ejGetOther(sessionKey)%>`
+>
+> `customRules`: 用于设置默认规则外，不进行提取的词条
 
 **预设不进行翻译配置如下**
 - 全数字

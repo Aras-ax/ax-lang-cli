@@ -4,6 +4,7 @@ import {
     trim,
     LOG_TYPE,
     copyFile,
+    string2Regexp,
     writeTextFile
 } from '../util/index';
 
@@ -20,8 +21,10 @@ class Extract {
             onComplete: null,
             ignoreCode: /<!--\s*hide|-->/g,
             // 将对应的词条全部修改为'/**<%%>**/window.MS'
-            // ignoreExp: /(\=|\+|\-|\*|\/|\s|\(|\[|\{)\s*<%.*?%>/g
-            ignoreExp: /<%([^\n]*?)%>/g
+            // templateExp: /(\=|\+|\-|\*|\/|\s|\(|\[|\{)\s*<%.*?%>/g
+            templateExp: /<%([^\n]*?)%>/g,
+            // 自定义不提词条规则，可以是正则也可以是function
+            customRules: []
         }, option);
         this.init();
     }
@@ -35,6 +38,23 @@ class Extract {
         this.isWorking = false;
         // 待处理文件列表
         this.handleList = [];
+        this.ignoreRE = IGNORE_REGEXP.slice(0);
+        this.ignoreFuns = IGNORE_FUNCTIONS.slice(0);
+
+        let customRules = this.option.customRules;
+        if (Array.isArray(customRules)) {
+            customRules.forEach(item => {
+                if (typeof item === 'function') {
+                    this.ignoreFuns.push(item);
+                } else {
+                    this.ignoreRE.push(item);
+                }
+            });
+        } else if (typeof customRules === 'function') {
+            this.ignoreFuns.push(customRules);
+        } else if (customRules) {
+            this.ignoreRE.push(string2Regexp(customRules));
+        }
     }
 
     handleFile(filePath) {
@@ -119,13 +139,13 @@ class Extract {
             return val;
         }
 
-        let skip = IGNORE_REGEXP.some(item => item.test(val));
+        let skip = this.ignoreRE.some(item => item.test(val));
         if (skip) {
             return '';
         }
 
-        for (let key in IGNORE_FUNCTIONS) {
-            let fun = IGNORE_FUNCTIONS[key],
+        for (let i = 0, l = this.ignoreFuns.length; i < l; i++) {
+            let fun = this.ignoreFuns[i],
                 str = val.replace(/(^\s+)|(\s+$)/g, '');
 
             if (typeof fun === 'function') {

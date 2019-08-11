@@ -24,14 +24,14 @@ function handle(cfg) {
             return merge(cfg);
         case COMMAD.ORIGINAL_CODE:
             let ignoreCode = cfg.ignoreCode,
-                ignoreExp = cfg.ignoreExp;
+                templateExp = cfg.templateExp;
 
             if (ignoreCode) {
                 cfg.ignoreCode = string2Regexp(ignoreCode);
             }
 
-            if (ignoreExp) {
-                cfg.ignoreExp = string2Regexp(ignoreExp);
+            if (templateExp) {
+                cfg.templateExp = string2Regexp(templateExp);
             }
             return addTrans(cfg);
     }
@@ -44,7 +44,7 @@ function addTrans(cfg) {
         baseReadPath: cfg.baseProPath,
         baseWritePath: cfg.baseProOutPath,
         ignoreCode: cfg.ignoreCode,
-        ignoreExp: cfg.ignoreExp
+        templateExp: cfg.templateExp
     });
     return extractOri.scanFile();
 }
