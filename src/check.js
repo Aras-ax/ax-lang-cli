@@ -143,7 +143,7 @@ function vueGet() {
 function vueTrans() {
     start({
         commandType: COMMAD.TRANSLATE,
-        baseTranslatePath: './test/vue/js',
+        baseTranslatePath: './test/vue/get',
         baseTransOutPath: './test/vue/transout',
         languagePath: './test/vue/lang/en-cn.xlsx',
         hongPath,
@@ -155,6 +155,6 @@ function vueTrans() {
     });
 }
 module.exports = function() {
-    vueGet();
+    vueTrans();
     // origin();
 }

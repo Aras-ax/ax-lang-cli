@@ -3,6 +3,7 @@ import fs from 'fs';
 import ExtractHTML from './extract/extract-html';
 import ExtractJS from './extract/extract-js';
 import ExtractVUE from './extract/extract-vue';
+const cp = require('child_process');
 
 import {
     scanFolder,

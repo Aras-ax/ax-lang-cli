@@ -15,7 +15,7 @@ export default {
   data() {
     return {
       wanStatus: {
-        val: "联网中",
+        val: "联网状态",
         disabled: true
       }
     };
