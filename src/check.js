@@ -155,6 +155,6 @@ function vueTrans() {
     });
 }
 module.exports = function() {
-    // vueTrans();
-    origin();
+    vueTrans();
+    // origin();
 }

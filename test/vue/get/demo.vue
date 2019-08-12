@@ -66,7 +66,7 @@ export default {
         }
       },
       radio: {
-        title: _("Login"),
+        title: _("登录"),
         sortArray: [
           {
             value: 2,
