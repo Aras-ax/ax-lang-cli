@@ -376,6 +376,26 @@ function string2Regexp(str) {
     return new RegExp(str);
 }
 
+function deepClone(obj) {
+    if (obj === null || typeof obj !== 'object') {
+        return obj;
+    }
+
+    if (obj instanceof Date) {
+        return new Date(obj);
+    }
+
+    if (obj instanceof RegExp) {
+        return new RegExp(RegExp);
+    }
+
+    let newObj = new obj.constructor();
+    for (let key in obj) {
+        newObj[key] = deepClone(obj[key]);
+    }
+    return newObj;
+}
+
 export {
     formatKey,
     decodeKey,
@@ -396,6 +416,7 @@ export {
     partMerge,
     getDirname,
     LOG_TYPE,
+    deepClone,
     getType,
     trim,
     log

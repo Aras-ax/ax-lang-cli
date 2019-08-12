@@ -2,6 +2,10 @@ import { parse } from 'babylon';
 import generate from 'babel-generator';
 import Extract from './extract';
 import { TRANS_NAME_REGEX } from '../util/config';
+import { chineseRE } from './vue/util';
+import { deepClone } from '../util/index';
+
+const parseType = /^(CallExpression|StringLiteral)$/i;
 
 /**
  * JS文件解析类
@@ -68,28 +72,48 @@ class ExtractJs extends Extract {
         return '';
     }
 
+    createFunAst(ast, word) {
+        let stringAst = deepClone(ast);
+        stringAst.value = word;
+        ast.type = 'CallExpression';
+        delete ast.value;
+        delete ast.extra;
+        ast.callee = {
+            type: "Identifier",
+            name: "_"
+        };
+        ast.arguments = [stringAst];
+    }
+
     listNode(node) {
         let curValue = '',
             oldVal = '';
         switch (node.type) {
             case 'CallExpression':
                 if (node.callee && TRANS_NAME_REGEX.test(node.callee.name)) {
-                    oldVal = this.getValue(node.arguments && node.arguments[0]);
-                    curValue = this.getWord(oldVal, true);
-                    if (curValue && node.arguments[0]['value']) {
-                        node.arguments[0]['value'] = curValue;
+                    // _(a ? '要翻译' : '也要翻译');
+                    if (node.arguments.length > 0 && node.arguments[0].type === 'ConditionalExpression') {
+                        this.listAst(node.arguments);
+                    } else {
+                        oldVal = this.getValue(node.arguments && node.arguments[0]);
+                        curValue = this.getWord(oldVal, true);
+                        if (curValue && node.arguments[0]['value']) {
+                            node.arguments[0]['value'] = curValue;
+                        }
                     }
-                    return;
+                    break;
                 }
-                for (let key in node) {
-                    this.listAst(node[key]);
-                }
+                this.listAst(node.arguments);
                 break;
-            case 'FunctionDeclaration':
-                let bodyList = node.body.body;
-                bodyList.forEach(item => {
-                    this.listAst(item);
-                });
+            case 'StringLiteral':
+                // 只处理中文
+                oldVal = node.value;
+                if (chineseRE.test(oldVal)) {
+                    curValue = this.getWord(oldVal, true);
+                    if (curValue) {
+                        this.createFunAst(node, curValue);
+                    }
+                }
                 break;
         }
     }
@@ -127,12 +151,13 @@ class ExtractJs extends Extract {
                 }
             }
 
-            if (astNode.type === 'CallExpression') {
+            // if (astNode.type === 'CallExpression') {
+            if (parseType.test(astNode.type)) {
                 this.listNode(astNode);
                 return;
             }
-            // 对于注释的项不进行遍历
-            let ignoreKeys = ['leadingComments', 'trailingComments'];
+            // ast中不需要进行遍历的属性
+            let ignoreKeys = ['leadingComments', 'trailingComments', 'loc', 'key', 'Identifier', 'MemberExpression'];
             for (let key in astNode) {
                 if (ignoreKeys.includes(key)) {
                     continue;

@@ -129,9 +129,9 @@ function origin() {
 function vueGet() {
     start({
         commandType: COMMAD.GET_WORDS,
-        baseReadPath: './test/vue/get',
+        // baseReadPath: './test/vue/get',
         // baseReadPath: './test/vue/error',
-        // baseReadPath: 'C:/Users/lenovo/Desktop/test',
+        baseReadPath: 'C:/Users/lenovo/Desktop/test',
         baseOutPath: 'C:/Users/lenovo/Desktop/output',
         // baseOutPath: './test/vue/output',
         hongPath
@@ -143,7 +143,7 @@ function vueGet() {
 function vueTrans() {
     start({
         commandType: COMMAD.TRANSLATE,
-        baseTranslatePath: './test/vue/get',
+        baseTranslatePath: './test/vue/js',
         baseTransOutPath: './test/vue/transout',
         languagePath: './test/vue/lang/en-cn.xlsx',
         hongPath,
@@ -155,6 +155,6 @@ function vueTrans() {
     });
 }
 module.exports = function() {
-    vueTrans();
+    vueGet();
     // origin();
 }
