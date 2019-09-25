@@ -35,10 +35,19 @@ const COMMAD = {
     /**
      * 原厂代码处理添加翻译
      */
-    ORIGINAL_CODE: 6
+    ORIGINAL_CODE: 6,
+    /**
+     * 提取词条及json文件生成一个excel表格
+     */
+    GET_ALLWORDS: 7,
+    /**
+     * 翻译文件检查
+     */
+    CHECK_LANGEXCEL: 8
+
 };
 
-const COMMAD_TEXT = ['提取词条', '翻译文件', '翻译检查', 'Excel转JSON', 'JSON转Excel', 'JSON合并', '添加翻译'];
+const COMMAD_TEXT = ['提取词条', '翻译文件', '翻译检查', 'Excel转JSON', 'JSON转Excel', 'JSON合并', '添加翻译', '提取词条2.0', '翻译文件检查'];
 
 const valid = {
     // 空或者存在的地址
@@ -90,7 +99,8 @@ const baseQuestions = [{
         choices: COMMAD_TEXT,
         filter: function(val) {
             return COMMAD_TEXT.indexOf(val);
-        }
+        },
+        pageSize: 9   //cmd命令行显示行数
     }],
     questions = [
         [{
@@ -266,6 +276,60 @@ const baseQuestions = [{
             type: 'input',
             name: 'templateExp',
             message: '后台插入表达式正则：'
+        }], [{
+            type: 'input',
+            name: 'baseReadPath',
+            message: '待提取文件地址：',
+            validate: valid.folder // 必填，可以是文件也可以是文件夹
+        }, {
+            type: 'input',
+            name: 'jsonPath',
+            message: '语言包文地址（文件夹）：',
+            validate: valid.folder
+        }, {
+            type: 'input',
+            name: 'baseWritePath',
+            message: '提取的Excel文件输出地址：',
+            default (answers) {
+                return getDirname(answers.baseReadPath);
+            },
+            valid: valid.specialfile
+        }, {
+            type: 'input',
+            name: 'hongPath',
+            message: '宏文件地址：',
+            default: '',
+            validate: valid.specialfile
+        }], [{
+            type: 'input',
+            name: 'outExcel',
+            message: '输出的excel文件地址:',
+            validate: valid.existFile
+        }, {
+            type: 'input',
+            name: 'sheetName1',
+            message: 'Excel中对应的sheet：',
+            default: ''
+        }, {
+            type: 'input',
+            name: 'keyName1',
+            message: 'key对应列：', //指代代码中的词条需要被那一列的数据替换
+            default: 'EN'
+        }, {
+            type: 'input',
+            name: 'inExcel',
+            message: '最终的语言包excel文件:',
+            validate: valid.existFile
+        }, {
+            type: 'input',
+            name: 'sheetName2',
+            message: 'Excel中对应的sheet：',
+            default: ''
+        }, {
+            type: 'input',
+            name: 'keyName2',
+            message: 'key对应列：', //指代代码中的词条需要被那一列的数据替换
+            default: 'EN'
         }]
     ];
 

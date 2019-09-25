@@ -5,6 +5,8 @@ import ExtractOri from './ExtractFileOrigin.js';
 import excel2json from './excel2json';
 import json2excel from './json2excel';
 import mergeJson from './mergeJson';
+import checkLangExcel from './checkLangExcel';
+import ExtractLangExcel from './ExtractLangExcel';
 import { COMMAD } from './util/config';
 import { loadJsonSync, string2Regexp } from './util/index';
 
@@ -34,6 +36,10 @@ function handle(cfg) {
                 cfg.templateExp = string2Regexp(templateExp);
             }
             return addTrans(cfg);
+        case COMMAD.CHECK_LANGEXCEL:
+            return checkExcel(cfg);
+        case COMMAD.GET_ALLWORDS:
+            return getAllWords(cfg);
     }
 
     return Promise.resolve('没有匹配的操作');
@@ -54,7 +60,9 @@ function getWords(cfg) {
         baseReadPath: cfg.baseReadPath,
         baseWritePath: cfg.baseOutPath,
         onlyZH: cfg.onlyZH,
-        hongPath: cfg.hongPath
+        hongPath: cfg.hongPath,
+        writeExcel: true,
+        needFilePath: true
     });
     return extract.scanFile();
 }
@@ -138,6 +146,30 @@ function jsonToExcel(cfg) {
 
 function merge(cfg) {
     return mergeJson(cfg.mainJsonPath, cfg.mergeJsonPath, cfg.outMergeJsonPath, cfg.action);
+}
+
+function checkExcel(cfg) {
+    return checkLangExcel({
+        outExcel: cfg.outExcel,
+        inExcel: cfg.inExcel,
+        sheetName1: cfg.sheetName1,
+        keyName1: cfg.keyName1,
+        sheetName2: cfg.sheetName2,
+        keyName2: cfg.keyName2
+    });
+}
+
+function getAllWords(cfg) {
+    let extract = new ExtractFile({
+        jsonPath: cfg.languagePath,
+        baseReadPath: cfg.baseReadPath,
+        baseWritePath: cfg.baseOutPath,
+        onlyZH: false,
+        hongPath: cfg.hongPath,
+        writeExcel: false,
+        needFilePath: false
+    });
+    extract.scanFile().then(words => ExtractLangExcel(words, cfg.languagePath, cfg.baseOutPath).catch(error => console.log(error.message)));
 }
 
 export default handle;

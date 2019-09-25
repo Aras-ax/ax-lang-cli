@@ -37,7 +37,9 @@ const comments = {
     'baseProPath': '原厂代码地址',
     'baseProOutPath': '添加翻译函数后文件输出地址',
     'ignoreCode': '需要注释的代码正则',
-    'templateExp': '后台插入表达式正则'
+    'templateExp': '后台插入表达式正则',
+    'outExcel': '输出的excel文件地址',
+     'inExcel': '最终的语言包excel文件地址'
 };
 let questions = [
     [{
@@ -168,6 +170,28 @@ let questions = [
         name: 'templateExp',
         message: '后台插入表达式正则：',
         default: '/<%([^\n]*?)%>/g'
+    }], [{
+        type: 'input',
+        name: 'outExcel',
+        message: '输出的excel文件地址：',
+        default: 'C:\\Users\\Administrator\\Desktop\\a.xlsx'
+    }, {
+        type: 'input',
+        name: 'inExcel',
+        message: '最终excel文件地址：',
+        default: 'C:\\Users\\Administrator\\Desktop\\b.xlsx'
+    }, {
+        type: 'input',
+        name: 'baseCheckPath',
+        message: '待检查文件根目录：'
+    }, {
+        type: 'input',
+        name: 'jsonPath',
+        message: '语言包文件夹地址：'
+    }, {
+        type: 'input',
+        name: 'outExcelPath',
+        message: '输出Excel文件目录：'
     }]
 ];
 /**

@@ -89,6 +89,28 @@ function gerArgs() {
             };
             console.log(config);
             break;
+        case COMMAD.GET_ALLWORDS:
+            config = {
+                commandType: 7,
+                baseReadPath: args.from,
+                languagePath: args.lang,
+                baseOutPath: args.to,
+                hongPath: args.hong
+            };
+            console.log(config);
+            break;
+        case COMMAD.CHECK_LANGEXCEL:
+            config = {
+                commandType: 8,
+                outExcel: args.set,
+                inExcel: args.get,
+                sheetName1: args.sheetName1,
+                keyName1: args.keyName1,
+                sheetName2: args.sheetName2,
+                keyName2: args.keyName2
+            };
+            console.log(config);
+            break;
     }
     return config;
 }
@@ -249,6 +271,22 @@ let validate = {
 
         // 为空的处理
         cfg.baseProOutPath = cfg.baseProOutPath || getDirname(cfg.baseProPath);
+    },
+    7: function (cfg) {
+        if (valid.folder(cfg.baseReadPath) !== true) {
+            return errorMess('baseReadPath', ARG_TYPE.FILE);
+        }
+        if (valid.folder(cfg.languagePath) !== true) {
+            return errorMess('languagePath', ARG_TYPE.FILE);
+        }
+    },
+    8: function(cfg) {
+        if (valid.existFile(cfg.outExcel) !== true) {
+            return errorMess('outExcel', ARG_TYPE.FILE);
+        }
+        if (valid.existFile(cfg.inExcel) !== true) {
+            return errorMess('inExcel', ARG_TYPE.FILE);
+        }
     }
 }
 

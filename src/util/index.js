@@ -282,6 +282,7 @@ function partMerge(obj, main) {
 function scanFolder(folder) {
     var fileList = [],
         folderList = [],
+        itemList = [],
         walk = function(folder, fileList, folderList) {
             var files = fs.readdirSync(folder);
             files.forEach(function(item) {
@@ -291,6 +292,7 @@ function scanFolder(folder) {
                 if (stats.isDirectory()) {
                     walk(tmpPath, fileList, folderList);
                     folderList.push(path.resolve(tmpPath));
+                    itemList.push(item);
                 } else {
                     fileList.push(path.resolve(tmpPath));
                 }
@@ -301,7 +303,8 @@ function scanFolder(folder) {
 
     return {
         files: fileList,
-        folders: folderList
+        folders: folderList,
+        items: itemList
     };
 }
 

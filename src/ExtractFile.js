@@ -34,7 +34,9 @@ class ExtractFile {
             isTranslate: false,
             isCheckTrans: false,
             hongPath: '',
-            transWords: {}
+            transWords: {},
+            needFilePath: true,
+            writeExcel: true
         }, option);
 
         this.option.baseReadPath = correctPath(this.option.baseReadPath);
@@ -78,7 +80,9 @@ class ExtractFile {
             // 词条提取完成后的操作
             onComplete: (filePath, words) => {
                 if (words.length > 0) {
-                    this.outData.push(correctPath(filePath));
+                    if (this.option.needFilePath) {
+                        this.outData.push(correctPath(filePath));
+                    }
                     this.outData = this.outData.concat(words);
                 }
             }
@@ -95,7 +99,9 @@ class ExtractFile {
             // 词条提取完成后的操作
             onComplete: (filePath, words) => {
                 if (words.length > 0) {
-                    this.outData.push(correctPath(filePath));
+                    if (this.option.needFilePath) {
+                        this.outData.push(correctPath(filePath));
+                    }
                     this.outData = this.outData.concat(words);
                 }
             }
@@ -112,11 +118,16 @@ class ExtractFile {
             // 词条提取完成后的操作
             onComplete: (filePath, words) => {
                 if (words.length > 0) {
-                    this.outData.push(correctPath(filePath));
+                    if (this.option.needFilePath) {
+                        this.outData.push(correctPath(filePath));
+                    }
                     this.outData = this.outData.concat(words);
                 }
             }
         });
+        if (this.option.commandType == 8) {
+            return this.outData;
+        }
     }
 
     scanFile() {
@@ -161,7 +172,9 @@ class ExtractFile {
 
             if (this.outData.length > 0) {
                 this.outData = [...new Set(this.outData)];
-                this.writeWordToExcel(outPath, sheetName);
+                if (this.option.writeExcel) {
+                    this.writeWordToExcel(outPath, sheetName);
+                }
 
                 if (this.option.isTranslate || this.option.isCheckTrans) {
                     log(`还有部分词条未被翻译，见输出的Excel-${outPath}`, LOG_TYPE.WARNING);
