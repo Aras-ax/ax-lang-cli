@@ -6,7 +6,7 @@ import parseHtml from './vue/html-parser';
 
 /**
  * 功能设定
- * 1. <template></template>中的词条支持添加翻译函数，script中的词条不支持翻译函数的添加，只支持预设范围内的词条翻译函数的添加
+ * 1. <template></template>中的词条支持添加翻译函数，script中的词条支持翻译函数的添加，只支持预设范围内的词条翻译函数的添加
  * 1. 只处理v-bind指令和alt，placeholder，title属性，属性内容的处理遵循下面的规则
  * 2. 如果文本段或代码段中存在_()，则只处理_()内的内容，其它内容不做处理
  * 3. 如果不存在_()，根据规则判断词条是否需要处理，进行翻译函数的添加（只对中文进行添加吧）
@@ -28,7 +28,7 @@ class ExtractVUE extends Extract {
         });
     }
 
-    transNode(content) {
+    transNode (content) {
         // 开始解析vue文件
         let sfc = this.sfc = this.parseVue(content);
 
@@ -41,12 +41,12 @@ class ExtractVUE extends Extract {
         });
     }
 
-    parseVue(content) {
+    parseVue (content) {
         return parseComponent(content);
     }
 
     // 扫描节点，提取字段
-    scanNode(sfc) {
+    scanNode (sfc) {
         if (sfc.template && sfc.template.content) {
             sfc.template.content = this.parseHtml(sfc.template.content);
         }
@@ -58,7 +58,7 @@ class ExtractVUE extends Extract {
         return Promise.resolve(this.generate());
     }
 
-    generate() {
+    generate () {
         let content = '';
         if (this.option.isTranslate) {
             let sortKey = ['template', 'script', 'style', 'customBlocks'];
@@ -79,7 +79,7 @@ class ExtractVUE extends Extract {
         return content;
     }
 
-    createTag(option) {
+    createTag (option) {
         let content = '<';
         content += option.type;
         option.attrs.forEach(attr => {
@@ -98,13 +98,13 @@ class ExtractVUE extends Extract {
         return content;
     }
 
-    parseHtml(template) {
+    parseHtml (template) {
         if (template) {
             return parseHtml(template, this);
         }
     }
 
-    handleJsTask(content) {
+    handleJsTask (content) {
         return this.extractJS.transNode(content)
             .then(AST => {
                 return this.extractJS.scanNode(AST);
