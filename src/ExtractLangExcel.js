@@ -9,12 +9,6 @@ import {
     LOG_TYPE
 } from './util/index';
 
-import {
-    EXTNAME_JS,
-    EXTNAME_VUE,
-    EXTNAME_HTML
-} from './util/config';
-
 
 let langArr = {
     "en": "英语",
@@ -41,7 +35,7 @@ let langArr = {
     "ko": "韩语",			//韩语，sublime默认字体显示乱码
     "bg": "保加利亚语",  //保加利亚语
     "laes":"美西",//美西
-    "brpt": "巴葡", // 巴葡
+    "brpt": "巴葡" // 巴葡
 }
 /**
  *
@@ -50,8 +44,6 @@ let langArr = {
  * @param {string} outPath
  */
 async function ExtractLangExcel(words, jsonPath, outPath) {
-    console.log(jsonPath);
-    console.log(outPath);
     let outData = [],
         jsonFolders = [],
         filePath = "",
@@ -95,7 +87,15 @@ function getExcelData(words, outData, filePath, dataIndex) {
             if (data[item]) {
                 outData[wordIndex][dataIndex] = data[item];
             } else {
-                outData[wordIndex][dataIndex] = "";
+                outData[wordIndex][dataIndex] = {
+                    v: '',
+                    s: {
+                        fill: {
+                            fgColor: {rgb: 'FFC5C5'}
+                        }
+
+                    }
+                };
             }
         });
     })

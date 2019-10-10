@@ -161,15 +161,18 @@ function checkExcel(cfg) {
 
 function getAllWords(cfg) {
     let extract = new ExtractFile({
-        jsonPath: cfg.languagePath,
+        jsonPath: cfg.jsonPath,
         baseReadPath: cfg.baseReadPath,
-        baseWritePath: cfg.baseOutPath,
+        baseWritePath: cfg.baseWritePath,
         onlyZH: false,
         hongPath: cfg.hongPath,
         writeExcel: false,
         needFilePath: false
     });
-    extract.scanFile().then(words => ExtractLangExcel(words, cfg.languagePath, cfg.baseOutPath).catch(error => console.log(error.message)));
+    extract.scanFile().then(words => {
+        words = Array.from(words[0]);
+        ExtractLangExcel(words, cfg.jsonPath, cfg.baseWritePath).catch(error => console.log(error.message));
+    });
 }
 
 export default handle;
