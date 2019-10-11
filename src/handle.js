@@ -161,9 +161,9 @@ function checkExcel(cfg) {
 
 function getAllWords(cfg) {
     let extract = new ExtractFile({
-        jsonPath: cfg.jsonPath,
+        jsonPath: cfg.languagePath,
         baseReadPath: cfg.baseReadPath,
-        baseWritePath: cfg.baseWritePath,
+        baseWritePath: cfg.baseOutPath,
         onlyZH: false,
         hongPath: cfg.hongPath,
         writeExcel: false,
@@ -171,7 +171,7 @@ function getAllWords(cfg) {
     });
     extract.scanFile().then(words => {
         words = Array.from(words[0]);
-        ExtractLangExcel(words, cfg.jsonPath, cfg.baseWritePath).catch(error => console.log(error.message));
+        ExtractLangExcel(words, cfg.languagePath, cfg.baseOutPath).catch(error => console.log(error.message));
     });
 }
 
