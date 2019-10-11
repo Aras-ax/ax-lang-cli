@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import xlsx from 'node-xlsx';
+import xlsx from 'yh-node-xlsx';
 
 const LOG_TYPE = {
     WARNING: 1,
