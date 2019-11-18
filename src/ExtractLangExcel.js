@@ -68,6 +68,7 @@ async function ExtractLangExcel(words, jsonPath, outPath) {
     }
 
     try {
+        outData = Array.from([...new Set(outData)][0]);
         writeExcel(outData, outPath, 'lang');
         log(`代码中所有词条的翻译已提取完成，保存在${outPath}中`, LOG_TYPE.DONE);
     } catch(e) {
