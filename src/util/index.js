@@ -399,6 +399,23 @@ function deepClone(obj) {
     return newObj;
 }
 
+function getNowFormatDate() {
+    var date = new Date(),
+        year = date.getFullYear(),
+        month = date.getMonth() + 1,
+        strDate = date.getDate(),
+        hour = date.getHours(),
+        min = date.getMinutes(),
+        second = date.getSeconds();
+    if (month >= 1 && month <= 9) {
+        month = '0' + month;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+        strDate = '0' + strDate;
+    }
+    var currentdate = year + month + strDate + hour + min + second;
+    return currentdate;
+}
 export {
     formatKey,
     decodeKey,
@@ -422,5 +439,6 @@ export {
     deepClone,
     getType,
     trim,
-    log
+    log,
+    getNowFormatDate
 };
