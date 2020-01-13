@@ -1,14 +1,5 @@
 # 翻译工具，Excel/Json处理工具
 
-**更新说明：**
-- 添加`.Vue`文件词条的提取和翻译替换，同时对`template`需要添加翻译函数的地方会自动的添加翻译函数
-- 添加`JS`文件中包含的中文词条提取和翻译替换，没有添加翻译函数的词条自动添加翻译函数
-- 修改参数配置错误信息，提供具体的参数错误说明
-- 添加JSON部分合并功能，满足删除多余词条的业务场景
-- 添加原厂代码添加翻译函数功能，支撑原厂代码多国语言的快速开发
-- 添加提取全部词条和语言包整合，输出完整的excel文件，并对未翻译词条进行标注
-- 添加语言包检查，检查资料返回的语言包与需要翻译词条是否一致
-
 
 **该工具同时包含以下几个功能：**
 
@@ -22,16 +13,43 @@
 - [提取全部词条](#提取全部词条)
 - [语言包检查](#语言包检查)
 
-**JS提取替换方法：**
+## 安装
+
+```
+npm install b28-cli -g
+```
+
+### 指令
+
+```
+# 运行工具
+cd xxx
+b28-cli
+
+# 初始化配置文件b28.config.js
+b28-cli init
+
+# 查看版本号
+b28-cli -v
+
+# 查看帮助
+b28-cli -h
+```
+
+
+
+## 文件词条提取说明
+
+### JS提取替换方法：
 
 通过[`babylon`](https://www.npmjs.com/package/babylon)将`js`代码转成`AST`(抽象语法树)，通过遍历`AST`得到需要提取的内容，并对`AST`进行修改，最后通过[`babel-generator`](https://www.npmjs.com/package/babel-generator)将`AST`转成代码文件输出。
 一开始选择[`Esprima`](https://www.npmjs.com/package/esprima)进行代码转`AST`，但[`Esprima`](https://www.npmjs.com/package/esprima)对注释的处理有点问题，通过[`Escodegen`](https://www.npmjs.com/package/escodegen)将`AST`转代码时，注释丢失或者位置不对，没找到解决方案，故换成[`babylon`](https://www.npmjs.com/package/babylon).
 
-**HTML提取替换方法：**
+### HTML提取替换方法：
 
 通过[`jsdom`](jsdom)将`html`代码转成`DOM`树，然后对`DOM`进行遍历。
 
-**Vue文件提取替换方法：**
+### Vue文件提取替换方法：
 
 将`template`和`script`模块分开进行处理。`script`代码还是按照JS的逻辑进行处理。`template`的解析处理参考`vue`的`compiler`模块进行解析。首先遍历html节点提取翻译相关的属性和文本信息，包括词条的`start`和`end`位置索引，然后解析提取的信息，提取需要翻译的词条，同时将翻译后的词条对原`template`进行原地替换，最后输出替换后的vue文件。		
 
@@ -71,32 +89,15 @@
 
 ![处理结果](./img/vue.jpg)
 
-**安装**
 
-```
-npm install b28-cli -g
-```
 
-**指令**
-```
-# 运行工具
-cd xxx
-b28-cli
+## 使用方式
 
-# 初始化配置文件b28.config.js
-b28-cli init
-
-# 查看版本号
-b28-cli -v
-
-# 查看帮助
-b28-cli -h
-```
-
-**使用方式：**
 1. 通过[WinForm](B28.exe)界面程序直接操作（只支持windows环境）
 
    ![b28](https://raw.githubusercontent.com/moshang-xc/b28-cli/master/img/b28.jpg?1)
+
+   
 
 2. 通过[b28.config.js](#b28.config.js)进行配置，在目标路径下面添加`b28.config.js`配置文件，见[参数配置说明](#配置参数说明)
 > 如果有读取到配置参数，则直接按配置参数运行工具。若读取的配置错误则会通过下面的使用方式重新输入配置项修正数据。
@@ -152,7 +153,10 @@ module.exports = {
 }
 ```
 
+
+
 ### 公共参数
+
 `commandType`: 操作类型，枚举值
 
 - 0: 提取词条
@@ -169,6 +173,8 @@ module.exports = {
 > 下面的所有地址参数既可以是绝对路径也可以是相对路径。相对路径为当前执行命令地址的相对路径。
 > 所有输出的目录可以为当前还不存在的文件夹，但其最初始目录必须存在
 
+
+
 ### 词条提取
 
 提取`html`和`JS`中所有的文本词条，以供其它地方使用或替换。
@@ -182,6 +188,8 @@ module.exports = {
 
 > `baseReadPath`: 既可以是文件夹也可以是具体的文件
 > `baseOutPath`: 当`baseReadPath`为具体的文件时，该默认值为文件所在的文件夹地址
+
+
 
 ### 翻译文件
 
@@ -215,6 +223,8 @@ module.exports = {
 
 > `langJsonPath`: 为保证检查结果的准确性，必须为`JSON`文件
 
+
+
 ### Excel转JSON数组或者对象
 
 将Excel转成JSON文件，并返回对应的对象。提供一列数据，转成对应的数组，提供多列，则分别与key列形成多个对象，输出到制定JSON文件.
@@ -228,6 +238,7 @@ module.exports = {
 | outJsonPath | String | `excelPath` | 输出json文件地址 |
 
 
+
 ### JSON转EXCEL文件
 
 将数值或者对象，转成一列或者两列的Excel文件
@@ -238,6 +249,8 @@ module.exports = {
 | outExcelPath | String | jsonPath | 输出Excel文件地址 |
 
 > `outExcelPath`: 可以是具体的文件名，也可以是输出文件所在的目录。为具体文件，则按给定的名称输出到给定的位置。给定的为目录，则在该目录下输出`json2Excel.xlsx`文件。
+
+
 
 ### 合并JSON文件
 
@@ -296,6 +309,8 @@ module.exports = {
 | baseOutPath  | String | `必填` | Excel文件输出目录                                |
 | hongPath     | String | 空     | 功能宏文件地址                                   |
 
+
+
 ### 语言包检查
 
 检查需要翻译的词条是否进行了修改/优化。
@@ -309,13 +324,45 @@ module.exports = {
 | sheetName2 | String | 空     | inExcel的sheetName                                      |
 | keyName2   | String | `EN`   | inExcel需要对比的列                                     |
 
+> 主json文件地址文件的优先级最高，如果存在值相同的，保留主json文件的内容，多个次JSON文件时，排在后面的文件优先级高于前面的文件。
 
+## 更新日志
 
+#### 【2019.09.25】
 
+- 新增提取全部词条和检查语言包功能
+- 更新b28.exe
 
+#### 【2019.08.12】
 
+- 添加`.Vue`文件词条的提取和翻译替换，同时对`template`需要添加翻译函数的地方会自动的添加翻译函数
+- 添加`JS`文件中包含的中文词条提取和翻译替换，没有添加翻译函数的词条自动添加翻译函数
 
-### 备注：
+#### 【2019.06.10】
+
+- 修改参数配置错误信息，提供具体的参数错误说明
+- 添加JSON部分合并功能，满足删除多余词条的业务场景
+
+#### 【2019.06.04】
+
+- 添加原厂代码添加翻译函数功能，支撑原厂代码多国语言的快速开发
+- 添加提取全部词条和语言包整合，输出完整的excel文件，并对未翻译词条进行标注
+- 添加语言包检查，检查资料返回的语言包与需要翻译词条是否一致
+
+#### 【2019.02.25】
+
+- 添加Mac os支持
+- 添加主入口测试用例
+- 添加控制台交互
+- 添加winform交互
+- 添加命令行交互
+
+#### 【2019.02.20】
+
+- 添加excel同时转多列数据
+- 添加自动化测试用例
+
+## 备注：
 
 ![流程图](https://raw.githubusercontent.com/moshang-xc/b28-cli/master/img/flow.png?1)
 
