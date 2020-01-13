@@ -170,7 +170,6 @@ function getAllWords(cfg) {
         needFilePath: false
     });
     extract.scanFile().then(words => {
-        words = Array.from(words[0]);
         ExtractLangExcel(words, cfg.languagePath, cfg.baseOutPath).catch(error => console.log(error.message));
     });
 }

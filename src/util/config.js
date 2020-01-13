@@ -47,7 +47,7 @@ const COMMAD = {
 
 };
 
-const COMMAD_TEXT = ['提取词条', '翻译文件', '翻译检查', 'Excel转JSON', 'JSON转Excel', 'JSON合并', '添加翻译', '提取词条2.0', '翻译文件检查'];
+const COMMAD_TEXT = ['提取词条', '翻译文件', '翻译检查', 'Excel转JSON', 'JSON转Excel', 'JSON合并', '添加翻译', '提取翻译', '翻译文件检查'];
 
 const valid = {
     // 空或者存在的地址

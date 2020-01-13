@@ -171,7 +171,7 @@ class ExtractFile {
             let outPath = path.join(this.option.baseWritePath, (this.option.isTranslate ? '未匹配的词条' : '提取词条') + `${sheetName}.xlsx`);
 
             if (this.outData.length > 0) {
-                this.outData = [...new Set(this.outData)];
+                this.outData = Array.from([...new Set(this.outData)][0]);
                 if (this.option.writeExcel) {
                     this.writeWordToExcel(outPath, sheetName);
                 }

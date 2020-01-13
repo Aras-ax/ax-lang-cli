@@ -19,7 +19,6 @@ const comments = {
     'hongPath': '宏文件地址',
     'baseTranslatePath': '待翻译文件根目录',
     'baseTransOutPath': '翻译后文件输出根目录',
-    'hongPath': '宏文件地址',
     'languagePath': '语言包文件地址',
     'sheetName': 'Excel中对应的sheet',
     'keyName': 'key对应列',
@@ -39,7 +38,7 @@ const comments = {
     'ignoreCode': '需要注释的代码正则',
     'templateExp': '后台插入表达式正则',
     'outExcel': '输出的excel文件地址',
-     'inExcel': '最终的语言包excel文件地址'
+    'inExcel': '最终的语言包excel文件地址'
 };
 let questions = [
     [{
