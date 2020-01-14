@@ -158,9 +158,9 @@ function vueTrans() {
 function translateJs() {
   start({
     commandType: COMMAD.TRANSLATE,
-    baseTranslatePath: "./test/TestFile/test/allTest",
-    baseTransOutPath: "./test/TestFile/output/allTest",
-    languagePath: "./test/TestFile/output/allTest/translate.xlsx",
+    baseTranslatePath: "./test/TestFile/test/js",
+    baseTransOutPath: "./test/TestFile/output/js",
+    languagePath: "./test/TestFile/output/js/translate.xlsx",
     hongPath,
     sheetName: "",
     keyName: "EN",
@@ -168,20 +168,20 @@ function translateJs() {
   }).then(data => {
     let t = "";
   });
+}
 
-  // start({
-  //     commandType: COMMAD.TRANSLATE,
-  //     baseTranslatePath: './test/TestFile/test/html',
-  //     baseTransOutPath: './test/TestFile/output/html',
-  //     languagePath: './test/TestFile/testData/allTest/translate.xlsx',
-  //     hongPath,
-  //     sheetName: '',
-  //     keyName: 'EN',
-  //     valueName: 'CN'
-  // }).then(data => {
-  //     let t = '';
-  // });
+function getAllSrc() {
+  start({
+    commandType: COMMAD.GET_WORDS,
+    baseReadPath: "C:/Users/lenovo/Desktop/trans/src",
+    baseOutPath: "C:/Users/lenovo/Desktop/trans/out",
+    hongPath
+  }).then(data => {
+    let t = data;
+  });
 }
 module.exports = function() {
   translateJs();
+  //   getWords();
+  //   getAllSrc();
 };

@@ -32,7 +32,7 @@ function initTable(data) {
             case 1:
               return _("系统日志");
             case 2:
-              return _("Attack 'Log\"");
+              return _("攻击'日\"志");
             case 3:
               return _("错误日志");
             case 4:
@@ -42,8 +42,17 @@ function initTable(data) {
       },
       {
         field: "sysLogMsg",
-        title: _("Log \n Content")
+        title: _("日志\n内容")
       }
     ]
   });
 }
+
+this.$confirm("十七")
+  .then(() => {
+    this.lldpEn.val = "0";
+    this.submit();
+  })
+  .then("十八")
+  .then("十九")
+  .then("二十");

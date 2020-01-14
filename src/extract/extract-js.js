@@ -196,14 +196,7 @@ class ExtractJs extends Extract {
         return;
       }
       // ast中不需要进行遍历的属性
-      let ignoreKeys = [
-        "leadingComments",
-        "trailingComments",
-        "loc",
-        "key",
-        "Identifier",
-        "MemberExpression"
-      ];
+      let ignoreKeys = ["leadingComments", "trailingComments", "loc", "key"];
       for (let key in astNode) {
         if (ignoreKeys.includes(key)) {
           continue;
