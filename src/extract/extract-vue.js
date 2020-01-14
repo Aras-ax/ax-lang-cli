@@ -1,8 +1,8 @@
-import { log, LOG_TYPE, trim } from '../util/index';
-import ExtractJS from './extract-js';
-import Extract from './extract';
-import parseComponent from './vue/vue-compiler';
-import parseHtml from './vue/html-parser';
+import { log, LOG_TYPE, trim } from "../util/index";
+import ExtractJS from "./extract-js";
+import Extract from "./extract";
+import parseComponent from "./vue/vue-compiler";
+import parseHtml from "./vue/html-parser";
 
 /**
  * 功能设定
@@ -17,112 +17,113 @@ import parseHtml from './vue/html-parser';
  * VUE文件解析类
  */
 class ExtractVUE extends Extract {
-    constructor(option) {
-        super(option);
+  constructor(option) {
+    super(option);
 
-        this.extractJS = new ExtractJS({
-            CONFIG_HONG: this.option.CONFIG_HONG,
-            onlyZH: this.option.onlyZH,
-            transWords: this.option.transWords,
-            isTranslate: this.option.isTranslate
-        });
+    this.extractJS = new ExtractJS({
+      CONFIG_HONG: this.option.CONFIG_HONG,
+      onlyZH: this.option.onlyZH,
+      transWords: this.option.transWords,
+      isTranslate: this.option.isTranslate
+    });
+  }
+
+  transNode(content) {
+    // 开始解析vue文件
+    let sfc = (this.sfc = this.parseVue(content));
+
+    return new Promise((resolve, reject) => {
+      try {
+        resolve(sfc);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  parseVue(content) {
+    return parseComponent(content);
+  }
+
+  // 扫描节点，提取字段
+  scanNode(sfc) {
+    if (sfc.template && sfc.template.content) {
+      sfc.template.content = this.parseHtml(sfc.template.content);
     }
-
-    transNode (content) {
-        // 开始解析vue文件
-        let sfc = this.sfc = this.parseVue(content);
-
-        return new Promise((resolve, reject) => {
-            try {
-                resolve(sfc);
-            } catch (err) {
-                reject(err);
-            }
-        });
+    if (sfc.script && sfc.script.content) {
+      return this.handleJsTask(sfc.script.content).then(() => {
+        return this.generate();
+      });
     }
+    return Promise.resolve(this.generate());
+  }
 
-    parseVue (content) {
-        return parseComponent(content);
-    }
-
-    // 扫描节点，提取字段
-    scanNode (sfc) {
-        if (sfc.template && sfc.template.content) {
-            sfc.template.content = this.parseHtml(sfc.template.content);
+  generate() {
+    let content = "";
+    if (this.option.isTranslate) {
+      let sortKey = ["template", "script", "style", "customBlocks"];
+      sortKey.forEach(key => {
+        let item = this.sfc[key];
+        if (!item) {
+          return;
         }
-        if (sfc.script && sfc.script.content) {
-            return this.handleJsTask(sfc.script.content).then(() => {
-                return this.generate();
-            });
+        if (Array.isArray(item)) {
+          item.forEach(style => {
+            content += this.createTag(style);
+          });
+        } else {
+          content += this.createTag(item);
         }
-        return Promise.resolve(this.generate());
+      });
     }
+    return content;
+  }
 
-    generate () {
-        let content = '';
-        if (this.option.isTranslate) {
-            let sortKey = ['template', 'script', 'style', 'customBlocks'];
-            sortKey.forEach(key => {
-                let item = this.sfc[key];
-                if (!item) {
-                    return;
-                }
-                if (Array.isArray(item)) {
-                    item.forEach(style => {
-                        content += this.createTag(style);
-                    });
-                } else {
-                    content += this.createTag(item);
-                }
-            });
-        }
-        return content;
-    }
+  createTag(option) {
+    let content = "<";
+    content += option.type;
+    option.attrs.forEach(attr => {
+      if (attr.value === "") {
+        content += ` ${attr.name}`;
+      } else {
+        content += ` ${attr.name}="${attr.value}"`;
+      }
+    });
+    content += ">";
+    content += "\r\n";
+    content += option.content.replace(/^\s*|\s*$/g, "");
+    content += "\r\n";
+    content += `</${option.type}>`;
+    content += "\r\n\r\n";
+    return content;
+  }
 
-    createTag (option) {
-        let content = '<';
-        content += option.type;
-        option.attrs.forEach(attr => {
-            if (attr.value === '') {
-                content += ` ${attr.name}`;
-            } else {
-                content += ` ${attr.name}="${attr.value}"`;
-            }
-        });
-        content += '>';
-        content += '\r\n';
-        content += option.content.replace(/^\s*|\s*$/g, '');
-        content += '\r\n';
-        content += `</${option.type}>`;
-        content += '\r\n\r\n';
-        return content;
+  parseHtml(template) {
+    if (template) {
+      return parseHtml(template, this);
     }
+  }
 
-    parseHtml (template) {
-        if (template) {
-            return parseHtml(template, this);
-        }
-    }
-
-    handleJsTask (content) {
-        return this.extractJS.transNode(content)
-            .then(AST => {
-                return this.extractJS.scanNode(AST);
-            })
-            .then((fileData) => {
-                // 写入解析后的内容
-                this.sfc.script.content = fileData;
-                // this.extractJS.complete();
-                this.addWords(this.extractJS.words);
-                this.extractJS.words = [];
-                return 'done';
-            })
-            .catch(error => {
-                console.log(error);
-                log(`vue script处理出错- ${error}`, LOG_TYPE.error);
-                return 'done';
-            });
-    }
+  handleJsTask(content) {
+    return this.extractJS
+      .transNode(content)
+      .then(AST => {
+        return this.extractJS.scanNode(AST);
+      })
+      .then(fileData => {
+        // 写入解析后的内容
+        this.sfc.script.content = fileData;
+        // this.extractJS.complete();
+        this.addWords(this.extractJS.words);
+        this.extractJS.words = [];
+        return "done";
+      })
+      .catch(error => {
+        console.log(error);
+        log(`vue script处理出错- ${error}`, LOG_TYPE.error);
+        return "done";
+      });
+  }
 }
 
 export default ExtractVUE;
