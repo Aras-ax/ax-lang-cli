@@ -1,0 +1,162 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=gb2312">
+<meta http-equiv="pragma" content="no-cache">
+<title>DHCP Snooping</title>
+<link href="/css/globe.css" type="text/css" rel="stylesheet">
+<script language="javascript" type="text/javascript" src="/js/j.js"></script>
+<script language="javascript" type="text/javascript" src="/js/common.js"></script>
+<script language="JavaScript" type="text/javascript">
+
+var max_poePort = 16;
+
+function backChange()
+{
+    for(i = 1; i <= max_poePort; i++)
+	{
+		document.getElementById(i).style.background = i % 2 ? "#FFFFFF" : "#EEEEEE";
+	}
+}
+
+function clearNoNum(obj)
+{ 
+    obj.value = obj.value.replace(/[^\d\.]/g,"");
+    obj.value = obj.value.replace(/^\./g,""); 
+    obj.value = obj.value.replace(/\.{2,}/g,"."); 
+    obj.value = obj.value.replace("\.","$#$").replace(/\./g,"").replace("$#$","\.");
+}
+
+</script>
+</head>
+
+
+<body onLoad="backChange();">
+<div class="main">
+<form name="dhcp snooping" method="GET" action="/cgi/DhcpSnooping.cgi">
+<table class="main">
+	<tr>
+   		<td width="720">
+    		<table cellspacing="0" id="table2" style="vertical-align:top" width="100%">
+     			<tr>
+      				<td colspan="2">
+        				<table width="100%">
+          			 		<tr>
+             					<td height="31" class="titleCell" style="padding-left: 6px;">DHCP Snooping 功能设置</td>  
+           					</tr>             
+        				</table>      
+      				</td>
+    			</tr>
+    			<tr>
+     		 		<td height="10" colspan="2"></td>
+    			</tr>
+    			<tr>
+                    <td width="25%" height="28" style="padding-left:15px;">DHCP Snooping 功能使能</td>
+					<td width="75%" class="left">
+        				<select name="MODE" style="width:150px" >
+                            <option value="1" [CGI_DHCPS_EN]>使能</option>
+                            <option value="2" [CGI_DHCPS_DIS]>禁止</option>
+                        </select>
+        			</td>
+                </tr>
+     		</table>
+     	</td>
+     	<td width="100" align="center" valign="top">
+      		<table cellspacing="0" id="table1"> 
+        		<tr>
+          			<td>        <img src="/images/config-icons.png" class='save-btn'>					
+<input type="Submit" class="actButton" id="bt_apply" name="Modify" value="应用" /><br>&nbsp;   
+                    </td>
+        		</tr>
+      		</table>
+  		</td>
+    </tr>
+</table>
+</form>
+<form name="dhcp snooping" method="GET" action="/cgi/DhcpSnoopingProcess.cgi" onSubmit="return muti();" autocomplete="off">
+<table class="main">
+	<tr>
+   		<td width="720">
+        	<table>
+       			<tr>
+    				<td>
+        				<table width="100%">
+            				<tr class="tabletitleCell">
+                                <td width="50%" nowrap class="table-space">信任端口选择</td>
+                                <td width="50%" nowrap class="table-space">DHCP snooping状态</td>
+               	 			</tr>
+                 			<tr>
+                        		<td height="10" colspan="5"></td>
+                 			</tr>                   
+                 			<tr align="center" valign="middle">
+                    			<td align=center nowrap>
+                    				<select name="Select" style="width:50px" id="sel_port">
+                        				<option value="99">ALL
+                        				<option value="1">1
+                                <option value="2">2
+                                <option value="3">3
+                                <option value="4">4
+                                <option value="5">5
+                                <option value="6">6
+                                <option value="7">7
+                                <option value="8">8
+                                <option value="9">9
+                                <option value="10">10
+                                <option value="11">11
+                                <option value="12">12
+                                <option value="13">13
+                                <option value="14">14
+                                <option value="15">15
+                                <option value="16">16
+                				</select>
+                    		</td>
+                    		<td align="center" nowrap>
+                     			<select name="PoeEn" style="width:80px">
+                     				<option value="99" selected>不改变
+                     				<option value="1">开启 
+                     				<option value="0">关闭
+                     			</select>
+                    		</td>                    		
+    					</tr>
+            		</table>
+        		</td>
+     		</tr> 
+     		<tr>
+        		<td height="10"></td>
+     		</tr> 
+     		<tr>
+     			<td colspan="7">
+         			<table class="main" width="720" style="margin-top:0px">
+              			<tr>
+               		 		<td id="div_table">
+                        		<table cellspacing="0" id="table3">
+                          			<tr class="tabletitleCell">
+                                        <td width="8%" nowrap>端口</td>
+                                        <td nowrap width="16%">DHCP snooping 端口信任状态</td>
+                          			</tr>
+            					<?CGI_TB1_START?>
+                          			<tr id="[CGI_DHCP_PORT_PNO]">
+                                        <td>[CGI_DHCP_PORT_PNO]</td>
+                                        <td>[CGI_DHCP_PORT_STATE]</td>
+                          			</tr>
+                      			<?CGI_TB1_END?>
+                        		</table>
+                      		</td>
+                        </tr>
+              		</table>
+           		</td>
+       		</tr>
+      	</table>
+    </td>
+    <td width="100" align="center" valign="top">
+      	<table cellspacing="0" id="table1">
+        	<tr>
+          		<td><img src="/images/config-icons.png" class='save-btn'><input type="Submit" class="actButton" id="bt_apply" name="Modify" value="应用"><br>&nbsp;</td>
+        	</tr>
+      	</table>
+  	</td>
+ </tr>
+</table>
+</form>
+</div>
+</body>
+</html>

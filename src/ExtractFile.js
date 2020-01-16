@@ -4,6 +4,7 @@ import ExtractHTML from "./extract/extract-html";
 import ExtractJS from "./extract/extract-js";
 import ExtractVUE from "./extract/extract-vue";
 const cp = require("child_process");
+const minimatch = require("minimatch");
 
 import {
   scanFolder,
@@ -22,7 +23,6 @@ import {
   EXTNAME_VUE,
   EXTNAME_HTML
 } from "./util/config";
-const minimatch = require("minimatch");
 let transFiles = [EXTNAME_JS, EXTNAME_VUE, EXTNAME_HTML];
 
 class ExtractFile {

@@ -24,7 +24,6 @@ String.prototype.splice = function(start, end, newStr) {
 };
 
 //将命令和参数分离
-
 function gerArgs() {
   let args = require("./util/getOption")(process.argv.splice(2)),
     config;
@@ -32,7 +31,7 @@ function gerArgs() {
   switch (+args.type) {
     case COMMAD.GET_WORDS:
       config = {
-        commandType: 0,
+        commandType: COMMAD.GET_WORDS,
         onlyZH: args.zh,
         baseReadPath: args.from,
         baseOutPath: args.to,
@@ -41,7 +40,7 @@ function gerArgs() {
       break;
     case COMMAD.TRANSLATE:
       config = {
-        commandType: 1,
+        commandType: COMMAD.TRANSLATE,
         baseTranslatePath: args.from,
         baseTransOutPath: args.to,
         languagePath: args.lang,
@@ -53,7 +52,7 @@ function gerArgs() {
       break;
     case COMMAD.CHECK_TRANSLATE:
       config = {
-        commandType: 2,
+        commandType: COMMAD.CHECK_TRANSLATE,
         baseCheckPath: args.from,
         langJsonPath: args.lang,
         hongPath: args.hong,
@@ -62,7 +61,7 @@ function gerArgs() {
       break;
     case COMMAD.EXCEL_TO_JSON:
       config = {
-        commandType: 3,
+        commandType: COMMAD.EXCEL_TO_JSON,
         keyName: args.key,
         valueName: args.value,
         sheetName: args.sheet,
@@ -72,14 +71,14 @@ function gerArgs() {
       break;
     case COMMAD.JSON_TO_EXCEL:
       config = {
-        commandType: 4,
+        commandType: COMMAD.JSON_TO_EXCEL,
         jsonPath: args.from,
         outExcelPath: args.to
       };
       break;
     case COMMAD.MERGE_JSON:
       config = {
-        commandType: 5,
+        commandType: COMMAD.MERGE_JSON,
         mainJsonPath: args.src1,
         mergeJsonPath: args.src2,
         outMergeJsonPath: args.dest,
@@ -89,7 +88,7 @@ function gerArgs() {
       break;
     case COMMAD.ORIGINAL_CODE:
       config = {
-        commandType: 6,
+        commandType: COMMAD.ORIGINAL_CODE,
         baseProPath: args.from,
         baseProOutPath: args.to,
         ignoreCode: args.code,
@@ -99,7 +98,7 @@ function gerArgs() {
       break;
     case COMMAD.GET_ALLWORDS:
       config = {
-        commandType: 7,
+        commandType: COMMAD.GET_ALLWORDS,
         baseReadPath: args.from,
         languagePath: args.lang,
         baseOutPath: args.to,
@@ -109,13 +108,22 @@ function gerArgs() {
       break;
     case COMMAD.CHECK_LANGEXCEL:
       config = {
-        commandType: 8,
+        commandType: COMMAD.CHECK_LANGEXCEL,
         outExcel: args.set,
         inExcel: args.get,
         sheetName1: args.sheetName1,
         keyName1: args.keyName1,
         sheetName2: args.sheetName2,
         keyName2: args.keyName2
+      };
+      console.log(config);
+      break;
+    case COMMAD.TRANS_ENCODE:
+      config = {
+        commandType: COMMAD.TRANS_ENCODE,
+        transFilePath: args.from,
+        transOutPath: args.to,
+        transEncode: args.encdoe
       };
       console.log(config);
       break;
@@ -195,7 +203,9 @@ function fullPath(cfg) {
     "mergeJsonPath",
     "outMergeJsonPath",
     "baseProPath",
-    "baseProOutPath"
+    "baseProOutPath",
+    "transFilePath",
+    "transOutPath"
   ];
 
   // 将相对地址转为绝对地址
@@ -227,7 +237,7 @@ function errorMess(key, type, cfg) {
 }
 
 let validate = {
-  0: function(cfg) {
+  [COMMAD.GET_WORDS]: function(cfg) {
     if (valid.folder(cfg.baseReadPath) !== true) {
       return errorMess("baseReadPath", ARG_TYPE.FOLDER, cfg);
     }
@@ -235,7 +245,7 @@ let validate = {
     // 为空的处理
     cfg.baseOutPath = cfg.baseOutPath || getDirname(cfg.baseReadPath);
   },
-  1: function(cfg) {
+  [COMMAD.TRANSLATE]: function(cfg) {
     let error = [];
     if (valid.folder(cfg.baseTranslatePath) !== true) {
       error.push(errorMess("baseTranslatePath", ARG_TYPE.FOLDER, cfg));
@@ -260,7 +270,7 @@ let validate = {
       cfg.valueName = cfg.valueName || "CN";
     }
   },
-  2: function(cfg) {
+  [COMMAD.CHECK_TRANSLATE]: function(cfg) {
     let error = [];
     if (valid.folder(cfg.baseCheckPath) !== true) {
       error.push(errorMess("baseCheckPath", ARG_TYPE.FOLDER, cfg));
@@ -280,20 +290,20 @@ let validate = {
       return "--->>>" + error.join("--->>>");
     }
   },
-  3: function(cfg) {
+  [COMMAD.EXCEL_TO_JSON]: function(cfg) {
     cfg.keyName = cfg.keyName || "EN";
     if (valid.existFile(cfg.excelPath) !== true) {
       return errorMess("excelPath", ARG_TYPE.FILE, cfg);
     }
     cfg.outJsonPath = cfg.outJsonPath || getDirname(cfg.excelPath);
   },
-  4: function(cfg) {
+  [COMMAD.JSON_TO_EXCEL]: function(cfg) {
     if (valid.existFile(cfg.jsonPath) !== true) {
       return errorMess("jsonPath", ARG_TYPE.FILE, cfg);
     }
     cfg.outExcelPath = cfg.outExcelPath || getDirname(cfg.jsonPath);
   },
-  5: function(cfg) {
+  [COMMAD.MERGE_JSON]: function(cfg) {
     let error = [];
     if (valid.existFile(cfg.mainJsonPath) !== true) {
       error.push(errorMess("mainJsonPath", ARG_TYPE.FILE, cfg));
@@ -306,7 +316,7 @@ let validate = {
     }
     cfg.outMergeJsonPath = cfg.outMergeJsonPath || getDirname(cfg.mainJsonPath);
   },
-  6: function(cfg) {
+  [COMMAD.ORIGINAL_CODE]: function(cfg) {
     if (valid.folder(cfg.baseProPath) !== true) {
       return errorMess("baseProPath", ARG_TYPE.FOLDER, cfg);
     }
@@ -314,7 +324,7 @@ let validate = {
     // 为空的处理
     cfg.baseProOutPath = cfg.baseProOutPath || getDirname(cfg.baseProPath);
   },
-  7: function(cfg) {
+  [COMMAD.GET_ALLWORDS]: function(cfg) {
     let error = [];
     if (valid.folder(cfg.baseReadPath) !== true) {
       error.push(errorMess("baseReadPath", ARG_TYPE.FILE, cfg));
@@ -326,7 +336,7 @@ let validate = {
       return "--->>>" + error.join("--->>>");
     }
   },
-  8: function(cfg) {
+  [COMMAD.CHECK_LANGEXCEL]: function(cfg) {
     let error = [];
     if (valid.existFile(cfg.outExcel) !== true) {
       error.push(errorMess("outExcel", ARG_TYPE.FILE, cfg));
@@ -336,6 +346,14 @@ let validate = {
     }
     if (error.length > 0) {
       return "--->>>" + error.join("--->>>");
+    }
+  },
+  [COMMAD.TRANS_ENCODE]: function(cfg) {
+    if (
+      valid.folder(cfg.transFilePath) !== true &&
+      valid.existFile(cfg.transFilePath) !== true
+    ) {
+      return errorMess("transFilePath", ARG_TYPE.FOLDER, cfg);
     }
   }
 };

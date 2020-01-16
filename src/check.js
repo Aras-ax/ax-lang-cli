@@ -180,8 +180,18 @@ function getAllSrc() {
     let t = data;
   });
 }
+
+function transAllFile() {
+  start({
+    commandType: COMMAD.TRANS_ENCODE,
+    transFilePath: "C:/Users/lenovo/Desktop/trans/out",
+    transOutPath: "C:/Users/lenovo/Desktop/trans/out"
+  }).then(data => {
+    let t = data;
+  });
+}
 module.exports = function() {
-  translateJs();
+  // translateJs();
   //   getWords();
-  //   getAllSrc();
+  transAllFile();
 };

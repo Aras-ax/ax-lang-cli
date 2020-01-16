@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+	<meta http-equiv="Pragma" content="no-cache">
+	<title>带宽控制</title>
+	<link href="/css/globe.css" type="text/css" rel="stylesheet">
+
+
+	<script language="javascript" type="text/javascript" src="/js/j.js"></script>
+	<script language="javascript" type="text/javascript" src="/js/common.js"></script>
+	<script language="javascript" type="text/javascript">
+		var getUrl = '/cgi-bin/bandwidth.cgi',
+			getUrl2 = '/cgi-bin/port_current.cgi',
+			setUrl = '/cgi-bin/bandwidth.cgi',
+			tableData = {},
+			itemArr = ['name', 'e_rate', 'in_rate', 'linkState'], //发送速率 接收速率
+			selectStr = 'bandwidth_'; // get 和 set 时 使用的拼接字符串
+
+		function init() {
+			var i = 0,
+				stateData;
+
+			var modules = getModules(selectStr, G_portLine - 1);
+				dataTransfor = {
+          			'e_rate': {
+            			"0": "--"
+					},
+					'in_rate': {
+            			"0": "--"
+					},
+				}
+
+			dataUtil.getData(getUrl, modules, function (data) {
+				tableData = data;
+				modules = getModules('port_', G_portLine - 1);
+				dataUtil.getData(getUrl2, modules, function (data) {
+					stateData = data;
+					//  处理数据
+					//  处理数据  目前没有name值设置端口名
+					//tableData = setPortName(tableData);
+					for (i = 0; i < G_portLine -2; i++) {
+						tableData[i].name = i + 1;
+						tableData[i].linkState = stateData[i].link == '1' ? stateData[i].speed + 'M' : '---';
+					}
+
+					for (i = 0; i < G_portLine-2; i++) {
+              for (key in dataTransfor) {
+                tableData[i][key] = dataTransfor[key][tableData[i][key]] == undefined ? tableData[i][key] :
+                  dataTransfor[key][tableData[i][key]];
+              }
+            }
+					// 插入页面
+					showTableData(tableData, 'table3', itemArr, true);
+					// 页面高度自适应
+					iframeHeightAuto();
+
+					new CheckAll("selectAll", "checkItem", "portMask");
+				});
+			});
+		}
+
+		/*
+		 ** 提交数据前 数据处理
+		 */
+		function onSubmit() {
+
+			var submitData = {},
+				itemArr = ['egress_rate', 'ingress_rate'],
+				selectArr = [];
+
+			selectArr = getSelectArr('');
+			submitData = getSubmitData(itemArr, selectArr, selectStr);
+
+			if($j.isEmptyObject(submitData)){
+        alert('没有修改项');
+        return false;
+      }
+
+			if (selectArr.length == 0) {
+				alert('请选择配置端口！');
+				return false;
+			}
+			// 提交数据
+			submit(submitData);
+			return false;
+		}
+
+		/*
+		提交数据
+		*/
+		function submit(data) {
+			dataUtil.setData(setUrl, data, function(){
+				setTimeout(function(){
+					window.location.reload();
+				}, 2000);
+			});
+		}
+
+		function applyReset() {
+			dataUtil.setData(setUrl, {'reset':'1'}, function(){
+				setTimeout(function(){
+					window.location.reload();
+				}, 2000);
+			});
+		}
+	</script>
+</head>
+
+<body>
+	<div class="main">
+		<form method="GET" style="margin-bottom:0" onsubmit="return false">
+			<table class="main">
+				<tr>
+					<td width="720">
+						<table width="100%" cellspacing="0" id="table2" style="vertical-align:top">
+							<tr>
+								<td colspan="2" class="titleCell" style="padding-left: 6px;">端口限速</td>
+							</tr>
+							<tr style="height:10px;">
+								<td height="10" colspan="2"></td>
+							</tr>
+							<tr>
+								<td style="padding-left:15px;">发送速率（bps）</td>
+								<td>
+									<select name="RATE_Tx" id="egress_rate">
+										<option value="99" selected>不改变</option>
+										<option value="256">256K</option>
+										<option value="512">512K</option>
+										<option value="1024">1M</option>
+										<option value="2048">2M</option>
+										<option value="4096">4M</option>
+										<option value="8192">8M</option>
+										<option value="10240">10M</option>
+										<option value="16384">16M</option>
+										<option value="32768">32M</option>
+										<option value="65536">64M</option>
+										<option value="102400">100M</option>
+									</select>
+								</td>
+								<td>接收速率（bps）</td>
+								<td>
+									<select name="RATE_Rx" id="ingress_rate">
+										<option value="99" selected>不改变</option>
+										<option value="256">256K</option>
+										<option value="512">512K</option>
+										<option value="1024">1M</option>
+										<option value="2048">2M</option>
+										<option value="4096">4M</option>
+										<option value="8192">8M</option>
+										<option value="10240">10M</option>
+										<option value="16384">16M</option>
+										<option value="32768">32M</option>
+										<option value="65536">64M</option>
+										<option value="102400">100M</option>
+									</select>
+									<input type="hidden" name="portMask" id="portMask">
+								</td>
+							</tr>
+
+							<tr style="height:10px;">
+								<td></td>
+							</tr>
+							<tr>
+								<td colspan="4">
+									<table style="margin-top:0px" width="100%">
+										<tr>
+											<td id="div_table" width="100%">
+												<table cellspacing="0" id="table3" width="100%">
+													<tbody>
+														<tr class="tabletitleCell">
+															<td width="10%" nowrap><input type="checkbox" id="selectAll"></td>
+															<td width="12%">端口</td>
+															<td width="26%">发送速率（kbps）</td>
+															<td width="26%">接收速率（kbps）</td>
+															<td width="26%">链接速率</td>
+														</tr>
+													</tbody>
+												</table>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+
+					<td width="100" align="center" valign="top">
+						<table cellspacing="0" id="table1">
+							<tr>
+								<td class="help-td">
+									<img src="/images/config-icons.png" class='save-btn'>
+									<input type="button" name="Modify2" class="actButton" value="应用" onclick="onSubmit()"><br>&nbsp;
+
+								</td>
+							</tr>
+							<tr>
+								<td id="div_apply_loading">
+									<input id="bt_apply2" class="actButton" type="button" name="LoadDefault" value="复位" onclick="applyReset()">
+
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	<script>
+		var checkAll = new CheckAll("selectAll", "checkItem", "portMask");
+	</script>
+</body>
+
+</html>

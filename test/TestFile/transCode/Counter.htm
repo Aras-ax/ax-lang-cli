@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html;charset=gb2312">
+<title>端口统计</title>
+<link href="/css/globe.css" type="text/css" rel="stylesheet">
+<script language="javascript" type="text/javascript" src="/js/j.js"></script>
+<script language="javascript" type="text/javascript" src="/js/common.js"></script>
+<script language="javascript" type="text/javascript">
+	function reopen() {
+		obj = window.location.href = '/Counter.htm';
+		//obj.location.reload();
+	}
+
+	var getUrl = '/cgi-bin/mib_counter.cgi',
+			setUrl = '/cgi-bin/mib_counter.cgi',
+			tableData = {},
+			getModuleStr = ['port_','port_','port_','port_rx_','port_rx_']
+			itemArr = [];
+
+		itemArr[1] = ['name', 'tx_pkt', 'rx_pkt'];
+		itemArr[2] = ['name', 'conflict', 'tx_pkt']; //Single Col + Multiple Col + Late Col + Excessive Col
+		itemArr[3] = ['name', 'drop', 'repkts'];
+		itemArr[4] = ['name', 'crc', 'repkts'];
+
+	function init() {
+		var i = 0;
+		var modules = modules = 'mode';
+
+		//dataUtil.getData(getUrl, modules, function (data) {
+			$('sl_mode').value = 1;
+			modules = getModules(getModuleStr[1], G_portLine+1);
+
+			dataUtil.getData(getUrl, modules, function (data) {
+				//  处理数据  目前没有name值设置端口名
+				tableData = setPortName(data);
+
+				// 插入页面
+				changData();
+				// 页面高度自适应
+				iframeHeightAuto();
+				// 记得读取其他数据
+				getTableData();
+			});
+
+		//});	
+
+		initEvent();
+	}
+
+	function getTableData() {
+		var i = 0;
+		var modules1 = getModules('port_tx_', G_portLine+1);
+		var modules2 = getModules('port_rx_', G_portLine+1);
+		var modules3 = getModules('port_', G_portLine+1);
+
+		dataUtil.getData(getUrl, modules1, function (data) {
+			//  处理数据  得到冲突和发送值
+			for (i = 0; i < G_portLine; i++) {
+				tableData[i]['pkts'] = data[i].pkts;
+				tableData[i]['conflict'] = parseInt(data[i].single_col) + parseInt(data[i].multiple_col) + parseInt(data[i]
+					.late_col) + parseInt(data[i].excessive_col);
+			}
+		});
+
+		dataUtil.getData(getUrl, modules2, function (data) {
+			//  处理数据  丢弃：drop + drop_others  接收：pkts  错误 crc
+			for (i = 0; i < G_portLine; i++) {
+				tableData[i]['repkts'] = data[i].pkts;
+				tableData[i]['crc'] = data[i].crc;
+				tableData[i]['drop'] = parseInt(data[i].drop) + parseInt(data[i].drop_others);
+			}
+		});
+
+		dataUtil.getData(getUrl, modules3, function (data) {
+			//  处理数据  丢弃：drop + drop_others  接收：pkts  错误 crc
+			for (i = 0; i < G_portLine; i++) {
+				tableData[i]['tx_pkt'] = data[i].tx_pkt;
+				tableData[i]['rx_pkt'] = data[i].rx_pkt;
+			}
+		});
+	}
+
+	function changData() {
+		var value = $('sl_mode').value;
+		var tableTitle = document.getElementById('table3').children[0].children[0];
+		var tableTbody = document.createElement('tbody');
+		var itemText = [
+			[],
+			['发送', '接收'],
+			['冲突', '发送'],
+			['丢弃', '接收'],
+			['CRC错误', '接收']
+		]
+
+		tableTitle.children[1].innerText = itemText[value][0];
+		tableTitle.children[2].innerText = itemText[value][1];
+
+		//清空数据  ie8 不能设置 innerHTML  使用 replaceNode
+		if(isIE()){
+			tableTbody.appendChild(tableTitle);
+			document.getElementById('table3').childNodes[0].replaceNode(tableTbody);
+			
+		}else{
+			document.getElementById('table3').children[0].innerHTML = '';
+			document.getElementById('table3').children[0].append(tableTitle);
+		}		
+
+		//插入数据
+		if (tableData[0][itemArr[value][1]] != undefined && tableData[0][itemArr[value][2]] != undefined) {
+			showTableData(tableData, 'table3', itemArr[value], false);
+			iframeHeightAuto();
+		} else {
+			setTimeout(changData, '1000');
+		}
+	}
+
+	// function setTBodyInnerHTML(tbody, html) {
+    // 	var div = document.createElement('div')
+    // 	div.innerHTML = '<table>' + html + '</table>'
+    // 	tbody.parentNode.replaceChild(div.firstChild.firstChild, tbody)
+	// }
+	function isIE() {
+		if (!!window.ActiveXObject || "ActiveXObject" in window)
+			return true;
+		else
+			return false;
+	}
+
+	function initEvent() {
+		$j('#sl_mode').on('change', function () {
+			// 切换数据
+			changData();
+			//  保存模式
+			submitdata = {};
+			submitdata.mode = $('sl_mode').value;
+			// dataUtil.setData(setUrl, submitdata,function(){
+			// 	if( $j('.actButton').length > 0){
+            //     for(var i=0;i<$j('.actButton').length;i++){
+            //         $j('.actButton')[i].disabled = false;
+            //     }
+            // } 
+			// });
+		})
+	}
+
+	function onSubmit() {
+		var data = {
+			"clear": "all"
+		};
+		dataUtil.setData(setUrl, data);
+	}
+</script>
+
+<body>
+	<div class="main">
+		<form name="Counter" method="get" onclick="return false">
+			<table class="main">
+				<tr>
+					<td width="720">
+						<table cellspacing="0" id="table2" style="vertical-align:top" width="100%">
+							<tr>
+								<td colspan="5">
+									<table width="100%">
+										<tr>
+											<td height="31" class="titleCell" style="padding-left: 6px;">端口统计</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr style="height:10px;">
+								<td></td>
+							</tr>
+				</tr>
+				<tr>
+					<td width="20%" style="padding-left:15px;">统计模式</td>
+					<td width="80%" height="28">
+						<select name="PortNO" id="sl_mode">
+							<option value="1">发送与接收</option>
+							<option value="2">冲突与发送</option>
+							<option value="3">丢弃与接收</option>
+							<option value="4">CRC错误与接收</option>
+						</select>
+					</td>
+				</tr>
+				<tr style="height:10px;">
+					<td></td>
+				</tr>
+				<tr>
+					<td valign="top" colspan="2">
+						<table width="720" cellspacing="0" id="table2" style=" padding:0; border:0">
+							<tr>
+								<td id="div_table">
+									<table width="100%" cellspacing="0" id="table3">
+										<tbody>
+											<tr class="tabletitleCell">
+												<td width="10%" nowrap style="border:#FFFFFF 1px solid;" id="portNO">端口</td>
+												<td width="46%" nowrap style="border:#FFFFFF 1px solid;" id="counter1">发送</td>
+												<td width="46%" nowrap style="border:#FFFFFF 1px solid;" id="counter2">接收</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+			</td>
+			<td width="100" align="center" valign="top">
+				<table cellspacing="0" id="table1">
+					<tr>
+						<td id="div_apply_loading">
+							<input id="bt_apply" class="actButton" TYPE="button" NAME="Clear" value="清零"
+								onClick="onSubmit()"><br>&nbsp;
+						</td>
+					</tr>
+					<tr>
+						<td id="div_apply_loading">
+							<input id="bt_apply2" class="actButton" TYPE="button" NAME="Refresh" value="刷新"
+								onClick="reopen()"><br>&nbsp;
+						</td>
+					</tr>
+				</table>
+			</td>
+			</tr>
+			</table>
+		</form>
+	</div>
+</body>
+
+</html>

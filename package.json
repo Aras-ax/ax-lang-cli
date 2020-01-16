@@ -1,57 +1,59 @@
 {
-    "name": "b28-cli",
-    "version": "1.4.1",
-    "description": "translate, ExcelToJson, JsonToExcel, getText, l18n",
-    "main": "./src/index.js",
-    "bin": {
-        "b28-cli": "./index.js"
-    },
-    "author": "moshang",
-    "keywords": [
-        "translation",
-        "b28",
-        "Excel2JSON",
-        "JSON2Excel",
-        "translate file",
-        "mergeJSON",
-        "mergeObject",
-        "getWords",
-        "gettext",
-        "checkLangExcel"
-    ],
-    "license": "ISC",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/moshang-xc/translate-cli.git"
-    },
-    "scripts": {
-        "compile": "babel -d dist/ src/",
-        "dist": "npm run compile",
-        "test": "cd test & jest"
-    },
-    "devDependencies": {
-        "babel-cli": "^6.26.0",
-        "babel-plugin-transform-runtime": "^6.23.0",
-        "babel-polyfill": "^6.26.0",
-        "babel-preset-env": "^1.7.0",
-        "babel-preset-es2015": "^6.24.1",
-        "babel-preset-stage-0": "^6.24.1",
-        "babel-runtime": "^6.26.0",
-        "jest": "^23.6.0"
-    },
-    "dependencies": {
-        "babel-generator": "^6.26.0",
-        "babylon": "^6.18.0",
-        "figlet": "^1.2.1",
-        "htmlparser2": "^3.10.1",
-        "inquirer": "^6.2.2",
-        "jsdom": "^10.0.0",
-        "minimatch": "^3.0.4",
-        "xregexp": "^4.2.4",
-        "yh-node-xlsx": "0.0.3"
-    },
-    "engines": {
-        "node": ">=6.1.3",
-        "npm": "~3.10.0"
-    }
+  "name": "b28-cli",
+  "version": "1.5.0",
+  "description": "translate, ExcelToJson, JsonToExcel, getText, l18n",
+  "main": "./src/index.js",
+  "bin": {
+    "b28-cli": "./index.js"
+  },
+  "author": "moshang",
+  "keywords": [
+    "translation",
+    "b28",
+    "Excel2JSON",
+    "JSON2Excel",
+    "translate file",
+    "mergeJSON",
+    "mergeObject",
+    "getWords",
+    "gettext",
+    "checkLangExcel"
+  ],
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moshang-xc/translate-cli.git"
+  },
+  "scripts": {
+    "compile": "babel -d dist/ src/",
+    "dist": "npm run compile",
+    "test": "cd test & jest"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-runtime": "^6.26.0",
+    "jest": "^23.6.0"
+  },
+  "dependencies": {
+    "babel-generator": "^6.26.0",
+    "babylon": "^6.18.0",
+    "figlet": "^1.2.1",
+    "htmlparser2": "^3.10.1",
+    "iconv-lite": "^0.5.0",
+    "inquirer": "^6.2.2",
+    "jschardet": "^2.1.1",
+    "jsdom": "^10.0.0",
+    "minimatch": "^3.0.4",
+    "xregexp": "^4.2.4",
+    "yh-node-xlsx": "0.0.3"
+  },
+  "engines": {
+    "node": ">=6.1.3",
+    "npm": "~3.10.0"
+  }
 }

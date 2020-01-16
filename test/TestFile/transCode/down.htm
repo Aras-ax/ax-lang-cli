@@ -1,0 +1,29 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html;CHARSET=GB2312">
+<TITLE>Web管理系统</TITLE>
+<script language="JavaScript">
+var myl = top.location;		
+var timeOut;
+var timeMode=[CGI_DOWN_MODE];		//timeMode = 0 will be best
+if(timeMode==1) myl += "cgi/timeout.cgi";
+else if(timeMode==2) myl += "idle.htm";
+
+function quitf()
+{
+	if(timeMode)
+	{
+		clearTimeout(timeOut);
+		timeOut=setTimeout("top.location.href=myl","[CGI_TIMEOUT]000");
+	}
+}
+</script>
+</HEAD>
+<FRAMESET cols="18%,82%" frameborder="no">
+    <FRAME name="left" src="/left.htm" noresize>
+    <FRAME name="main" src="/intro.htm" onload="quitf()" noresize>
+<NOFRAMES>
+    Sorry, your browser does not support frames.
+</NOFRAMES>
+</FRAMESET>
+</HTML>
