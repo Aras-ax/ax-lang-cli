@@ -320,7 +320,7 @@ module.exports = {
 | ------------- | ------ | ------ | -------------------------------- |
 | transFilePath | String | `必填` | 待转码文件地址                   |
 | transOutPath  | String | 空     | 转码后文件输出地址               |
-| transEncode   | String | `EN`   | 转码后文件的编码方式(默认 UTF-8) |
+| transEncode   | String | `UTF-8`   | 转码后文件的编码方式(默认 UTF-8) |
 
 ## 更新日志
 
