@@ -435,18 +435,14 @@ const TRANS_EXCLUDE =
  * 不进行匹配词条的正则
  */
 const IGNORE_REGEXP = [
-  /^[\s0-9]*$/,
-  // 单个字母
+  /^[a-z]*[0-9]+[a-z]*$/i,
   /^[a-z]$/i,
-  // <% xxxx %>格式的字符串不提取
+  /^(mac|ip|TPC|QVLAN|VLAN|SSID|PPPoE|WPA|WPA2|WPA2-PSK|WPA-PSK|WEP|TKIP|AES|TKIP&AES|N\/A|mBPS|KB\/s|ping|UPnP|ASCII|hex|APSD|)$/i,
   /<%([\s\S]*)%>/i,
   /\(\[([\s\S]*)\]\)/i,
   /^(&nbsp;)+$/i,
   /[a-z0-9]*&[a-z]*=/i,
-  // 只包含html结束标签
   /^(\s*<\s*\/([a-z0-9]+)?>\s*)*$/i,
-  // /^<%=((.|\n)*)%>$/i,
-  // url不提取
   /^((ht|f)tps?):\/\/([\w\-]+(\.[\w\-]+)*\/)*[\w\-]+(\.[\w\-]+)*\/?(\?([\w\-\.,@?^=%&:\/~\+#]*)+)?/i
 ];
 /**
