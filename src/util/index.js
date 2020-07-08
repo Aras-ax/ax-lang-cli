@@ -151,21 +151,21 @@ function log(message, type = LOG_TYPE.LOG) {
  * @param {String} xlsxPath excel文件地址
  */
 function loadExcel(xlsxPath, sheetName) {
-    let data = xlsx.parse(xlsxPath);
-    let outData = [];
-    // 当前只读取第一个sheet里面的内容
-    data.forEach(item => {
-        if (sheetName) {
-            if (item.name === sheetName) {
-                outData = item.data;
-                return false;
-            }
-            outData = [];
-        } else {
-            outData = item.data;
-            return false;
-        }
-    });
+  let data = xlsx.parse(xlsxPath);
+  let outData = [];
+  for (let i = 0, l = data.length; i < l; i++) {
+    let item = data[i];
+    if (sheetName) {
+      if (item.name === sheetName) {
+        outData = item.data;
+        break;
+      }
+      outData = [];
+    } else {
+      outData = item.data;
+      break;
+    }
+  }
     outData = outData.filter(item => item.length > 0);
     return outData;
 }
