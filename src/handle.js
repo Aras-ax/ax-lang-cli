@@ -97,7 +97,7 @@ function translate(cfg) {
       sheetName: cfg.sheetName,
       key: cfg.keyName,
       value: "ALL"
-    }).then(data => {
+    }).then((data) => {
       let langData = {};
       data = data[cfg.valueName.toUpperCase() || "CN"];
       for (let key in data) {
@@ -111,7 +111,6 @@ function translate(cfg) {
         hongPath: cfg.hongPath,
         transWords: langData
       });
-      // extract.setAttr('transWords', langData);
       return extract.scanFile();
     });
   }
@@ -176,8 +175,8 @@ function getAllWords(cfg) {
     writeExcel: false,
     needFilePath: false
   });
-  extract.scanFile().then(words => {
-    ExtractLangExcel(words, cfg.languagePath, cfg.baseOutPath).catch(error =>
+  extract.scanFile().then((words) => {
+    ExtractLangExcel(words, cfg.languagePath, cfg.baseOutPath).catch((error) =>
       console.log(error.message)
     );
   });

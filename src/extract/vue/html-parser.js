@@ -12,7 +12,7 @@ const startTagOpen = new RegExp(`^<${qnameCapture}`);
 const startTagClose = /^\s*(\/?)>/;
 const endTag = new RegExp(`^<\\/${qnameCapture}[^>]*>`);
 const doctype = /^<!DOCTYPE [^>]+>/i;
-// #7298: escape - to avoid being pased as HTML comment when inlined in page
+
 const comment = /^<!\--/;
 const conditionalComment = /^<!\[/;
 
@@ -31,7 +31,7 @@ const decodingMap = {
 };
 const encodedAttr = /&(?:lt|gt|quot|amp|#39);/g;
 const encodedAttrWithNewLines = /&(?:lt|gt|quot|amp|#39|#10|#9);/g;
-const bindRE = /^:|^v-bind:/;
+const bindRE = /^:|^v-bind:|^v-html/;
 
 const regexEscapeRE = /[-.*+?^${}()|[\]\/\\]/g;
 const buildRegex = (delimiters, full) => {
@@ -72,12 +72,14 @@ export function parseText(
       });
     }
     // tag token
+
+    let startEmptyLength = /^\s*/g.exec(match[1])[0].length;
     const exp = match[1].trim();
     tokens.push({
       value: exp,
       directive: true,
-      start: index + delimiters[0].length,
-      end: index + delimiters[0].length + exp.length
+      start: index + startEmptyLength + delimiters[0].length,
+      end: index + startEmptyLength + delimiters[0].length + exp.length
     });
     lastIndex = index + match[0].length;
   }
@@ -109,8 +111,7 @@ function parseExp(tocken, offset = 0) {
 
   ast = ast.program.body;
   let tockens = [];
-  ast.forEach(item => {
-    // listAst(item, tockens);
+  ast.forEach((item) => {
     if (typeof item === "object" && item.type === "ExpressionStatement") {
       tockens.push(...parseOperation(item.expression));
     }
@@ -131,13 +132,12 @@ function parseExp(tocken, offset = 0) {
         tockens.push({
           start: ast.start + start,
           end: ast.end + start,
-          value: ast.value
+          value: ast.value,
+          type: 'string'
         });
         break;
       case "CallExpression":
         if (ast.callee.name === "_") {
-          // _('xxx')，arguments[0]为'xxx'，所以需要把两个引号的占位符去掉
-          // todo by xc start索引计算有问题，整体向前了几个值
           if (
             ast.arguments.length > 0 &&
             ast.arguments[0].type === "StringLiteral"
@@ -148,6 +148,13 @@ function parseExp(tocken, offset = 0) {
               end: ast.arguments[0].end - 1 + start,
               value: ast.arguments[0].value
             });
+
+            // 解析参数
+            if (ast.arguments.length > 1) {
+              for (let i = 1; i < ast.arguments.length; i++) {
+                tockens.push(...parseOperation(ast.arguments[i]));
+              }
+            }
           }
         } else {
           tockens.push({
@@ -161,13 +168,12 @@ function parseExp(tocken, offset = 0) {
         tockens.push(...parseOperation(ast.consequent));
         tockens.push(...parseOperation(ast.alternate));
         break;
+      case "ArrayExpression":
+        ast.elements.forEach((item) => {
+          tockens.push(...parseOperation(item));
+        });
+        break;
       default:
-        // 其它情况就需要遍历了
-        // for (let key in ast) {
-        //     if (typeof ast[key] === 'object') {
-        //         tockens.push(...parseOperation(ast[key]));
-        //     }
-        // }
         tockens.push({
           start: ast.start + start,
           end: ast.end + start,
@@ -202,6 +208,12 @@ function listModuleTockens(tockens, text) {
       });
     } else {
       if (outData.isTrans) {
+        tocken.value && outData.trans.push({
+          isTrans: tocken.isTrans,
+          start: tocken.start,
+          end: tocken.end,
+          value: tocken.value
+        });
         continue;
       }
       if (tocken.isArg) {
@@ -218,7 +230,8 @@ function listModuleTockens(tockens, text) {
 // html 解析
 function parseHTML(html, options) {
   let index = 0;
-  let last, lastTag; //记录当前解析的标签名
+  // 记录当前解析的标签名
+  let last, lastTag;
   while (html) {
     last = html;
     if (!lastTag || !isPlainTextElement(lastTag)) {
@@ -315,7 +328,7 @@ function parseHTML(html, options) {
           "([\\s\\S]*?)(</" + stackedTag + "[^>]*>)",
           "i"
         ));
-      const rest = html.replace(reStackedTag, function() {
+      const rest = html.replace(reStackedTag, function () {
         return "";
       });
       index += html.length - rest.length;
@@ -360,7 +373,7 @@ function parseHTML(html, options) {
         let name = attr[1],
           value = attr[3] || attr[4] || attr[5] || "";
 
-        if (bindRE.test(name)) {
+        if (bindRE.test(name) || /_\(/.test(value)) {
           attrs.push({
             name,
             value,
@@ -368,7 +381,8 @@ function parseHTML(html, options) {
             end: end,
             directive: true
           });
-        } else if (["placeholder", "title", "alt"].indexOf(name) !== -1) {
+        }  else {
+          // else if (["placeholder", "title", "alt"].indexOf(name) !== -1) {
           attrs.push({
             name,
             value,
@@ -385,13 +399,15 @@ function parseHTML(html, options) {
     }
   }
 }
+
 /**
  * html转AST，记录词条的位置信息
  */
 function parseTemplate(template, target) {
   // vue {{}}分隔符
   let delimiters = target.option.delimiters || ["{{", "}}"];
-  let langs = []; // 存储词条相关内容，供翻译的时候直接添加翻译函数
+  // 存储词条相关内容，供翻译的时候直接添加翻译函数
+  let langs = [];
 
   function getWord(text) {
     return target.getWord(text);
@@ -401,7 +417,7 @@ function parseTemplate(template, target) {
   parseHTML(template, {
     start(attrs) {
       let word = "";
-      attrs.forEach(attr => {
+      attrs.forEach((attr) => {
         // 指令默认已添加翻译函数，未添加翻译函数代表不提取
         if (attr.directive) {
           // value的偏移量，计算value的ast时，start index需要偏移到value的起始位置
@@ -410,14 +426,19 @@ function parseTemplate(template, target) {
           let outData = listModuleTockens(tockens, attr.value);
           // 对于v-bind指令，只有当指令内容包含翻译函数时才会进行处理，其它情况不进行处理
           if (outData.isTrans) {
-            outData.trans.forEach(item => {
-              word = getWord(item.value);
+            outData.trans.forEach((item) => {
+              if(item.isTrans){
+                word = getWord(item.value);
+              }else if(item.type === 'string' || chineseRE.test(item.value)){
+                word = getWord(item.value);
+              }
+
               if (word && word !== item.value) {
                 langs.push({
                   start: item.start,
                   end: item.end,
-                  value: word
-                  // name: attr.name
+                  value: word,
+                  needTrans: !item.isTrans
                 });
               }
             });
@@ -451,9 +472,8 @@ function parseTemplate(template, target) {
       // 文本内容中包含指令
       if ((tockens = parseText(text, delimiters))) {
         // 解析指令表达式转成AST
-        tockens.forEach(tocken => {
+        tockens.forEach((tocken) => {
           if (tocken.directive) {
-            // textArr.push(parseExp(tocken));
             let asts = parseExp(tocken);
             textArr.push(listModuleTockens(asts, text));
           } else {
@@ -479,12 +499,12 @@ function parseTemplate(template, target) {
             // let outData = listModuleTockens(tocken, text);
             if (tocken.isTrans) {
               hasTrans = true;
-              tocken.trans.forEach(item => {
+              tocken.trans.forEach((item) => {
                 oldWord = item.value;
                 let newStart = start + item.start;
                 let newEnd = newStart + item.value.length;
 
-                word = getWord(oldWord);
+                // word = getWord(oldWord);
                 if ((word = getWord(oldWord))) {
                   if (word !== oldWord) {
                     langs.push({
@@ -508,7 +528,6 @@ function parseTemplate(template, target) {
 
         // 非_('%s')内的%s不处理
         if (/^(%s)*$/.test(oldWord.replace(/^\s*|\s*$/g, ""))) {
-          // if (!hasTrans && /^(%s)*$/.test(oldWord)) {
           return;
         }
 
@@ -525,7 +544,6 @@ function parseTemplate(template, target) {
               : `_('${word.replace(/'/, "\\'")}')`;
           word = `${delimiters[0]}${word}${delimiters[1]}`;
           if (word !== text) {
-            // todo by xc 考虑空格问题
             langs.push({
               start,
               end,
@@ -533,9 +551,8 @@ function parseTemplate(template, target) {
             });
           }
         }
-      }
-      // 纯文本内容
-      else if (chineseRE.test(text)) {
+      } else if (chineseRE.test(text)) {
+        // 纯文本内容
         let word = getWord(text);
         // word不为空则表示添加翻译
         if (word) {
@@ -551,10 +568,8 @@ function parseTemplate(template, target) {
     }
   });
 
-  // to do by xc 添加翻译
   let offset = 0;
-  langs.forEach(item => {
-    // 有name代表是属性
+  langs.forEach((item) => {
     if (process.env.NODE_ENV === "dev") {
       console.log(
         `[test:][${template.slice(item.start + offset, item.end + offset)}]`
@@ -562,6 +577,9 @@ function parseTemplate(template, target) {
     }
     if (item.name && item.needBind) {
       let attrText = `:${item.name}="_('${item.value}')"`;
+      replace(item.start, item.end, attrText);
+    } else if(item.needTrans){
+      let attrText = `_('${item.value}')`;
       replace(item.start, item.end, attrText);
     } else {
       // html节点内容文本

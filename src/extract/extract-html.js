@@ -18,7 +18,7 @@ const Edit_TYPE = {
  */
 class ExtractHTML extends Extract {
   constructor(option) {
-    super(option);
+    super(option, "html");
 
     this.extractJS = new ExtractJS({
       CONFIG_HONG: this.option.CONFIG_HONG,
@@ -131,8 +131,13 @@ class ExtractHTML extends Extract {
           return;
         }
 
-        // 对特殊需要翻译的属性进行处理
-        HANDLE_ATTRIBUTE.forEach(attr => {
+        // noscript内的文本不处理
+        if (nodeName === "noscript") {
+          nextSibling && this.listNode(nextSibling);
+          return;
+        }
+
+        HANDLE_ATTRIBUTE.forEach((attr) => {
           curValue = this.getWord(element.getAttribute(attr));
           this.transWord(element, Edit_TYPE.attribute, curValue, attr);
         });
@@ -184,15 +189,14 @@ class ExtractHTML extends Extract {
   handleJsTask(child) {
     return this.extractJS
       .transNode(child.nodeValue)
-      .then(AST => {
+      .then((AST) => {
         return this.extractJS.scanNode(AST);
       })
-      .then(fileData => {
-        // 写入文件
+      .then((fileData) => {
         child.nodeValue = fileData;
         return this.nextJsTask();
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
         log(`内联JS处理出错- ${error}`, LOG_TYPE.error);
         return this.nextJsTask();

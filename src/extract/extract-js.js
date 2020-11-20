@@ -5,7 +5,7 @@ import { TRANS_NAME_REGEX } from "../util/config";
 import { chineseRE } from "./vue/util";
 import { deepClone } from "../util/index";
 
-const parseType = /^(CallExpression|StringLiteral)$/i;
+const parseType = /^(CallExpression|StringLiteral|TemplateLiteral)$/i;
 let inTranslate = false;
 
 /**
@@ -13,7 +13,7 @@ let inTranslate = false;
  */
 class ExtractJs extends Extract {
   constructor(option) {
-    super(option);
+    super(option, "js");
     this.leadingComment = "";
     this.tempNodes = [];
   }
@@ -28,7 +28,7 @@ class ExtractJs extends Extract {
         resolve(AST);
       } catch (err) {
         // 转换出错直接用旧的翻译工具
-        reject("文件转AST出错，无法转换！");
+        reject("文件转AST出错，无法转换，使用其它方式再次进行提取！");
       }
     });
   }
@@ -42,7 +42,7 @@ class ExtractJs extends Extract {
       }
       // AST.program.body是个数组
       let body = AST.program.body;
-      body.forEach(node => {
+      body.forEach((node) => {
         this.listAst(node);
       });
 
@@ -144,6 +144,81 @@ class ExtractJs extends Extract {
           }
         }
         break;
+      case "TemplateLiteral": // 对于模板表达式`xxx`进行处理
+        // 无模板
+        if (node.expressions.length === 0) {
+          node.quasis.forEach((item) => {
+            oldVal = item.value.raw;
+            if (chineseRE.test(oldVal)) {
+              curValue = this.getWord(oldVal, true);
+              if (curValue) {
+                if (inTranslate) {
+                  item.value.raw = curValue;
+                  item.value.cooked = curValue;
+                } else {
+                  this.createFunAst(node, curValue);
+                }
+              }
+            }
+          });
+        } else {
+          // 有模板时默认没有添加翻译函数，对于有模板还添加了翻译函数的，不进行处理
+          // 例如：_(`this is ${b}`) 这种情况不进行处理
+          if (inTranslate) {
+            break;
+          }
+
+          let texts = [];
+          texts.push(...node.expressions);
+          texts.push(...node.quasis);
+          texts.sort((a, b) => a.start - b.start);
+          let args = [],
+            text = "";
+          texts.forEach((item) => {
+            if (item.type === "TemplateElement") {
+              text += item.value.raw;
+            } else {
+              text += "%s";
+              args.push(item);
+              delete item.start;
+              delete item.end;
+            }
+          });
+
+          if (!chineseRE.test(text)) {
+            break;
+          }
+
+          curValue = this.getWord(text, true);
+          if (curValue) {
+            // 构造翻译函数ast
+            node.type = "CallExpression";
+            delete node.expressions;
+            delete node.quasis;
+            node.callee = {
+              type: "Identifier",
+              name: "_"
+            };
+            node.arguments = [
+              {
+                type: "TemplateLiteral",
+                expressions: [],
+                quasis: [
+                  {
+                    type: "TemplateElement",
+                    tail: true,
+                    value: { raw: curValue, cooked: curValue }
+                  }
+                ]
+              },
+              {
+                type: "ArrayExpression",
+                elements: args
+              }
+            ];
+          }
+        }
+        break;
     }
   }
 
@@ -204,14 +279,14 @@ class ExtractJs extends Extract {
         this.listAst(astNode[key]);
       }
     } else if (type === "[object Array]") {
-      astNode.forEach(node => {
+      astNode.forEach((node) => {
         this.listAst(node);
       });
     }
   }
 
   listTenpAst() {
-    this.tempNodes.forEach(item => {
+    this.tempNodes.forEach((item) => {
       this.listAst(item);
     });
     this.tempNodes = [];

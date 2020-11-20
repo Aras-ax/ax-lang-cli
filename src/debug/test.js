@@ -1,17 +1,17 @@
-import start from "./index";
-import { COMMAD } from "./util/config";
+import start from "../index";
+import { COMMAD } from "../util/config";
 
-const hongPath = "./test/TestFile/config/index.js";
+const hongPath = "../../test/TestFile/config/index.js";
 
 // import arrayToJson from './arrayToJson';
 
 function getWords() {
   start({
     commandType: COMMAD.GET_WORDS,
-    baseReadPath: "./test/TestFile/test/js",
-    baseOutPath: "./test/TestFile/output/js",
+    baseReadPath: "C:/Users/lenovo/Desktop/trans",
+    baseOutPath: "C:/Users/lenovo/Desktop/trans",
     hongPath
-  }).then(data => {
+  }).then((data) => {
     let t = data;
   });
 
@@ -52,7 +52,7 @@ function translate() {
     sheetName: "",
     keyName: "EN",
     valueName: "CN"
-  }).then(data => {
+  }).then((data) => {
     let t = "";
   });
 
@@ -71,24 +71,18 @@ function translate() {
 }
 
 function check() {
-  // start({
-  //     commandType: COMMAD.CHECK_TRANSLATE,
-  //     baseCheckPath: './test/TestFile/testData/allTest/translate',
-  //     langJsonPath: './test/TestFile/testData/allTest/translate/lang.json',
-  //     hongPath,
-  //     logPath: './test/TestFile/output/allTest/test'
-  // }).then(data => {
-  //     let t = '';
-  // });
+  start({
+    commandType: COMMAD.CHECK_TRANSLATE,
+    baseCheckPath: "D:/project/AC系列/AC6V4.0-LNK01/AC5_cn_normal_src",
+    langJsonPath: "C:/Users/lenovo/Desktop/out/t.json",
+    hongPath,
+    logPath: "C:/Users/lenovo/Desktop/out"
+  }).then((data) => {
+    let t = "";
+  });
 }
 
 function json2excel() {
-  // start({
-  //     commandType: COMMAD.JSON_TO_EXCEL,
-  //     jsonPath: 'C:/Users/moshang/Desktop/srcOut/t.json',
-  //     outExcelPath: ''
-  // });
-
   start({
     commandType: COMMAD.JSON_TO_EXCEL,
     jsonPath: "./test/TestFile/testData/onlyZH.json",
@@ -121,7 +115,7 @@ function origin() {
     commandType: COMMAD.ORIGINAL_CODE,
     baseProPath: "./test/TestFile/origin",
     baseProOutPath: "./test/TestFile/output/origin"
-  }).then(data => {
+  }).then((data) => {
     // return expect(data).toEqual(words);
   });
 }
@@ -135,7 +129,7 @@ function vueGet() {
     baseOutPath: "C:/Users/lenovo/Desktop/output",
     // baseOutPath: './test/vue/output',
     hongPath
-  }).then(data => {
+  }).then((data) => {
     let t = data;
   });
 }
@@ -150,7 +144,7 @@ function vueTrans() {
     sheetName: "",
     keyName: "EN",
     valueName: "CN"
-  }).then(data => {
+  }).then((data) => {
     let t = data;
   });
 }
@@ -165,7 +159,7 @@ function translateJs() {
     sheetName: "",
     keyName: "EN",
     valueName: "CN"
-  }).then(data => {
+  }).then((data) => {
     let t = "";
   });
 }
@@ -176,7 +170,7 @@ function getAllSrc() {
     baseReadPath: "C:/Users/lenovo/Desktop/trans/src",
     baseOutPath: "C:/Users/lenovo/Desktop/trans/out",
     hongPath
-  }).then(data => {
+  }).then((data) => {
     let t = data;
   });
 }
@@ -186,12 +180,65 @@ function transAllFile() {
     commandType: COMMAD.TRANS_ENCODE,
     transFilePath: "C:/Users/lenovo/Desktop/trans/out",
     transOutPath: "C:/Users/lenovo/Desktop/trans/out"
-  }).then(data => {
+  }).then((data) => {
     let t = data;
   });
 }
-module.exports = function() {
-  // translateJs();
-  //   getWords();
-  transAllFile();
+
+module.exports = function () {
+  let command = "getLan";
+  switch (command) {
+    case "check":
+      check();
+      break;
+    case "excel2json":
+      start({
+        commandType: COMMAD.EXCEL_TO_JSON,
+        keyName: "EN",
+        valueName: "CN",
+        excelPath: "C:/Users/lenovo/Desktop/mw6.xlsx",
+        outJsonPath: "C:/Users/lenovo/Desktop"
+      });
+      break;
+    case "trans":
+      start({
+        commandType: COMMAD.TRANSLATE,
+        baseTranslatePath: "C:/Users/lenovo/Desktop/transTest/error/src",
+        baseTransOutPath: "C:/Users/lenovo/Desktop/transTest/error/out",
+        languagePath: "C:/Users/lenovo/Desktop/transTest/error/lan.xlsx",
+        hongPath: "",
+        sheetName: "",
+        keyName: "EN",
+        valueName: "CN"
+      });
+      // start({
+      //   commandType: COMMAD.TRANSLATE,
+      //   baseTranslatePath: "C:/Users/lenovo/Desktop/transTest/src",
+      //   baseTransOutPath: "C:/Users/lenovo/Desktop/transTest/out",
+      //   languagePath: "C:/Users/lenovo/Desktop/transTest/lan.xlsx",
+      //   hongPath: "",
+      //   sheetName: "",
+      //   keyName: "EN",
+      //   valueName: "CN"
+      // });
+      break;
+    case "getLan":
+      // start({
+      //   commandType: COMMAD.GET_WORDS,
+      //   // onlyZH: true,
+      //   baseReadPath: "C:/Users/lenovo/Desktop/ts/src",
+      //   baseOutPath: "C:/Users/lenovo/Desktop/ts"
+      // });
+      start({
+        commandType: COMMAD.TRANSLATE,
+        baseTranslatePath: "C:/Users/lenovo/Desktop/ts/src",
+        baseTransOutPath: "C:/Users/lenovo/Desktop/ts/out",
+        languagePath: "C:/Users/lenovo/Desktop/ts/提取词条EN.xlsx",
+        hongPath: "",
+        sheetName: "",
+        keyName: "CN",
+        valueName: "EN"
+      });
+      break;
+  }
 };

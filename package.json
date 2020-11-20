@@ -1,6 +1,6 @@
 {
   "name": "b28-cli",
-  "version": "1.5.5",
+  "version": "1.6.2",
   "description": "translate, ExcelToJson, JsonToExcel, getText, l18n",
   "main": "./src/index.js",
   "bin": {
@@ -26,7 +26,7 @@
   },
   "scripts": {
     "compile": "babel -d dist/ src/",
-    "dist": "npm run compile",
+    "build": "npm run compile",
     "test": "cd test & jest"
   },
   "devDependencies": {

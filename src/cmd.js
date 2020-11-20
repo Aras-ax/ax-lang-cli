@@ -47,6 +47,7 @@ const comments = {
   transOutPath: "转码后文件输出地址",
   transEncode: "转码后文件的编码方式(默认UTF-8)"
 };
+
 /**
  * 命令行手动输入参数逐条配置
  */
@@ -263,6 +264,7 @@ let questions = [
     }
   ]
 ];
+
 /**
  * 初始化b28.config.js文件
  */
@@ -270,15 +272,15 @@ function handleInit() {
   let config = {};
   inquirer
     .prompt(baseQuestions)
-    .then(answers => {
+    .then((answers) => {
       config.commandType = answers.commandType;
       return inquirer.prompt(questions[answers.commandType]);
     })
-    .then(answers => {
+    .then((answers) => {
       answers = Object.assign({}, config, answers);
       return answers;
     })
-    .then(data => {
+    .then((data) => {
       let str = `module.exports = {\r\n\t`,
         notString = ["onlyZH", "commandType"];
 
@@ -295,7 +297,7 @@ function handleInit() {
       str += "}";
 
       let outPath = path.join(process.cwd(), "b28.config.js");
-      fs.writeFile(outPath, str, err => {
+      fs.writeFile(outPath, str, (err) => {
         if (err) {
           reject(err);
           return;
@@ -308,7 +310,7 @@ function handleInit() {
 function handleVersion() {
   console.log("v" + cfg.version);
 
-  figlet("B28-CLI", function(err, data) {
+  figlet("B28-CLI", function (err, data) {
     if (err) {
       return;
     }
